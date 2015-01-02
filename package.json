@@ -29,6 +29,7 @@
     "grunt-mocha": "~0.4.11",
     "requirejs": "~2.1.15",
     "promjax": "0.0.3",
-    "amd-resolver": "0.0.10"
+    "amd-resolver": "",
+    "bit-loader": ""
   }
 }
