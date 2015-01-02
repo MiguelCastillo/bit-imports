@@ -17,7 +17,7 @@
   };
 
   function AMDLoader(options) {
-    this.settings = Utils.merge({}, defaults, options);
+    this.settings = Utils.extend({}, defaults, options);
     Bitloader.Fetch = fetchFactory(this);
     var mloader = new Bitloader();
     var define  = new Define(mloader);
@@ -29,7 +29,7 @@
   }
 
   AMDLoader.prototype.config = function(options) {
-    Bitloader.Utils.merge(this.settings, options);
+    Bitloader.Utils.extend(this.settings, options);
   };
 
   AMDLoader.prototype.factory = function(options) {
