@@ -1,1 +1,1 @@
-MLoader.define(3.14);
+Bitloader.define(3.14);

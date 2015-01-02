@@ -1,10 +1,10 @@
 (function(root) {
   "use strict";
-  var Fetcher = require("./fetchxhr"),
-      Define  = require('./define'),
-      Require = require('./require'),
-      MLoader = require("mloader"),
-      Utils   = MLoader.Utils;
+  var Fetcher   = require("./fetchxhr"),
+      Define    = require('./define'),
+      Require   = require('./require'),
+      Bitloader = require('bit-loader'),
+      Utils     = Bitloader.Utils;
 
   var defaults = {
     global: this,
@@ -18,8 +18,8 @@
 
   function AMDLoader(options) {
     this.settings = Utils.merge({}, defaults, options);
-    MLoader.Fetch = fetchFactory(this);
-    var mloader = new MLoader();
+    Bitloader.Fetch = fetchFactory(this);
+    var mloader = new Bitloader();
     var define  = new Define(mloader);
     var require = new Require(mloader);
 
@@ -29,7 +29,7 @@
   }
 
   AMDLoader.prototype.config = function(options) {
-    MLoader.Utils.merge(this.settings, options);
+    Bitloader.Utils.merge(this.settings, options);
   };
 
   AMDLoader.prototype.factory = function(options) {
@@ -37,7 +37,7 @@
   };
 
   /**
-   * fetchFactory is the hook for MLoader to get a hold of a fetch provider
+   * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
    */
   function fetchFactory(amdLoader) {
     return function fetch(/*manager*/) {
@@ -45,6 +45,6 @@
     };
   }
 
-  root.MLoader = new AMDLoader();
+  root.Bitloader = new AMDLoader();
   module.exports = AMDLoader;
 })(typeof(window) !== 'undefined' ? window : this);
