@@ -9,6 +9,6 @@ define([
   mocha.setup("bdd");
 
   require([
-    "tests/specs/amd-loader"
+    "tests/specs/packages"
   ], mocha.run);
 });
