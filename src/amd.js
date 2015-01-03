@@ -19,11 +19,11 @@
   function AMDLoader(options) {
     this.settings = Utils.extend({}, defaults, options);
     Bitloader.Fetch = fetchFactory(this);
-    var mloader = new Bitloader();
-    var define  = new Define(mloader);
-    var require = new Require(mloader);
+    var bitloader = new Bitloader();
+    var define  = new Define(bitloader);
+    var require = new Require(bitloader);
 
-    this.import  = mloader.import;
+    this.import  = bitloader.import;
     this.define  = define.define.bind(define);
     this.require = require.require.bind(require);
   }
