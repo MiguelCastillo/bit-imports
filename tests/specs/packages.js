@@ -46,9 +46,9 @@ define(["dist/amd-loader"], function(AMDLoader) {
       });
     });
 
-    describe("When Importing two files", function() {
+    describe("When importing an empty object and a string", function() {
       var emptyobject, emptystring;
-      beforeEach(function () {
+      before(function () {
         return bitloader.import(["js/emptyobject", "js/emptystring"])
           .then(function (_emptyobject, _emptystring) {
             emptyobject = _emptyobject;
@@ -56,20 +56,22 @@ define(["dist/amd-loader"], function(AMDLoader) {
           });
       });
 
-      it("then the first result is one object", function() {
-        expect(emptyobject).to.be.an("object");
+      describe("and the empty object is loaded", function() {
+        it("then `emptyobject` is an object", function() {
+          expect(emptyobject).to.be.an("object");
+        });
+        it("then `emptyobject` does not have properties", function() {
+          expect(Object.keys(emptyobject).length).to.equal(0);
+        });
       });
 
-      it("then the first result is one object with no properties", function() {
-        expect(Object.keys(emptyobject).length).to.equal(0);
-      });
-
-      it("then the second result is a string", function() {
-        expect(emptystring).to.be.a("string");
-      });
-
-      it("then the second result is an empty string", function () {
-        expect(emptystring.length).to.equal(0);
+      describe("and the empty string is loaded", function() {
+        it("then `emptystring` is a string", function() {
+          expect(emptystring).to.be.a("string");
+        });
+        it("then `emptystring` has length 0", function() {
+          expect(emptystring.length).to.equal(0);
+        });
       });
     });
 
