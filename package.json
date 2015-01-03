@@ -5,7 +5,7 @@
     "test": "grunt test"
   },
   "name": "amd-loader",
-  "description": "amd-loader ==========",
+  "description": "AMD loader built on top of bit-loader",
   "version": "0.0.1",
   "directories": {
     "test": "tests"
