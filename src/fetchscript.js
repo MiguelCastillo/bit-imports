@@ -2,13 +2,19 @@
   "use strict";
 
   var Promise  = require("spromise"),
-      Define = require("./define");
+      Resolver = require('amd-resolver'),
+      Define   = require("./define");
 
-  function Fetch(moduleMeta) {
-    var deferred = Promise.defer();
-    var head     = document.getElementsByTagName("head")[0] || document.documentElement;
-    var script   = document.createElement("script");
-    var _url     = moduleMeta.file.toUrl();
+  function Fetcher(options) {
+    this.resolver = new Resolver(options);
+  }
+
+  Fetcher.prototype.fetch = function(name) {
+    var moduleMeta = this.resolver.resolve(name);
+    var deferred   = Promise.defer();
+    var head       = document.getElementsByTagName("head")[0] || document.documentElement;
+    var script     = document.createElement("script");
+    var _url       = moduleMeta.file.toUrl();
 
     if (moduleMeta.urlArgs) {
       _url += "?" + moduleMeta.urlArgs;
@@ -56,7 +62,7 @@
 
     head.appendChild(script);
     return deferred.promise;
-  }
+  };
 
-  module.exports = Fetch;
+  module.exports = Fetcher;
 })();

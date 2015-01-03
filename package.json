@@ -30,6 +30,7 @@
     "requirejs": "~2.1.15",
     "promjax": "0.0.3",
     "amd-resolver": "",
-    "bit-loader": ""
+    "bit-loader": "",
+    "spromise": ""
   }
 }
