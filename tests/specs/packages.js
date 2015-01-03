@@ -1,5 +1,5 @@
 define(["dist/amd-bits"], function(AMDLoader) {
-  describe("Test suite", function() {
+  describe("Packages suite", function() {
     var bitloader;
     beforeEach(function() {
       bitloader = new AMDLoader({
@@ -30,25 +30,27 @@ define(["dist/amd-bits"], function(AMDLoader) {
 
     describe("When Importing an empty object", function() {
       var result;
-      before(function() {
+      beforeEach(function() {
         return bitloader.import("js/emptyobject.js")
           .then(function (_result) {
             result = _result;
           });
       });
 
-      it("then the result is an object", function() {
-        expect(result).to.be.an("object");
-      });
+      describe("and the empty object is loaded", function () {
+        it("then the result is an object", function() {
+          expect(result).to.be.an("object");
+        });
 
-      it("then the result is an object with no properties", function() {
-        expect(Object.keys(result).length).to.equal(0);
+        it("then the result is an object with no properties", function() {
+          expect(Object.keys(result).length).to.equal(0);
+        });
       });
     });
 
     describe("When importing an empty object and a string", function() {
       var emptyobject, emptystring;
-      before(function () {
+      beforeEach(function () {
         return bitloader.import(["js/emptyobject", "js/emptystring"])
           .then(function (_emptyobject, _emptystring) {
             emptyobject = _emptyobject;
@@ -77,109 +79,113 @@ define(["dist/amd-bits"], function(AMDLoader) {
 
     describe("When Importing nested dependencies in deep3", function() {
       var deep3;
-      before(function () {
+      beforeEach(function () {
         return bitloader.import("js/deep3")
           .then(function (_result) {
             deep3 = _result;
           });
       });
 
-      it("deep3 is an object", function () {
-        expect(deep3).to.be.an("object");
-      });
+      describe("and deep3 is loaded", function () {
+        it("then deep3 is an object", function () {
+          expect(deep3).to.be.an("object");
+        });
 
-      it("deep3 has only one property", function () {
-        expect(Object.keys(deep3).length).to.equal(1);
-      });
+        it("then deep3 has only one property", function () {
+          expect(Object.keys(deep3).length).to.equal(1);
+        });
 
-      it("deep2 is an object", function () {
-        expect(deep3.deep2).to.be.an("object");
-      });
+        it("then deep2 is an object", function () {
+          expect(deep3.deep2).to.be.an("object");
+        });
 
-      it("deep2 has only one property", function () {
-        expect(Object.keys(deep3.deep2).length).to.equal(1);
-      });
+        it("then deep2 has only one property", function () {
+          expect(Object.keys(deep3.deep2).length).to.equal(1);
+        });
 
-      it("deep1 is an object", function () {
-        expect(deep3.deep2.deep1).to.be.an("object");
-      });
+        it("then deep1 is an object", function () {
+          expect(deep3.deep2.deep1).to.be.an("object");
+        });
 
-      it("deep1 has only one property", function () {
-        expect(Object.keys(deep3.deep2.deep1).length).to.equal(1);
-      });
+        it("then deep1 has only one property", function () {
+          expect(Object.keys(deep3.deep2.deep1).length).to.equal(1);
+        });
 
-      it("deep0 is an object", function () {
-        expect(deep3.deep2.deep1.deep0).to.be.an("object");
-      });
+        it("then deep0 is an object", function () {
+          expect(deep3.deep2.deep1.deep0).to.be.an("object");
+        });
 
-      it("deep0 has only two properties", function () {
-        expect(Object.keys(deep3.deep2.deep1.deep0).length).to.equal(2);
-      });
+        it("then deep0 has only two properties", function () {
+          expect(Object.keys(deep3.deep2.deep1.deep0).length).to.equal(2);
+        });
 
-      it("deep0 has a property `hello` that is a string", function () {
-        expect(deep3.deep2.deep1.deep0.hello).to.be.a("string");
-      });
+        it("then deep0 has a property `hello` that is a string", function () {
+          expect(deep3.deep2.deep1.deep0.hello).to.be.a("string");
+        });
 
-      it("deep0 has a property `hello` with a value of `world`", function () {
-        expect(deep3.deep2.deep1.deep0.hello).to.equal("world");
-      });
+        it("then deep0 has a property `hello` with a value of `world`", function () {
+          expect(deep3.deep2.deep1.deep0.hello).to.equal("world");
+        });
 
-      it("deep0 has a property `init` that is a function", function () {
-        expect(deep3.deep2.deep1.deep0.init).to.be.a("function");
+        it("then deep0 has a property `init` that is a function", function () {
+          expect(deep3.deep2.deep1.deep0.init).to.be.a("function");
+        });
       });
     });
 
     describe("When Importing package called `js`", function() {
-      var result;
-      before(function () {
+      var deep3;
+      beforeEach(function () {
         return bitloader.import("js")
-          .then(function (_result) {
-            result = _result;
+          .then(function (_deep3) {
+            deep3 = _deep3;
           });
       });
 
-      it("deep3 is an object", function () {
-        expect(result).to.be.an("object");
-      });
+      describe("and deep3 is loaded", function () {
+        it("then deep3 is an object", function () {
+          expect(deep3).to.be.an("object");
+        });
 
-      it("deep3 has only one property", function () {
-        expect(Object.keys(result).length).to.equal(1);
-      });
+        it("then deep3 has only one property", function () {
+          expect(Object.keys(deep3).length).to.equal(1);
+        });
 
-      it("deep2 is an object", function () {
-        expect(result.deep2).to.be.an("object");
-      });
+        it("then deep2 is an object", function () {
+          expect(deep3.deep2).to.be.an("object");
+        });
 
-      it("deep2 has only one property", function () {
-        expect(Object.keys(result.deep2).length).to.equal(1);
-      });
+        it("then deep2 has only one property", function () {
+          expect(Object.keys(deep3.deep2).length).to.equal(1);
+        });
 
-      it("deep1 is an object", function () {
-        expect(result.deep2.deep1).to.be.an("object");
-      });
+        it("then deep1 is an object", function () {
+          expect(deep3.deep2.deep1).to.be.an("object");
+        });
 
-      it("deep1 has only one property", function () {
-        expect(Object.keys(result.deep2.deep1).length).to.equal(1);
-      });
+        it("then deep1 has only one property", function () {
+          expect(Object.keys(deep3.deep2.deep1).length).to.equal(1);
+        });
 
-      it("deep0 is an object", function () {
-        expect(result.deep2.deep1.deep0).to.be.an("object");
-      });
+        it("then deep0 is an object", function () {
+          expect(deep3.deep2.deep1.deep0).to.be.an("object");
+        });
 
-      it("deep0 has only two properties", function () {
-        expect(Object.keys(result.deep2.deep1.deep0).length).to.equal(2);
-      });
+        it("then deep0 has only two properties", function () {
+          expect(Object.keys(deep3.deep2.deep1.deep0).length).to.equal(2);
+        });
 
-      it("deep0 has a property `hello` that is a string", function () {
-        expect(result.deep2.deep1.deep0.hello).to.be.a("string");
-      });
+        it("then deep0 has a property `hello` that is a string", function () {
+          expect(deep3.deep2.deep1.deep0.hello).to.be.a("string");
+        });
 
-      it("deep0 has a property `hello` with a value of `world`", function () {
-        expect(result.deep2.deep1.deep0.hello).to.equal("world");
-      });
+        it("then deep0 has a property `hello` with a value of `world`", function () {
+          expect(deep3.deep2.deep1.deep0.hello).to.equal("world");
+        });
 
-      it("deep0 has a property `init` that is a function", function () {
-        expect(result.deep2.deep1.deep0.init).to.be.a("function");
+        it("then deep0 has a property `init` that is a function", function () {
+          expect(deep3.deep2.deep1.deep0.init).to.be.a("function");
+        });
       });
     });
   });
