@@ -7,21 +7,21 @@
       Utils     = Bitloader.Utils;
 
   var defaults = {
-    baseUrl: "",
-    cache: true,
-    deps: [],
-    paths: {},
-    shim: {},
-    packages: []
+    baseUrl  : "",
+    cache    : true,
+    deps     : [],
+    paths    : {},
+    shim     : {},
+    packages : []
   };
 
   function AMDLoader(options) {
     this.settings = Utils.extend({}, defaults, options);
     Bitloader.Fetch = fetchFactory(this);
 
-    var bitloader = new Bitloader();
-    var define    = new Define(bitloader);
-    var require   = new Require(bitloader);
+    var bitloader = new Bitloader(),
+        define    = new Define(bitloader),
+        require   = new Require(bitloader);
 
     this.import  = bitloader.import;
     this.define  = define.define.bind(define);
