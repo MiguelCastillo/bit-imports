@@ -1,10 +1,10 @@
 {
-  "main": "dist/amd-loader.js",
+  "main": "dist/amd-bits.js",
   "scripts": {
-    "prepublish": "browserify src/amd.js -o dist/amd-loader.js -s amd-loader --dg false --ignore-missing",
+    "prepublish": "browserify src/amd.js -o dist/amd-bits.js -s amd-bits --dg false --ignore-missing",
     "test": "grunt test"
   },
-  "name": "amd-loader",
+  "name": "amd-bits",
   "description": "AMD loader built on top of bit-loader",
   "version": "0.0.1",
   "directories": {
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MiguelCastillo/amd-loader.git"
+    "url": "https://github.com/MiguelCastillo/amd-bits.git"
   },
   "author": "Miguel Castillo <manchagnu@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MiguelCastillo/amd-loader/issues"
+    "url": "https://github.com/MiguelCastillo/amd-bits/issues"
   },
-  "homepage": "https://github.com/MiguelCastillo/amd-loader",
+  "homepage": "https://github.com/MiguelCastillo/amd-bits",
   "devDependencies": {
     "grunt": "~0.4.5",
     "mocha": "~2.1.0",

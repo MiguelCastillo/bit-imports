@@ -1,4 +1,4 @@
-define(["dist/amd-loader"], function(AMDLoader) {
+define(["dist/amd-bits"], function(AMDLoader) {
   describe("Test suite", function() {
     var bitloader;
     beforeEach(function() {
