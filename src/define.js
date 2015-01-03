@@ -53,7 +53,6 @@
 
     if (typeof(factory) === "function") {
       mod.factory = factory;
-      mod.source  = factory.toString();
     }
     else {
       mod.code = factory;
