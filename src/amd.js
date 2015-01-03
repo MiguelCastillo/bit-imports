@@ -19,13 +19,17 @@
   function AMDLoader(options) {
     this.settings = Utils.extend({}, defaults, options);
     Bitloader.Fetch = fetchFactory(this);
+
     var bitloader = new Bitloader();
-    var define  = new Define(bitloader);
-    var require = new Require(bitloader);
+    var define    = new Define(bitloader);
+    var require   = new Require(bitloader);
 
     this.import  = bitloader.import;
     this.define  = define.define.bind(define);
     this.require = require.require.bind(require);
+
+    // Add `amd` for compliance
+    this.define.amd = {};
   }
 
   AMDLoader.prototype.config = function(options) {
