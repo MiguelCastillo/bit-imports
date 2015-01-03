@@ -994,7 +994,12 @@
     };
   }
 
-  root.Bitloader = new AMDLoader();
+  var options;
+  if (Utils.isPlainObject(root.require || root.requirejs)) {
+    options = root.require || root.requirejs;
+  }
+
+  root.Bitloader = new AMDLoader(options);
   module.exports = AMDLoader;
 })(typeof(window) !== 'undefined' ? window : this);
 
