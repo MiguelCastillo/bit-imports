@@ -34,6 +34,7 @@
 
   AMDLoader.prototype.config = function(options) {
     Bitloader.Utils.extend(this.settings, options);
+    return new AMDLoader(options);
   };
 
   AMDLoader.prototype.factory = function(options) {
