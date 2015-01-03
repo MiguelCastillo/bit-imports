@@ -952,7 +952,6 @@
       Utils     = Bitloader.Utils;
 
   var defaults = {
-    global: this,
     baseUrl: "",
     cache: true,
     deps: [],
