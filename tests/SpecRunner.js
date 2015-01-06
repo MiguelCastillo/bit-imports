@@ -10,5 +10,7 @@ define([
 
   require([
     "tests/specs/packages"
-  ], mocha.run);
+  ], function() {
+    mocha.run();
+  });
 });
