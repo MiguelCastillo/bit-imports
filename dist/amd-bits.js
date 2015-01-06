@@ -303,23 +303,33 @@
 (function () {
   "use strict";
 
-  var Promise  = require('spromise'),
-      Utils    = require('./utils'),
-      Import   = require('./import'),
-      Loader   = require('./loader'),
-      Module   = require('./module'),
-      Registry = require('./registry'),
-      Fetch    = require('./fetch');
+  var Promise    = require('spromise'),
+      Utils      = require('./utils'),
+      Import     = require('./import'),
+      Loader     = require('./loader'),
+      Module     = require('./module'),
+      Registry   = require('./registry'),
+      Middleware = require('./middleware'),
+      Fetch      = require('./fetch');
 
-  function Bitloader() {
-    this.middlewares = {};
-    this.context     = Registry.getById();
+  function Bitloader(options) {
+    this.context   = Registry.getById();
+    this.transform = Middleware.factory(this);
+    this.plugin    = Middleware.factory(this);
+
+    if (options.transforms) {
+      this.transform(options.transforms);
+    }
+
+    if (options.plugins) {
+      this.plugin(options.plugins);
+    }
 
     // Override any of these constructors if you need specialized implementation
     var providers = {
-      fetch   : new Bitloader.Fetch(this),
-      loader  : new Bitloader.Loader(this),
-      import  : new Bitloader.Import(this)
+      fetch  : new Bitloader.Fetch(this),
+      loader : new Bitloader.Loader(this),
+      import : new Bitloader.Import(this)
     };
 
     // Expose interfaces
@@ -329,59 +339,27 @@
     this.import    = providers.import.import.bind(providers.import);
   }
 
-  Bitloader.prototype.use = function(name, provider) {
-    if (!provider || !provider.handler) {
-      throw new TypeError("Must provide a providers with a `handler` interface");
-    }
-
-    var middleware = this.middlewares[name] || (this.middlewares[name] = []);
-
-    if (typeof(provider) === "function") {
-      provider = {handler: provider};
-    }
-
-    middleware.push(provider);
-  };
-
-  Bitloader.prototype.run = function(name) {
-    var middleware = this.middlewares[name],
-        data = Array.prototype.slice.call(arguments, 1),
-        result, i, length;
-
-    if (!middleware) {
-      return;
-    }
-
-    for (i = 0, length = middleware.legnth; i < length; i++) {
-      result = middleware[i].handler.apply(middleware[i], data);
-
-      if (result !== (void 0)) {
-        return result;
-      }
-    }
-  };
-
   Bitloader.prototype.clear = function() {
     return Registry.clearById(this.context._id);
   };
-
 
   Bitloader.prototype.Promise = Promise;
   Bitloader.prototype.Module  = Module;
   Bitloader.prototype.Utils   = Utils;
 
   // Expose constructors and utilities
-  Bitloader.Promise  = Promise;
-  Bitloader.Utils    = Utils;
-  Bitloader.Registry = Registry;
-  Bitloader.Loader   = Loader;
-  Bitloader.Import   = Import;
-  Bitloader.Module   = Module;
-  Bitloader.Fetch    = Fetch;
+  Bitloader.Promise    = Promise;
+  Bitloader.Utils      = Utils;
+  Bitloader.Registry   = Registry;
+  Bitloader.Loader     = Loader;
+  Bitloader.Import     = Import;
+  Bitloader.Module     = Module;
+  Bitloader.Fetch      = Fetch;
+  Bitloader.Middleware = Middleware;
   module.exports   = Bitloader;
 })();
 
-},{"./fetch":3,"./import":4,"./loader":5,"./module":6,"./registry":7,"./utils":8,"spromise":1}],3:[function(require,module,exports){
+},{"./fetch":3,"./import":4,"./loader":5,"./middleware":6,"./module":7,"./registry":8,"./utils":9,"spromise":1}],3:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -411,8 +389,9 @@
       throw new TypeError("Must provide a manager");
     }
 
-    this.manager = manager;
-    this.context = manager.context || {};
+    this.manager  = manager;
+    this.context  = manager.context || {};
+    this.pipeline = [load, validate, dependencies, finalize, cache];
 
     if (!this.context.modules) {
       this.context.modules = {};
@@ -430,7 +409,6 @@
   Import.prototype.import = function(names, options) {
     options = options || {};
     var importer = this,
-        manager  = this.manager,
         context  = this.context;
 
     // Coerce string to array to simplify input processing
@@ -451,11 +429,7 @@
       }
 
       // Workflow for loading a module that has not yet been loaded
-      return (context.modules[name] = manager.load(name)
-        .then(validate,               passThroughError)
-        .then(dependencies(importer), passThroughError)
-        .then(finalize(importer),     passThroughError)
-        .then(cache(importer),        passThroughError));
+      return (context.modules[name] = runPipeline(importer, name));
     });
 
     return Promise.when.apply((void 0), deps).catch(function(error) {
@@ -463,15 +437,33 @@
     });
   };
 
-  function passThroughError(error) {
+
+  function forwardError(error) {
     return error;
   }
 
-  function validate(mod) {
-    if (mod instanceof(Module) === false) {
-      throw new TypeError("input must be an Instance of Module");
-    }
-    return mod;
+
+  function runPipeline(importer, name) {
+    return importer.pipeline.reduce(function(prev, curr) {
+      return prev.then(curr(importer, name), forwardError);
+    }, Promise.resolve());
+  }
+
+
+  function validate() {
+    return function (mod) {
+      if (mod instanceof(Module) === false) {
+        throw new TypeError("input must be an Instance of Module");
+      }
+      return mod;
+    };
+  }
+
+
+  function load(importer, name) {
+    return function() {
+      return importer.manager.load(name);
+    };
   }
 
   /**
@@ -522,7 +514,7 @@
   module.exports = Import;
 })(typeof(window) !== 'undefined' ? window : this);
 
-},{"./module":6,"spromise":1}],5:[function(require,module,exports){
+},{"./module":7,"spromise":1}],5:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -546,8 +538,9 @@
       throw new TypeError("Must provide a manager");
     }
 
-    this.manager = manager;
-    this.context = manager.context || {};
+    this.manager  = manager;
+    this.context  = manager.context || {};
+    this.pipeline = [fetch, validate, transform, compile];
 
     if (!this.context.loaded) {
       this.context.loaded = {};
@@ -576,7 +569,6 @@
    */
   Loader.prototype.load = function(name) {
     var loader  = this,
-        manager = this.manager,
         context = this.context;
 
     if (!name) {
@@ -588,46 +580,64 @@
     if (!context.loaded.hasOwnProperty(name)) {
       // This is where the workflow for fetching, transforming, and compiling happens.
       // It is designed to easily add more steps to the workflow.
-      context.loaded[name] = manager.fetch(name)
-        .then(validate,          passThroughError)
-        .then(transform(loader), passThroughError)
-        .then(compile(loader),   passThroughError);
+      context.loaded[name] = runPipeline(loader, name);
     }
 
     return Promise.resolve(context.loaded[name]);
   };
 
 
-  function passThroughError(error) {
+  function forwardError(error) {
     return error;
   }
+
+
+  function runPipeline(loader, name) {
+    return loader.pipeline.reduce(function(prev, curr) {
+      return prev.then(curr(loader, name), forwardError);
+    }, Promise.resolve());
+  }
+
+
+  function fetch(loader, name) {
+    return function() {
+      return loader.manager.fetch(name);
+    };
+  }
+
 
   /**
    * Method to ensure we have a valid module meta object before we continue on with
    * the rest of the pipeline.
    */
-  function validate(moduleMeta) {
-    if (!moduleMeta) {
-      throw new TypeError("Must provide a ModuleMeta");
-    }
+  function validate(loader) {
+    return function(moduleMeta) {
+      if (!moduleMeta) {
+        throw new TypeError("Must provide a ModuleMeta");
+      }
 
-    if (!moduleMeta.compile) {
-      throw new TypeError("ModuleMeta must provide have a `compile` interface");
-    }
+      if (!moduleMeta.compile) {
+        throw new TypeError("ModuleMeta must provide have a `compile` interface that creates and returns an instance of Module");
+      }
 
-    return moduleMeta;
+      moduleMeta.manager = loader.manager;
+      return moduleMeta;
+    };
   }
+
 
   /**
    * The transform enables transformation providers to process the moduleMeta
    * before it is compiled into an actual Module instance.  This is where steps
    * such as linting and processing coffee files can take place.
    */
-  function transform(/*loader*/) {
+  function transform(loader) {
     return function(moduleMeta) {
-      return moduleMeta;
+      return loader.manager.transform.runAll(moduleMeta)
+        .then(function() {return moduleMeta;}, forwardError);
     };
   }
+
 
   /**
    * The compile step is to convert the moduleMeta to an instance of Module. The
@@ -638,7 +648,7 @@
   function compile(loader) {
     return function(moduleMeta) {
       var mod     = moduleMeta.compile(),
-          modules = moduleMeta.loaded ? moduleMeta.loaded.modules : {};
+          modules = mod.modules || {};
 
       // Copy modules over to the loaded bucket if it does not exist. Anything
       // that has already been loaded will get ignored.
@@ -657,6 +667,234 @@
 })(typeof(window) !== 'undefined' ? window : this);
 
 },{"spromise":1}],6:[function(require,module,exports){
+(function() {
+  "use strict";
+
+  var Promise = require('spromise'),
+      Utils   = require('./utils');
+
+
+  /**
+   * Middleware provides a mechanism for registering `plugins` that can be
+   * called in the order in which they are registered.  These middlewares can
+   * be module names that can be loaded at runtime or can be functions.
+   */
+  function Middleware(manager) {
+    this.manager   = manager;
+    this.providers = [];
+    this.named     = {};
+  }
+
+
+  /**
+   * Method to register middleware providers.  Providers can be methods, a module
+   * name, or an object with a method in it called `handler`.  If the provider is
+   * is a module name, then it will be loaded dynamically. These providers will also
+   * be registered as `named` providers, which are providers.  Named providers are
+   * those that can be executed by name.  For example, you can say `middleware.run("concat");`
+   * Registering a provider that is function will just be an `anonymouse` provider
+   * and will only execute when running the entire chain of providers.  When passing
+   * in an object, you will need to define a method `handler`. But you can optionally
+   * pass in a name, which will cause the provider to be registered as a `named`
+   * provider.
+   *
+   * @param {Object | Array<Object>} providers - One or collection of providers to
+   *   be registered in this middleware manager instance.
+   *
+   *
+   * For example, the provider below is just a method that will get invoked when
+   * running the entire sequence of providers.
+   *
+   * ``` javascript
+   * middleware.use(function() {
+   *   console.log("1");
+   * });
+   * ```
+   *
+   * But registering a provider as a name will cause the middleware engine to
+   * dynamically load it, and can also be executed with `run("concat")` which
+   * runs only the provider `concat` rather than the entire chain.
+   *
+   * ``` javascript
+   * middleware.use(`concat`);
+   * ```
+   *
+   * The alternative for registering `named` providers is to pass in a `Object` with a
+   * `handler` method and a `name`.  The name is only required if you are interested in
+   * more control for executing the provider.
+   *
+   * ``` javascript
+   * middleware.use({
+   *  name: "concat",
+   *  handler: function() {
+   *  }
+   * });
+   * ```
+   */
+  Middleware.prototype.use = function(providers) {
+    if (!Utils.isArray(providers)) {
+      providers = [providers];
+    }
+
+    for (var provider in providers) {
+      if (providers.hasOwnProperty(provider)) {
+        provider = this.configure(providers[provider]);
+        this.providers.push(provider);
+
+        if (Utils.isString(provider.name)) {
+          this.named[provider.name] = provider;
+        }
+      }
+    }
+  };
+
+
+  /**
+   * Method that runs `named` providers.  You can pass in a name of the provider
+   * to be executed or an array of names.  If passing in an array, the order in
+   * array is the order in which they will be ran; regardless of the order in
+   * which they were registered.
+   *
+   * When a provider is executed, it can terminate the execution sequence by
+   * returning a value.  You can also `throw` to teminate the execution. Otherwise
+   * the sequence will run for as long as no poviders return anything.
+   *
+   * The only thing a provider can return is a promise, which is really useful
+   * if the provider needs to do some work asynchronously.
+   *
+   * @param {string | Array<string>} names - Name(s) of the providers to run
+   *
+   * @returns {Promise}
+   */
+  Middleware.prototype.run = function(names) {
+    if (Utils.isString(names)) {
+      names = [names];
+    }
+
+    if (!Utils.isArray(names)) {
+      throw new TypeError("List of handlers must be a string or an array of names");
+    }
+
+    var i, length;
+    var handlers = [];
+
+    for (i = 0, length = names.length; i < length; i++) {
+      handlers.push(this.named[names[i]]);
+    }
+
+    return _runProvider(handlers, Array.prototype.slice.call(arguments, 1));
+  };
+
+
+  /**
+   * Method to run all registered providers in the order in which they were
+   * registered.
+   *
+   * @returns {Promise}
+   */
+  Middleware.prototype.runAll = function() {
+    return _runProvider(this.providers, arguments);
+  };
+
+
+  /**
+   * Method to normalize provider settings to proper provider objects that can
+   * be used by the middleware manager.
+   */
+  Middleware.prototype.configure = function(provider) {
+    if (Utils.isFunction(provider)) {
+      provider = {handler: provider};
+    }
+    else if (Utils.isString(provider)) {
+      provider = {name: provider};
+      provider.handler = _deferred(this, provider);
+    }
+    else if (Utils.isPlainObject(provider)) {
+      if (!Utils.isFunction(provider.handler)) {
+        throw new TypeError("Middleware provider must have a handler method");
+      }
+    }
+
+    return provider;
+  };
+
+
+  /**
+   * Convenience method to allow registration of providers by calling the middleware
+   * manager itself rather than the use method.
+   *
+   * E.g.
+   *
+   * middleware(function() {
+   * })
+   *
+   * vs.
+   *
+   * middleware.use(function() {
+   * });
+   *
+   */
+  Middleware.factory = function(manager) {
+    var middleware = new Middleware(manager);
+
+    function instance(provider) {
+      middleware.use(provider);
+    }
+
+    instance.use    = middleware.use.bind(middleware);
+    instance.run    = middleware.run.bind(middleware);
+    instance.runAll = middleware.runAll.bind(middleware);
+    return Utils.extend(instance, middleware);
+  };
+
+
+  /**
+   * @private
+   * Method that enables chaining in providers that have to be dynamically loaded.
+   */
+  function _deferred(middleware, provider) {
+    return function() {
+      var context = this,
+          args    = arguments;
+
+      provider.__pending = true;
+      return (provider.handler = middleware.manager.import(provider.name).then(function(handler) {
+        delete provider.__pending;
+        provider.handler = handler;
+        return handler.apply(context, args);
+      }));
+    };
+  }
+
+
+  /**
+   * @private
+   * Method that runs a cancellable sequence of promises.
+   */
+  function _runProvider(provider, data) {
+    var cancelled = false;
+
+    return provider.reduce(function(prev, curr) {
+      return prev.then(function() {
+        if (arguments.length) {
+          cancelled = true;
+        }
+
+        if (!cancelled && !curr.__pending) {
+          return curr.handler.apply(curr, data);
+        }
+      }, function(err) {
+        cancelled = true;
+        return err;
+      });
+    }, Promise.resolve());
+  }
+
+
+  module.exports = Middleware;
+})();
+
+},{"./utils":9,"spromise":1}],7:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -695,7 +933,7 @@
   module.exports = Module;
 })();
 
-},{"./utils":8}],7:[function(require,module,exports){
+},{"./utils":9}],8:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -728,18 +966,23 @@
   module.exports = Registry;
 })();
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 (function() {
   "use strict";
 
-  function noop() {}
+  function noop() {
+  }
 
   function isNull(item) {
-    return item === null || item === undefined;
+    return item === null || item === (void 0);
   }
 
   function isArray(item) {
     return item instanceof(Array);
+  }
+
+  function isString(item) {
+    return typeof(item) === "string";
   }
 
   function isObject(item) {
@@ -747,7 +990,7 @@
   }
 
   function isPlainObject(item) {
-    return !!item && !isArray(item) && !isDate(item) && (item.toString() === "[object Object]");
+    return !!item && !isArray(item) && (item.toString() === "[object Object]");
   }
 
   function isFunction(item) {
@@ -763,6 +1006,16 @@
       return input.apply(context, args||[]);
     }
     return input[args];
+  }
+
+  function toArray(items) {
+    if (isArray(items)) {
+      return items;
+    }
+
+    return Object.keys(items).map(function(item) {
+      return items[item];
+    });
   }
 
   /**
@@ -815,10 +1068,12 @@
   module.exports = {
     isNull: isNull,
     isArray: isArray,
+    isString: isString,
     isObject: isObject,
     isPlainObject: isPlainObject,
     isFunction: isFunction,
     isDate: isDate,
+    toArray: toArray,
     noop: noop,
     result: result,
     extend: extend,
@@ -828,7 +1083,7 @@
 
 },{}]},{},[2])(2)
 });
-},{"./fetch":undefined,"./import":undefined,"./loader":undefined,"./module":undefined,"./registry":undefined,"./utils":undefined,"spromise":4}],3:[function(require,module,exports){
+},{"./fetch":undefined,"./import":undefined,"./loader":undefined,"./middleware":undefined,"./module":undefined,"./registry":undefined,"./utils":undefined,"spromise":4}],3:[function(require,module,exports){
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.promjax=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * spromise Copyright (c) 2014 Miguel Castillo.
@@ -945,6 +1200,7 @@
 },{}],5:[function(require,module,exports){
 (function(root) {
   "use strict";
+
   var Fetcher   = require("./fetchxhr"),
       Define    = require('./define'),
       Require   = require('./require'),
@@ -952,19 +1208,19 @@
       Utils     = Bitloader.Utils;
 
   var defaults = {
-    baseUrl  : "",
-    cache    : true,
-    deps     : [],
-    paths    : {},
-    shim     : {},
-    packages : []
+    baseUrl    : "",
+    paths      : {},
+    shim       : {},
+    deps       : [],
+    packages   : [],
+    transforms : []
   };
 
   function AMDLoader(options) {
-    this.settings = Utils.extend({}, defaults, options);
+    this.settings   = Utils.extend({}, defaults, options);
     Bitloader.Fetch = fetchFactory(this);
 
-    var bitloader = new Bitloader(),
+    var bitloader = new Bitloader(this.settings),
         define    = new Define(bitloader),
         require   = new Require(bitloader);
 
@@ -989,8 +1245,8 @@
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
    */
   function fetchFactory(amdLoader) {
-    return function fetch(/*manager*/) {
-      return new Fetcher(amdLoader.settings);
+    return function fetch(manager) {
+      return new Fetcher(manager, amdLoader.settings);
     };
   }
 
@@ -1017,7 +1273,7 @@
    */
   Define.prototype.define = function () {
     var mod     = Define.adapters.apply(this, arguments),
-        context = Define.getGlobalModule();
+        context = Define.getGlobalDefinitions();
 
     if (mod.name) {
       // Do no allow modules to override other modules...
@@ -1047,12 +1303,12 @@
     return adapter.apply(this, arguments);
   };
 
+
   Define.adapters.create = function (name, deps, factory) {
     var manager = this.manager;
 
     var mod = {
       type: manager.Module.Type.AMD,
-      cjs: [],
       name: name,
       deps: deps
     };
@@ -1067,6 +1323,53 @@
     return new manager.Module(mod);
   };
 
+
+  Define.getGlobalDefinitions = function() {
+    if (!root.__globalDefinitions) {
+      root.__globalDefinitions = {
+        modules: {},
+        anonymous: []
+      };
+    }
+
+    return root.__globalDefinitions;
+  };
+
+
+  Define.clearGlobalDefinitions = function() {
+    var definitions = root.__globalDefinitions;
+    delete root.__globalDefinitions;
+    return definitions;
+  };
+
+
+  Define.compileDefinitions = function(moduleMeta, definitions) {
+    definitions = definitions;
+
+    if (!definitions) {
+      return;
+    }
+
+    var anonymous = definitions.anonymous,
+        modules   = definitions.modules,
+        mod       = modules[moduleMeta.name];
+
+    if (!mod && anonymous.length) {
+      mod      = anonymous.shift();
+      mod.name = moduleMeta.name;
+      modules[mod.name] = mod;
+    }
+
+    mod.modules = modules;
+    return mod;
+  };
+
+
+  /**
+   * This is a table for quickly detecting the signature that `define` was called
+   * with.  This is just a much more direct execution path than building blocks
+   * of if statements.
+   */
   Define.adapters["/string/object/function"]        = function (name, deps, factory) { return Define.adapters.create.call(this, name, deps, factory); };
   Define.adapters["/string/function/undefined"]     = function (name, factory)       { return Define.adapters.create.call(this, name, [], factory); };
   Define.adapters["/object/function/undefined"]     = function (deps, factory)       { return Define.adapters.create.call(this, undefined, deps, factory); };
@@ -1076,43 +1379,6 @@
   Define.adapters["/string/undefined/undefined"]    = Define.adapters["/object/undefined/undefined"];
   Define.adapters["/number/undefined/undefined"]    = Define.adapters["/object/undefined/undefined"];
   Define.adapters["/undefined/undefined/undefined"] = Define.adapters["/object/undefined/undefined"];
-
-  Define.getGlobalModule = function() {
-    if (!root.DefineGlobalModule) {
-      root.DefineGlobalModule = {
-        modules: {},
-        anonymous: []
-      };
-    }
-
-    return root.DefineGlobalModule;
-  };
-
-  Define.clearGlobalModule = function() {
-    var _module = root.DefineGlobalModule;
-    root.DefineGlobalModule = null;
-    return _module;
-  };
-
-  Define.compile = function(moduleMeta) {
-    var loaded  = moduleMeta.loaded,
-        modules = loaded.modules,
-        mod     = modules[moduleMeta.name];
-
-    // Check if the module was loaded as a named module or an anonymous module.
-    // If it was loaded as an anonymous module, then we need to manually add it
-    // the list of named modules
-    if (!mod && loaded.anonymous && loaded.anonymous.length) {
-      mod      = loaded.anonymous.shift();
-      mod.name = moduleMeta.name;
-
-      // Make module available as pending resolution so that it can be loaded
-      // whenever it is requested as dependency.
-      modules[mod.name] = mod;
-    }
-
-    return modules[mod.name];
-  };
 
   module.exports = Define;
 })(typeof(window) !== 'undefined' ? window : this);
@@ -1125,37 +1391,56 @@
       Resolver = require('amd-resolver'),
       Define   = require('./define');
 
-  function Fetcher(options) {
+  function Fetcher(manager, options) {
+    this.manager  = manager;
     this.resolver = new Resolver(options);
   }
 
   Fetcher.prototype.fetch = function(name) {
-    var moduleMeta = this.resolver.resolve(name),
+    var manager    = this.manager,
+        moduleMeta = this.resolver.resolve(name),
         _url       = moduleMeta.file.toUrl();
 
     return (new Ajax(_url)).then(function(source) {
       moduleMeta.source  = source;
-      moduleMeta.compile = function() {
-        var __header = "",
-            __footer = "",
-            __module = {exports: {}};
-
-        //__header += "'use strict';"; // Make this optional
-        //__header += "debugger;";     // Make this optional
-        __footer += ";//# sourceURL=" + _url;
-
-        /* jshint -W061, -W054 */
-        (new Function("module", __header + source + __footer))(__module);
-        //(new Function("module", "exports", __header + source + __footer))(__module, __module.exports);
-        /* jshint +W061, +W054 */
-
-        moduleMeta.loaded = Define.clearGlobalModule();
-        return Define.compile(moduleMeta);
-      };
-
+      moduleMeta.compile = compileModuleMeta(manager, moduleMeta);
       return moduleMeta;
     });
   };
+
+
+  function compileModuleMeta(manager, moduleMeta) {
+    return function compile() {
+      var __header = "",
+          __footer = "",
+          __module = {exports: {}};
+
+      //__header += "'use strict';"; // Make this optional
+      //__header += "debugger;";     // Make this optional
+      __footer += ";//# sourceURL=" + moduleMeta.file.toUrl();
+
+      /* jshint -W061, -W054 */
+      var result = (new Function("module", "exports", __header + (moduleMeta.source) + __footer))(__module, __module.exports);
+      /* jshint +W061, +W054 */
+
+      var mod = Define.compileDefinitions(moduleMeta, Define.clearGlobalDefinitions());
+
+      // If `compileGlobalDefitions` does not return a module that means there were no calls
+      // to `define`.  So we will build a module from either the return of the execution of
+      // the module factory, or module.exports.
+      if (!mod) {
+        // If `define` was not called, the we will try to assign the result of the function
+        // call to support IEFF, or exports.
+        mod = new manager.Module({
+          type: result ? manager.Module.Type.IEFF : manager.Module.Type.CJS,
+          name: moduleMeta.name,
+          code: result || __module.exports
+        });
+      }
+
+      return mod;
+    };
+  }
 
   module.exports = Fetcher;
 })();

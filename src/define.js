@@ -11,7 +11,7 @@
    */
   Define.prototype.define = function () {
     var mod     = Define.adapters.apply(this, arguments),
-        context = Define.getGlobalModule();
+        context = Define.getGlobalDefinitions();
 
     if (mod.name) {
       // Do no allow modules to override other modules...
@@ -41,12 +41,12 @@
     return adapter.apply(this, arguments);
   };
 
+
   Define.adapters.create = function (name, deps, factory) {
     var manager = this.manager;
 
     var mod = {
       type: manager.Module.Type.AMD,
-      cjs: [],
       name: name,
       deps: deps
     };
@@ -61,6 +61,53 @@
     return new manager.Module(mod);
   };
 
+
+  Define.getGlobalDefinitions = function() {
+    if (!root.__globalDefinitions) {
+      root.__globalDefinitions = {
+        modules: {},
+        anonymous: []
+      };
+    }
+
+    return root.__globalDefinitions;
+  };
+
+
+  Define.clearGlobalDefinitions = function() {
+    var definitions = root.__globalDefinitions;
+    delete root.__globalDefinitions;
+    return definitions;
+  };
+
+
+  Define.compileDefinitions = function(moduleMeta, definitions) {
+    definitions = definitions;
+
+    if (!definitions) {
+      return;
+    }
+
+    var anonymous = definitions.anonymous,
+        modules   = definitions.modules,
+        mod       = modules[moduleMeta.name];
+
+    if (!mod && anonymous.length) {
+      mod      = anonymous.shift();
+      mod.name = moduleMeta.name;
+      modules[mod.name] = mod;
+    }
+
+    mod.modules = modules;
+    return mod;
+  };
+
+
+  /**
+   * This is a table for quickly detecting the signature that `define` was called
+   * with.  This is just a much more direct execution path than building blocks
+   * of if statements.
+   */
   Define.adapters["/string/object/function"]        = function (name, deps, factory) { return Define.adapters.create.call(this, name, deps, factory); };
   Define.adapters["/string/function/undefined"]     = function (name, factory)       { return Define.adapters.create.call(this, name, [], factory); };
   Define.adapters["/object/function/undefined"]     = function (deps, factory)       { return Define.adapters.create.call(this, undefined, deps, factory); };
@@ -70,43 +117,6 @@
   Define.adapters["/string/undefined/undefined"]    = Define.adapters["/object/undefined/undefined"];
   Define.adapters["/number/undefined/undefined"]    = Define.adapters["/object/undefined/undefined"];
   Define.adapters["/undefined/undefined/undefined"] = Define.adapters["/object/undefined/undefined"];
-
-  Define.getGlobalModule = function() {
-    if (!root.DefineGlobalModule) {
-      root.DefineGlobalModule = {
-        modules: {},
-        anonymous: []
-      };
-    }
-
-    return root.DefineGlobalModule;
-  };
-
-  Define.clearGlobalModule = function() {
-    var _module = root.DefineGlobalModule;
-    root.DefineGlobalModule = null;
-    return _module;
-  };
-
-  Define.compile = function(moduleMeta) {
-    var loaded  = moduleMeta.loaded,
-        modules = loaded.modules,
-        mod     = modules[moduleMeta.name];
-
-    // Check if the module was loaded as a named module or an anonymous module.
-    // If it was loaded as an anonymous module, then we need to manually add it
-    // the list of named modules
-    if (!mod && loaded.anonymous && loaded.anonymous.length) {
-      mod      = loaded.anonymous.shift();
-      mod.name = moduleMeta.name;
-
-      // Make module available as pending resolution so that it can be loaded
-      // whenever it is requested as dependency.
-      modules[mod.name] = mod;
-    }
-
-    return modules[mod.name];
-  };
 
   module.exports = Define;
 })(typeof(window) !== 'undefined' ? window : this);

@@ -1,5 +1,6 @@
 (function(root) {
   "use strict";
+
   var Fetcher   = require("./fetchxhr"),
       Define    = require('./define'),
       Require   = require('./require'),
@@ -7,19 +8,19 @@
       Utils     = Bitloader.Utils;
 
   var defaults = {
-    baseUrl  : "",
-    cache    : true,
-    deps     : [],
-    paths    : {},
-    shim     : {},
-    packages : []
+    baseUrl    : "",
+    paths      : {},
+    shim       : {},
+    deps       : [],
+    packages   : [],
+    transforms : []
   };
 
   function AMDLoader(options) {
-    this.settings = Utils.extend({}, defaults, options);
+    this.settings   = Utils.extend({}, defaults, options);
     Bitloader.Fetch = fetchFactory(this);
 
-    var bitloader = new Bitloader(),
+    var bitloader = new Bitloader(this.settings),
         define    = new Define(bitloader),
         require   = new Require(bitloader);
 
@@ -44,8 +45,8 @@
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
    */
   function fetchFactory(amdLoader) {
-    return function fetch(/*manager*/) {
-      return new Fetcher(amdLoader.settings);
+    return function fetch(manager) {
+      return new Fetcher(manager, amdLoader.settings);
     };
   }
 

@@ -44,9 +44,9 @@
         done = true;
 
         // Collect module information and clear it from the registry.
-        moduleMeta.loaded  = Define.clearGlobalModule();
+        var definitions  = Define.clearGlobalDefinitions();
         moduleMeta.compile = function() {
-          return Define.compile(moduleMeta);
+          return Define.compileDefinitions(moduleMeta, definitions);
         };
 
         // Resolve with emtpty string so that moduleMeta can be processed
