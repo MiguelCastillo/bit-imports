@@ -7,11 +7,10 @@
   }
 
   Require.prototype.require = function(name, ready, options) {
-    var manager = this.manager,
-        context = this.context;
+    var manager = this.manager;
 
-    if (context.modules.hasOwnProperty(name)) {
-      return context.modules[name];
+    if (manager.hasModuleCode(name)) {
+      return manager.getModuleCode(name);
     }
     else {
       return manager.import(name, options).done(ready || manager.Utils.noop);

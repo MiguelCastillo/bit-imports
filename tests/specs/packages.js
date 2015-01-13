@@ -1,4 +1,6 @@
 define(["dist/amd-bits"], function(AMDLoader) {
+
+//var AMDLoader = require("dist/amd-bits");
   describe("Packages suite", function() {
     var bitloader;
     beforeEach(function() {

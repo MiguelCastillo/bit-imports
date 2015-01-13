@@ -82,8 +82,6 @@
 
 
   Define.compileDefinitions = function(moduleMeta, definitions) {
-    definitions = definitions;
-
     if (!definitions) {
       return;
     }
