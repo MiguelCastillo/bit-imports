@@ -1,25 +1,25 @@
 {
-  "name": "amd-bits",
-  "description": "AMD loader built on top of bit-loader",
-  "version": "0.0.2",
+  "name": "bit-importer",
+  "description": "Module loader built on top of bit-loader",
+  "version": "0.0.1",
   "directories": {
     "test": "tests"
   },
-  "main": "dist/amd-bits.js",
+  "main": "dist/bit-importer.js",
   "scripts": {
-    "prepublish": "browserify src/amd.js -o dist/amd-bits.js -s amd-bits --dg false --ignore-missing",
+    "prepublish": "browserify src/bit-importer.js -o dist/bit-importer.js -s bit-importer --dg true --ignore-missing",
     "test": "grunt test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MiguelCastillo/amd-bits.git"
+    "url": "https://github.com/MiguelCastillo/bit-importer.git"
   },
   "author": "Miguel Castillo <manchagnu@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MiguelCastillo/amd-bits/issues"
+    "url": "https://github.com/MiguelCastillo/bit-importer/issues"
   },
-  "homepage": "https://github.com/MiguelCastillo/amd-bits",
+  "homepage": "https://github.com/MiguelCastillo/bit-importer",
   "devDependencies": {
     "grunt": "~0.4.5",
     "mocha": "~2.1.0",
@@ -27,6 +27,8 @@
     "chai": "~1.10.0",
     "grunt-contrib-connect": "~0.9.0",
     "grunt-mocha": "~0.4.11",
+    "deamdify": "~0.1.1",
+    "detective": "~4.0.0",
     "promjax": "",
     "amd-resolver": "",
     "bit-loader": "",

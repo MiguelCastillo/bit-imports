@@ -1,4 +1,4 @@
-Bitloader.define(["js/simple", "js/number"], function(simple, number) {
+define(["js/simple", "js/number"], function(simple, number) {
   return {
     "one": simple,
     "two": number

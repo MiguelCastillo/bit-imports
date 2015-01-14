@@ -1,4 +1,4 @@
-Bitloader.define(function() {
+define(function() {
   return {
     "init": function() {
       return "initialized!";

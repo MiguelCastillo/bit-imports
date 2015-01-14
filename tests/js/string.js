@@ -1,1 +1,1 @@
-Bitloader.define("Just some string value");
+define("Just some string value");

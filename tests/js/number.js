@@ -1,1 +1,1 @@
-Bitloader.define(3.14);
+define(3.14);

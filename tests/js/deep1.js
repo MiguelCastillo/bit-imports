@@ -1,5 +1,5 @@
-Bitloader.define(["js/deep0"], function(deep0) {
-  return {
-    "deep0": deep0
-  };
-});
+var deep0 = require("js/deep0");
+
+module.exports = {
+  "deep0": deep0
+};

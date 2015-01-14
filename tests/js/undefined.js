@@ -1,1 +1,1 @@
-Bitloader.define(undefined);
+define(undefined);
