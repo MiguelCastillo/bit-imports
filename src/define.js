@@ -1,4 +1,4 @@
-(function(root) {
+(function() {
   "use strict";
 
   function Define(importer) {
@@ -122,4 +122,4 @@
   Define.adapters["/undefined/undefined/undefined"] = Define.adapters["/object/undefined/undefined"];
 
   module.exports = Define;
-})(typeof(window) !== 'undefined' ? window : this);
+})();

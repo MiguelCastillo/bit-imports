@@ -2,8 +2,7 @@
   "use strict";
 
   var Ajax     = require('promjax'),
-      Resolver = require('amd-resolver'),
-      Define   = require('./define');
+      Resolver = require('amd-resolver');
 
   function Fetcher(loader, importer) {
     this.importer = importer;
@@ -45,7 +44,7 @@
       __footer += ";//# sourceURL=" + _url;
 
       /* jshint -W061, -W054 */
-      var result = (new Function("require", "define", "module", "exports", __header + (moduleMeta.source) + __footer))(importer.require, importer.define, __module, __module.exports);
+      var result = (new Function("define", "require", "module", "exports", __header + (moduleMeta.source) + __footer))(importer.define, importer.require, __module, __module.exports);
       /* jshint +W061, +W054 */
 
       var mod = importer.define.instance.compileDefinitions(moduleMeta);

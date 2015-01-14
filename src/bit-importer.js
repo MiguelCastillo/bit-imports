@@ -9,21 +9,29 @@
       Bitloader    = require('bit-loader'),
       Utils        = Bitloader.Utils;
 
+  var defaultTransform = [{
+      name: "amd",
+      handler: amdTransform
+    }, {
+      name: "cjs",
+      handler: cjsTransform,
+      ignore: ["amd"]
+    }];
+
   var defaults = {
     baseUrl    : "",
     paths      : {},
     shim       : {},
     deps       : [],
     packages   : [],
-    transforms : [{name: "amd", handler: amdTransform, ignore: ["chai", "dist/bit-importer", "bit-loader", "cjsbit-transform"]}, {name: "cjs", handler: cjsTransform, ignore: ["chai", "dist/bit-importer", "bit-loader", "amdbit-transform"]}]
+    transforms : []
   };
 
   function Bitimporter(options) {
-    if (options && options.transforms) {
-      options.transforms = defaults.transforms.concat(options.transforms);
-    }
+    options = options || {};
+    options.transforms = (options.transforms || []).concat(defaultTransform);
 
-    this.settings = Utils.extend({}, defaults, options);
+    this.settings = Utils.merge({}, defaults, options);
     this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
     this.import   = this.loader.import;
 
@@ -41,7 +49,7 @@
   }
 
   Bitimporter.prototype.config = function(options) {
-    Bitloader.Utils.extend(this.settings, options);
+    Bitloader.Utils.merge(this.settings, options);
     return this.factory(options);
   };
 
@@ -64,5 +72,6 @@
   }
 
   root.Bitimporter = new Bitimporter(options);
+  root.Bitimporter.Logger = Bitloader.Logger;
   module.exports = Bitimporter;
 })(typeof(window) !== 'undefined' ? window : this);

@@ -441,6 +441,7 @@
   Bitloader.Module     = Module;
   Bitloader.Fetch      = Fetch;
   Bitloader.Middleware = Middleware;
+  Bitloader.Logger     = Logger;
   module.exports       = Bitloader;
 })();
 
@@ -763,93 +764,92 @@
 })();
 
 },{"./meta/compilation":7,"./meta/dependencies":8,"./meta/fetch":9,"./meta/transform":10,"./meta/validation":11,"./module/linker":14,"./pipeline":15,"./stateful-items":17,"./utils":18,"spromise":1}],6:[function(require,module,exports){
-(function() {
-  "use strict";
+var _enabled = false,
+    _only    = false;
 
+function getDate() {
+  return (new Date()).getTime();
+}
 
-  function getDate() {
-    return (new Date()).getTime();
+function Logger(name) {
+  this.name = name;
+  this._enabled = true;
+}
+
+Logger.prototype.factory = function(name) {
+  return new Logger(name);
+};
+
+Logger.prototype.log = function() {
+  if (!this.isEnabled()) {
+    return;
   }
 
+  console.log.apply(console, [getDate(), this.name].concat(arguments));
+};
 
-  function Logger(name) {
-    this.name = name;
-    this._enabled = true;
+Logger.prototype.dir = function() {
+  if (!this.isEnabled()) {
+    return;
   }
 
+  console.dir.apply(console, arguments);
+};
 
-  Logger.prototype.factory = function(name) {
-    return new Logger(name);
-  };
+Logger.prototype.error = function() {
+  if (!this.isEnabled()) {
+    return;
+  }
 
+  console.error.apply(console, arguments);
+};
 
-  Logger.prototype.log = function() {
-    if (!this.isEnabled()) {
-      return;
-    }
+Logger.prototype.isEnabled = function() {
+  return this._enabled && _enabled && (!_only || _only === this.name);
+};
 
-    console.log.apply(console, [getDate(), this.name].concat(arguments));
-  };
+Logger.prototype.enable = function() {
+  this._enabled = true;
+};
 
+Logger.prototype.disable = function() {
+  this._enabled = false;
+};
 
-  Logger.prototype.dir = function() {
-    if (!this.isEnabled()) {
-      return;
-    }
+Logger.prototype.only = function() {
+  Logger._only = this.name;
+};
 
-    console.dir.apply(console, arguments);
-  };
+Logger.prototype.all = function() {
+  Logger._only = null;
+};
 
+Logger.prototype.disableAll = function() {
+  Logger.disable();
+};
 
-  Logger.prototype.error = function() {
-    if (!this.isEnabled()) {
-      return;
-    }
-
-    console.error.apply(console, arguments);
-  };
-
-
-  Logger.prototype.isEnabled = function() {
-    return Logger._enabled && this._enabled && (!Logger._only || Logger._only === this.name);
-  };
-
-
-  Logger.prototype.only = function() {
-    Logger._only = this.name;
-  };
-
-  Logger.prototype.all = function() {
-    Logger._only = null;
-  };
-
-  Logger.prototype.enable = function() {
-    this._enabled = true;
-  };
-
-  Logger.prototype.disable = function() {
-    this._enabled = false;
-  };
+Logger.prototype.enableAll = function() {
+  Logger.enable();
+};
 
 
-  // Expose the constructor to be able to create new instances from an
-  // existing instance.
-  Logger.prototype.Logger = Logger;
-  Logger._enabled = typeof(console) !== 'undefined';
-  Logger.enable  = function() {
-    Logger._enabled = true;
-  };
+// Expose the constructor to be able to create new instances from an
+// existing instance.
+Logger.prototype.Logger = Logger;
+Logger._enabled = typeof(console) !== 'undefined';
+Logger.enable  = function() {
+  _enabled = true;
+};
 
-  Logger.disable = function() {
-    Logger._enabled = false;
-  };
+Logger.disable = function() {
+  _enabled = false;
+};
 
-  Logger.only = function(name) {
-    Logger._only = name;
-  };
+Logger.only = function(name) {
+  _only = name;
+};
 
-  module.exports = new Logger();
-})();
+module.exports = new Logger();
 
 },{}],7:[function(require,module,exports){
 (function() {
@@ -1230,8 +1230,8 @@
     var cancelled = false;
 
     return providers.reduce(function(prev, curr) {
-      return prev.then(function() {
-        if (arguments.length) {
+      return prev.then(function(next) {
+        if (next === false) {
           cancelled = true;
         }
 
@@ -23028,21 +23028,29 @@ module.exports={
       Bitloader    = require('bit-loader'),
       Utils        = Bitloader.Utils;
 
+  var defaultTransform = [{
+      name: "amd",
+      handler: amdTransform
+    }, {
+      name: "cjs",
+      handler: cjsTransform,
+      ignore: ["amd"]
+    }];
+
   var defaults = {
     baseUrl    : "",
     paths      : {},
     shim       : {},
     deps       : [],
     packages   : [],
-    transforms : [{name: "amd", handler: amdTransform, ignore: ["chai", "dist/bit-importer", "bit-loader", "cjsbit-transform"]}, {name: "cjs", handler: cjsTransform, ignore: ["chai", "dist/bit-importer", "bit-loader", "amdbit-transform"]}]
+    transforms : []
   };
 
   function Bitimporter(options) {
-    if (options && options.transforms) {
-      options.transforms = defaults.transforms.concat(options.transforms);
-    }
+    options = options || {};
+    options.transforms = (options.transforms || []).concat(defaultTransform);
 
-    this.settings = Utils.extend({}, defaults, options);
+    this.settings = Utils.merge({}, defaults, options);
     this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
     this.import   = this.loader.import;
 
@@ -23060,7 +23068,7 @@ module.exports={
   }
 
   Bitimporter.prototype.config = function(options) {
-    Bitloader.Utils.extend(this.settings, options);
+    Bitloader.Utils.merge(this.settings, options);
     return this.factory(options);
   };
 
@@ -23083,11 +23091,12 @@ module.exports={
   }
 
   root.Bitimporter = new Bitimporter(options);
+  root.Bitimporter.Logger = Bitloader.Logger;
   module.exports = Bitimporter;
 })(typeof(window) !== 'undefined' ? window : this);
 
 },{"./define":69,"./fetchxhr":70,"./require":71,"./transforms/amd":72,"./transforms/cjs":73,"bit-loader":2}],69:[function(require,module,exports){
-(function(root) {
+(function() {
   "use strict";
 
   function Define(importer) {
@@ -23211,15 +23220,14 @@ module.exports={
   Define.adapters["/undefined/undefined/undefined"] = Define.adapters["/object/undefined/undefined"];
 
   module.exports = Define;
-})(typeof(window) !== 'undefined' ? window : this);
+})();
 
 },{}],70:[function(require,module,exports){
 (function() {
   "use strict";
 
   var Ajax     = require('promjax'),
-      Resolver = require('amd-resolver'),
-      Define   = require('./define');
+      Resolver = require('amd-resolver');
 
   function Fetcher(loader, importer) {
     this.importer = importer;
@@ -23261,7 +23269,7 @@ module.exports={
       __footer += ";//# sourceURL=" + _url;
 
       /* jshint -W061, -W054 */
-      var result = (new Function("require", "define", "module", "exports", __header + (moduleMeta.source) + __footer))(importer.require, importer.define, __module, __module.exports);
+      var result = (new Function("define", "require", "module", "exports", __header + (moduleMeta.source) + __footer))(importer.define, importer.require, __module, __module.exports);
       /* jshint +W061, +W054 */
 
       var mod = importer.define.instance.compileDefinitions(moduleMeta);
@@ -23286,7 +23294,7 @@ module.exports={
   module.exports = Fetcher;
 })();
 
-},{"./define":69,"amd-resolver":1,"promjax":66}],71:[function(require,module,exports){
+},{"amd-resolver":1,"promjax":66}],71:[function(require,module,exports){
 (function() {
   "use script";
 
