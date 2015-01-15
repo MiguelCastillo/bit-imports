@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.bitImporter=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.bitImports=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
 !function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.amdResolver=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function() {
@@ -23045,7 +23045,7 @@ module.exports={
     transforms : []
   };
 
-  function Bitimporter(options) {
+  function Bitimports(options) {
     options = options || {};
     options.transforms = (options.transforms || []).concat(defaultTransform);
 
@@ -23066,13 +23066,13 @@ module.exports={
     this.define.amd = {};
   }
 
-  Bitimporter.prototype.config = function(options) {
+  Bitimports.prototype.config = function(options) {
     Bitloader.Utils.merge(this.settings, options);
     return this.factory(options);
   };
 
-  Bitimporter.prototype.factory = function(options) {
-    return new Bitimporter(options);
+  Bitimports.prototype.factory = function(options) {
+    return new Bitimports(options);
   };
 
   /**
@@ -23089,9 +23089,9 @@ module.exports={
     options = root.require || root.requirejs;
   }
 
-  root.Bitimporter = new Bitimporter(options);
-  root.Bitimporter.Logger = Bitloader.Logger;
-  module.exports = Bitimporter;
+  root.Bitimports = new Bitimports(options);
+  root.Bitimports.Logger = Bitloader.Logger;
+  module.exports = Bitimports;
 })(typeof(window) !== 'undefined' ? window : this);
 
 },{"./define":69,"./fetchxhr":70,"./require":71,"./transforms/amd":72,"./transforms/cjs":73,"bit-loader":2}],69:[function(require,module,exports){

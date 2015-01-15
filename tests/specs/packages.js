@@ -1,4 +1,4 @@
-var Importer = require("dist/bit-importer");
+var Importer = require("dist/bit-imports");
 
 describe("Packages suite", function() {
   var importer;

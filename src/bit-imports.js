@@ -27,7 +27,7 @@
     transforms : []
   };
 
-  function Bitimporter(options) {
+  function Bitimports(options) {
     options = options || {};
     options.transforms = (options.transforms || []).concat(defaultTransform);
 
@@ -48,13 +48,13 @@
     this.define.amd = {};
   }
 
-  Bitimporter.prototype.config = function(options) {
+  Bitimports.prototype.config = function(options) {
     Bitloader.Utils.merge(this.settings, options);
     return this.factory(options);
   };
 
-  Bitimporter.prototype.factory = function(options) {
-    return new Bitimporter(options);
+  Bitimports.prototype.factory = function(options) {
+    return new Bitimports(options);
   };
 
   /**
@@ -71,7 +71,7 @@
     options = root.require || root.requirejs;
   }
 
-  root.Bitimporter = new Bitimporter(options);
-  root.Bitimporter.Logger = Bitloader.Logger;
-  module.exports = Bitimporter;
+  root.Bitimports = new Bitimports(options);
+  root.Bitimports.Logger = Bitloader.Logger;
+  module.exports = Bitimports;
 })(typeof(window) !== 'undefined' ? window : this);

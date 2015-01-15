@@ -1,25 +1,25 @@
 {
-  "name": "bit-importer",
-  "description": "Module loader built on top of bit-loader",
-  "version": "0.0.1",
+  "name": "bit-imports",
+  "description": "Module imports built on top of bit-loader",
+  "version": "0.0.2",
   "directories": {
     "test": "tests"
   },
-  "main": "dist/bit-importer.js",
+  "main": "dist/bit-imports.js",
   "scripts": {
-    "prepublish": "browserify src/bit-importer.js -o dist/bit-importer.js -s bit-importer --dg true --ignore-missing",
+    "prepublish": "browserify src/bit-imports.js -o dist/bit-imports.js -s bit-imports --dg true --ignore-missing",
     "test": "grunt test"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MiguelCastillo/bit-importer.git"
+    "url": "https://github.com/MiguelCastillo/bit-imports.git"
   },
   "author": "Miguel Castillo <manchagnu@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/MiguelCastillo/bit-importer/issues"
+    "url": "https://github.com/MiguelCastillo/bit-imports/issues"
   },
-  "homepage": "https://github.com/MiguelCastillo/bit-importer",
+  "homepage": "https://github.com/MiguelCastillo/bit-imports",
   "devDependencies": {
     "grunt": "~0.4.5",
     "mocha": "~2.1.0",
