@@ -1,8 +1,9 @@
-(function(root) {
+(function() {
   "use strict";
 
-  function Define(manager) {
-    this.manager = manager;
+  function Define(importer) {
+    this.importer = importer;
+    this.loader   = importer.loader;
   }
 
   /**
@@ -11,7 +12,7 @@
    */
   Define.prototype.define = function () {
     var mod     = Define.adapters.apply(this, arguments),
-        context = Define.getGlobalDefinitions();
+        context = this.getContext();
 
     if (mod.name) {
       // Do no allow modules to override other modules...
@@ -26,6 +27,48 @@
       context.anonymous.push(mod);
     }
   };
+
+
+  Define.prototype.getContext = function() {
+    return this.context || (this.context = {
+      modules: {},
+      anonymous: []
+    });
+  };
+
+
+  Define.prototype.clearContext = function() {
+    var context = this.context;
+    delete this.context;
+    return context;
+  };
+
+
+  Define.prototype.compileDefinitions = function(moduleMeta) {
+    var context = this.clearContext();
+
+    // define was never called...
+    if (!context) {
+      return mod;
+    }
+
+    var anonymous = context.anonymous,
+        modules   = context.modules,
+        mod       = modules[moduleMeta.name];
+
+    if (!mod && anonymous.length) {
+      mod      = anonymous.shift();
+      mod.name = moduleMeta.name;
+      modules[mod.name] = mod;
+    }
+
+    if (mod) {
+      mod.modules = modules;
+    }
+
+    return mod;
+  };
+
 
   /**
    * Adapter interfaces to define modules
@@ -43,10 +86,10 @@
 
 
   Define.adapters.create = function (name, deps, factory) {
-    var manager = this.manager;
+    var loader = this.importer.loader;
 
     var mod = {
-      type: manager.Module.Type.AMD,
+      type: loader.Module.Type.AMD,
       name: name,
       deps: deps
     };
@@ -58,49 +101,9 @@
       mod.code = factory;
     }
 
-    return new manager.Module(mod);
+    return new loader.Module(mod);
   };
 
-
-  Define.getGlobalDefinitions = function() {
-    if (!root.__globalDefinitions) {
-      root.__globalDefinitions = {
-        modules: {},
-        anonymous: []
-      };
-    }
-
-    return root.__globalDefinitions;
-  };
-
-
-  Define.clearGlobalDefinitions = function() {
-    var definitions = root.__globalDefinitions;
-    delete root.__globalDefinitions;
-    return definitions;
-  };
-
-
-  Define.compileDefinitions = function(moduleMeta, definitions) {
-    definitions = definitions;
-
-    if (!definitions) {
-      return;
-    }
-
-    var anonymous = definitions.anonymous,
-        modules   = definitions.modules,
-        mod       = modules[moduleMeta.name];
-
-    if (!mod && anonymous.length) {
-      mod      = anonymous.shift();
-      mod.name = moduleMeta.name;
-      modules[mod.name] = mod;
-    }
-
-    mod.modules = modules;
-    return mod;
-  };
 
 
   /**
@@ -119,4 +122,4 @@
   Define.adapters["/undefined/undefined/undefined"] = Define.adapters["/object/undefined/undefined"];
 
   module.exports = Define;
-})(typeof(window) !== 'undefined' ? window : this);
+})();

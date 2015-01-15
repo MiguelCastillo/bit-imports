@@ -2,42 +2,52 @@
   "use strict";
 
   var Ajax     = require('promjax'),
-      Resolver = require('amd-resolver'),
-      Define   = require('./define');
+      Resolver = require('amd-resolver');
 
-  function Fetcher(manager, options) {
-    this.manager  = manager;
-    this.resolver = new Resolver(options);
+  function Fetcher(loader, importer) {
+    this.importer = importer;
+    this.loader   = loader;
+    this.resolver = new Resolver(importer.settings);
   }
 
   Fetcher.prototype.fetch = function(name) {
-    var manager    = this.manager,
+    var fetcher    = this,
         moduleMeta = this.resolver.resolve(name),
         _url       = moduleMeta.file.toUrl();
 
+    var logger = this.loader.Logger.factory("Bitimporter/Fetch");
+    logger.log(moduleMeta, _url);
+
     return (new Ajax(_url)).then(function(source) {
       moduleMeta.source  = source;
-      moduleMeta.compile = compileModuleMeta(manager, moduleMeta);
+      moduleMeta.compile = compileModuleMeta(fetcher, moduleMeta);
       return moduleMeta;
     });
   };
 
 
-  function compileModuleMeta(manager, moduleMeta) {
+  function compileModuleMeta(fetcher, moduleMeta) {
+    var importer = fetcher.importer,
+        loader   = fetcher.loader;
+
     return function compile() {
       var __header = "",
           __footer = "",
-          __module = {exports: {}};
+          __module = {exports: {}},
+          _url     = moduleMeta.file.toUrl(),
+          logger   = loader.Logger.factory("Bitimporter/Fetch");
+
+      logger.log(moduleMeta, _url);
 
       //__header += "'use strict';"; // Make this optional
       //__header += "debugger;";     // Make this optional
-      __footer += ";//# sourceURL=" + moduleMeta.file.toUrl();
+      __footer += ";//# sourceURL=" + _url;
 
       /* jshint -W061, -W054 */
-      var result = (new Function("module", "exports", __header + (moduleMeta.source) + __footer))(__module, __module.exports);
+      var result = (new Function("define", "require", "module", "exports", __header + (moduleMeta.source) + __footer))(importer.define, importer.require, __module, __module.exports);
       /* jshint +W061, +W054 */
 
-      var mod = Define.compileDefinitions(moduleMeta, Define.clearGlobalDefinitions());
+      var mod = importer.define.instance.compileDefinitions(moduleMeta);
 
       // If `compileGlobalDefitions` does not return a module that means there were no calls
       // to `define`.  So we will build a module from either the return of the execution of
@@ -45,8 +55,8 @@
       if (!mod) {
         // If `define` was not called, the we will try to assign the result of the function
         // call to support IEFF, or exports.
-        mod = new manager.Module({
-          type: result ? manager.Module.Type.IEFF : manager.Module.Type.CJS,
+        mod = new loader.Module({
+          type: result ? loader.Module.Type.IEFF : loader.Module.Type.CJS,
           name: moduleMeta.name,
           code: result || __module.exports
         });

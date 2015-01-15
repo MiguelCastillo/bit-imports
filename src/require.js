@@ -1,20 +1,23 @@
 (function() {
   "use script";
 
-  function Require(manager) {
-    this.manager = manager;
-    this.context = manager.context;
+  function Require(importer) {
+    this.importer = importer;
+    this.loader   = importer.loader;
+    this.context  = importer.loader.context;
   }
 
   Require.prototype.require = function(name, ready, options) {
-    var manager = this.manager,
-        context = this.context;
+    var loader = this.loader,
+        logger = loader.Logger.factory("Bitimporter/require");
 
-    if (context.modules.hasOwnProperty(name)) {
-      return context.modules[name];
+    logger.log(name, loader.context._id);
+
+    if (loader.hasModuleCode(name)) {
+      return loader.getModuleCode(name);
     }
     else {
-      return manager.import(name, options).done(ready || manager.Utils.noop);
+      return loader.import(name, options).done(ready || loader.Utils.noop);
     }
   };
 

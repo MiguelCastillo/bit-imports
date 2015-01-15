@@ -1,3 +1,3 @@
-Bitloader.define(["js/deep3"], function(deep3) {
+define(["js/deep3"], function(deep3) {
   return deep3;
 });

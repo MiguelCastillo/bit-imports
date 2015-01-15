@@ -1,5 +1,5 @@
-Bitloader.define(["js/deep1"], function(deep1) {
-  return {
-    "deep1": deep1
-  };
-});
+var deep1 = require("js/deep1");
+
+module.exports = {
+  "deep1": deep1
+};
