@@ -1,6 +1,5 @@
-var require = (function() {
-  "use strict";
-
+var require;
+require = (function() {
   var importer = Bitimports.config({
     "baseUrl": "../",
     "paths": {
@@ -16,7 +15,7 @@ var require = (function() {
       name: "ignore",
       handler: ignore,
       ignore:["chai", "dist/bit-imports"]
-    }],
+    }]
   });
 
   /**
