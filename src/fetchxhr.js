@@ -16,7 +16,7 @@
         _url       = moduleMeta.file.toUrl();
 
     var logger = this.loader.Logger.factory("Bitimporter/Fetch");
-    logger.log(moduleMeta, _url);
+    logger.log(moduleMeta.name, moduleMeta, _url);
 
     return (new Ajax(_url)).then(function(source) {
       moduleMeta.source  = source;
@@ -37,7 +37,7 @@
           _url     = moduleMeta.file.toUrl(),
           logger   = loader.Logger.factory("Bitimporter/Compile");
 
-      logger.log(moduleMeta, _url);
+      logger.log(moduleMeta.name, moduleMeta, _url);
 
       //__header += "'use strict';"; // Make this optional
       //__header += "debugger;";     // Make this optional
