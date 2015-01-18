@@ -35,7 +35,7 @@
           __footer = "",
           __module = {exports: {}},
           _url     = moduleMeta.file.toUrl(),
-          logger   = loader.Logger.factory("Bitimporter/Fetch");
+          logger   = loader.Logger.factory("Bitimporter/Compile");
 
       logger.log(moduleMeta, _url);
 
