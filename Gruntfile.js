@@ -16,7 +16,7 @@ module.exports = function(grunt) {
           port: 8619,
           host: "localhost",
           keepalive: true,
-          open: "http://localhost:8619/tests/SpecRunner.html"
+          open: "http://localhost:8619/test/SpecRunner.html"
         }
       }
     },
@@ -28,7 +28,7 @@ module.exports = function(grunt) {
           reporter: "Spec",
           run: false,
           timeout: 10000,
-          urls: ["http://localhost:8612/tests/SpecRunner.html"]
+          urls: ["http://localhost:8612/test/SpecRunner.html"]
         }
       }
     }

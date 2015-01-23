@@ -7,7 +7,7 @@ describe("Packages suite", function() {
       baseUrl: "../",
       packages: [
         {
-          location: "tests",
+          location: "test",
           main: "main",
           name: "js"
         }
@@ -81,7 +81,7 @@ describe("Packages suite", function() {
   describe("When Importing nested dependencies in deep3", function() {
     var deep3;
     beforeEach(function () {
-      return importer.import("tests/js/deep3")
+      return importer.import("test/js/deep3")
         .then(function (_result) {
           deep3 = _result;
         });
