@@ -29,8 +29,8 @@
     "grunt-mocha": "~0.4.11",
     "deamdify": "~0.1.1",
     "detective": "~4.0.0",
+    "amd-resolver": "1.0.0",
     "promjax": "",
-    "amd-resolver": "",
     "bit-loader": "",
     "spromise": ""
   }

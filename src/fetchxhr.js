@@ -13,7 +13,7 @@
   Fetcher.prototype.fetch = function(name) {
     var fetcher    = this,
         moduleMeta = this.resolver.resolve(name),
-        _url       = moduleMeta.file.toUrl();
+        _url       = moduleMeta.file.url.href;
 
     var logger = this.loader.Logger.factory("Bitimporter/Fetch");
     logger.log(moduleMeta.name, moduleMeta, _url);
@@ -34,7 +34,7 @@
       var __header = "",
           __footer = "",
           __module = {exports: {}},
-          _url     = moduleMeta.file.toUrl(),
+          _url     = moduleMeta.file.url.href,
           logger   = loader.Logger.factory("Bitimporter/Compile");
 
       logger.log(moduleMeta.name, moduleMeta, _url);
