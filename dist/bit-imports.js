@@ -1960,7 +1960,7 @@ function isNullOrUndefined(arg) {
    *
    * @returns {Promise} - Promise that will resolve to a Module instance
    */
-  Loader.prototype.load = function(name) {
+  Loader.prototype.load = function(name, parentMeta) {
     var loader  = this,
         manager = this.manager;
 
@@ -1975,7 +1975,7 @@ function isNullOrUndefined(arg) {
       return Promise.resolve(loader.getModule(name));
     }
 
-    return loader.fetch(name)
+    return loader.fetch(name, parentMeta)
       .then(function moduleFetched(getModuleDelegate) {
         return getModuleDelegate();
       }, Utils.forwardError);
@@ -1999,7 +1999,7 @@ function isNullOrUndefined(arg) {
    *   that can be called to actually compile the module meta to an instance of Module.
    *
    */
-  Loader.prototype.fetch = function(name) {
+  Loader.prototype.fetch = function(name, parentMeta) {
     var loader  = this,
         manager = this.manager;
 
@@ -2015,7 +2015,7 @@ function isNullOrUndefined(arg) {
     // This is where the call to fetch the module meta takes place. Once the
     // module meta is loaded, it is put through the transformation pipeline.
     //
-    var loading = metaFetch(manager, name)
+    var loading = metaFetch(manager, name, parentMeta)
       .then(processModuleMeta, handleError)
       .then(moduleFetched, handleError);
 
@@ -2326,7 +2326,7 @@ module.exports = new Logger();
     }
 
     var loading = moduleMeta.deps.map(function fetchDependency(mod_name) {
-      return manager.providers.loader.fetch(mod_name);
+      return manager.providers.loader.fetch(mod_name, moduleMeta);
     });
 
     return manager.Promise.all(loading)
@@ -2344,9 +2344,9 @@ module.exports = new Logger();
       Utils  = require('../utils'),
       logger = Logger.factory("Meta/Fetch");
 
-  function MetaFetch(manager, name) {
+  function MetaFetch(manager, name, parentMeta) {
     logger.log(name);
-    return manager.fetch(name)
+    return manager.fetch(name, parentMeta)
       .then(moduleFetched, Utils.forwardError);
 
     // Once the module meta is fetched, we want to add helper properties
@@ -26027,46 +26027,44 @@ function hasOwnProperty(obj, prop) {
       Resolver = require('amd-resolver');
 
   function Fetcher(loader, importer) {
+    var settings     = loader.Utils.merge({}, importer.settings);
+    settings.baseUrl = getBaseUrl(settings.baseUrl);
+
     this.importer = importer;
     this.loader   = loader;
-    this.resolver = new Resolver(importer.settings);
+    this.resolver = new Resolver(settings);
   }
 
-  Fetcher.prototype.fetch = function(name) {
+  Fetcher.prototype.fetch = function(name, parentMeta) {
     var fetcher    = this,
-        moduleMeta = this.resolver.resolve(name),
-        _url       = moduleMeta.file.url.href;
+        cwd        = getWorkingDirectory(parentMeta),
+        moduleMeta = this.resolver.resolve(name, cwd),
+        url        = moduleMeta.file.url.href;
 
     var logger = this.loader.Logger.factory("Bitimporter/Fetch");
-    logger.log(moduleMeta.name, moduleMeta, _url);
+    logger.log(moduleMeta.name, moduleMeta, url);
 
-    return (new Ajax(_url)).then(function(source) {
+    return (new Ajax(url)).then(function(source) {
       moduleMeta.source  = source;
-      moduleMeta.compile = compileModuleMeta(fetcher, moduleMeta);
+      moduleMeta.compile = compileModuleMeta(fetcher, moduleMeta, parentMeta);
       return moduleMeta;
     });
   };
 
 
-  function compileModuleMeta(fetcher, moduleMeta) {
+  function compileModuleMeta(fetcher, moduleMeta /*, parentMeta*/) {
     var importer = fetcher.importer,
         loader   = fetcher.loader;
 
     return function compile() {
-      var __header = "",
-          __footer = "",
-          __module = {exports: {}},
-          _url     = moduleMeta.file.url.href,
+      var __module = {exports: {}},
+          url      = moduleMeta.file.url.href,
           logger   = loader.Logger.factory("Bitimporter/Compile");
 
-      logger.log(moduleMeta.name, moduleMeta, _url);
-
-      //__header += "'use strict';"; // Make this optional
-      //__header += "debugger;";     // Make this optional
-      __footer += ";//# sourceURL=" + _url;
+      logger.log(moduleMeta.name, moduleMeta);
 
       /* jshint -W061, -W054 */
-      var result = (new Function("define", "require", "module", "exports", __header + (moduleMeta.source) + __footer))(importer.define, importer.require, __module, __module.exports);
+      var result = (new Function("define", "require", "module", "exports", (moduleMeta.source) + getSourceUrl(url)))(importer.define, importer.require, __module, __module.exports);
       /* jshint +W061, +W054 */
 
       var mod = importer.define.instance.compileDefinitions(moduleMeta);
@@ -26086,6 +26084,30 @@ function hasOwnProperty(obj, prop) {
 
       return mod;
     };
+  }
+
+  /**
+   * This will adjust the baseUrl in the settings so that requests get the absolute
+   * url so that browsers can better handle `# sourceURL`.  In chrome for example,
+   * the files are added to the developer tools' source tree, which let's you put
+   * break points directly from the developer tools.
+   */
+  function getBaseUrl(url) {
+    return Resolver.URL.parser.resolve(window.location.href, url || "");
+  }
+
+  /**
+   * Gets the url form the module data if it exists.
+   */
+  function getWorkingDirectory(moduleMeta) {
+    return moduleMeta ? moduleMeta.file.url.href : "";
+  }
+
+  /**
+   * Builds a `//# sourceURL` string from the provided URL.
+   */
+  function getSourceUrl(url) {
+    return "\n//# sourceURL=" + url;
   }
 
   module.exports = Fetcher;
