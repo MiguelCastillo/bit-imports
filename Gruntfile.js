@@ -53,12 +53,12 @@ module.exports = function(grunt) {
       test: {
         tasks: ['connect:keepalive', 'watch:test'],
         options: {
-          logConcurrentOutput : true
+          logConcurrentOutput: true
         }
       }
     },
     browserify: {
-      "build-debug": {
+      "build": {
         files: {
           "dist/bit-imports.js": ["src/bit-imports.js"]
         },
@@ -70,17 +70,28 @@ module.exports = function(grunt) {
           }
         }
       }
+    },
+    uglify: {
+      "build": {
+        options: {
+          sourceMap: true
+        },
+        files: {
+          "dist/bit-imports.min.js": ["dist/bit-imports.js"]
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks("grunt-mocha");
   grunt.loadNpmTasks("grunt-concurrent");
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks("grunt-contrib-connect");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-browserify");
 
-  grunt.registerTask("build", ["browserify:build-debug"]);
+  grunt.registerTask("build", ["browserify:build", "uglify:build"]);
   grunt.registerTask("server", ["connect:keepalive"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
   grunt.registerTask("livereload", ["concurrent:test"]);
