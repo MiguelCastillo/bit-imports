@@ -1,7 +1,17 @@
 language: node_js
 node_js:
-  - "0.10"
-
+- '0.10'
 before_install:
-  - npm install -g grunt-cli
-
+- npm install -g grunt-cli
+deploy:
+  provider: releases
+  api_key:
+    secure: dDq3HZ5eaIrg0Blwi2T6S6bMFCWFVJ/a7nhWZbWNo7XLjnxJkvi+Mr4IrTkdgHmpze6dMzVEGFi3imAh2STr1iJbUcOryOIdOnCvRCTtz4jv7XIsHuXPPZO6eMDFdo0P+iJlj/3h6Qyl7rdUYQsdtzJitYYNwnagRTmGUcU0jBs=
+  file:
+    - "dist/bit-imports.js"
+    - "dist/bit-imports.min.js"
+  skip_cleanup: true
+  on:
+    repo: MiguelCastillo/bit-imports
+    tags: true
+    all_branches: true
