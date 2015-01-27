@@ -1,12 +1,12 @@
-var detective = require('detective');
+var pullDeps = require('pulling-deps/src/index');
 
-function cjsTransform(moduleMeta) {
+function dependencies(moduleMeta) {
   if (!moduleMeta.hasOwnProperty("source")) {
      return;
   }
 
   if (!ignoreModule(moduleMeta, this.ignore)) {
-    loadDependencies(moduleMeta, detective(moduleMeta.source));
+    loadDependencies(moduleMeta, pullDeps(moduleMeta.source, this.options).dependencies);
   }
 }
 
@@ -20,4 +20,4 @@ function ignoreModule(moduleMeta, ignoreList) {
   return ignoreList && ignoreList.length && ignoreList.indexOf(moduleMeta.name) !== -1;
 }
 
-module.exports = cjsTransform;
+module.exports = dependencies;

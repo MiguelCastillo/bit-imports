@@ -4,18 +4,16 @@
   var Fetcher      = require("./fetchxhr"),
       Define       = require('./define'),
       Require      = require('./require'),
-      cjsTransform = require('./transforms/cjs'),
-      amdTransform = require('./transforms/amd'),
+      dependencies = require('./transforms/dependencies'),
+      acorn        = require('acorn'),
       Bitloader    = require('bit-loader'),
       Utils        = Bitloader.Utils;
 
+  acorn.walk = require('acorn/util/walk');
+
   var defaultTransform = [{
-      name: "amd",
-      handler: amdTransform
-    }, {
-      name: "cjs",
-      handler: cjsTransform,
-      ignore: ["amd"]
+      name: "deps",
+      handler: dependencies
     }];
 
   var defaults = {
