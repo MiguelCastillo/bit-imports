@@ -13,7 +13,7 @@
 
     logger.log(name, loader.context._id);
 
-    if (loader.hasModuleCode(name)) {
+    if (loader.hasModule(name)) {
       return loader.getModuleCode(name);
     }
     else {

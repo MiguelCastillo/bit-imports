@@ -71,5 +71,6 @@
 
   root.Bitimports = new Bitimports(options);
   root.Bitimports.Logger = Bitloader.Logger;
+  Bitimports.Logger = Bitloader.Logger;
   module.exports = Bitimports;
 })(typeof(window) !== 'undefined' ? window : this);
