@@ -5352,8 +5352,18 @@ module.exports = new Logger();
 (function() {
   "use strict";
 
-  var Logger = require('../logger'),
+  var Module = require('../module'),
+      Logger = require('../logger'),
       logger = Logger.factory("Meta/Compilation");
+
+  function compile(moduleMeta) {
+    if (moduleMeta.hasOwnProperty("code")) {
+      return new Module(moduleMeta);
+    }
+    else if (typeof(moduleMeta.compile) === 'function') {
+      return moduleMeta.compile();
+    }
+  }
 
   /**
    * The compile step is to convert the moduleMeta to an instance of Module. The
@@ -5364,7 +5374,7 @@ module.exports = new Logger();
   function MetaCompilation(manager, moduleMeta) {
     logger.log(moduleMeta.name, moduleMeta);
 
-    var mod     = moduleMeta.compile(),
+    var mod     = compile(moduleMeta),
         modules = mod.modules || {};
 
     // Copy modules over to the modules bucket if it does not exist. Anything
@@ -5383,7 +5393,7 @@ module.exports = new Logger();
   module.exports = MetaCompilation;
 })();
 
-},{"../logger":6}],8:[function(require,module,exports){
+},{"../logger":6,"../module":13}],8:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5419,18 +5429,23 @@ module.exports = new Logger();
 (function() {
   "use strict";
 
-  var Logger = require('../logger'),
-      Utils  = require('../utils'),
-      logger = Logger.factory("Meta/Fetch");
+  var Promise = require('spromise'),
+      Logger  = require('../logger'),
+      Utils   = require('../utils'),
+      logger  = Logger.factory("Meta/Fetch");
 
   function MetaFetch(manager, name, parentMeta) {
     logger.log(name);
-    return manager.fetch(name, parentMeta)
+    return Promise.resolve(manager.fetch(name, parentMeta))
       .then(moduleFetched, Utils.forwardError);
 
     // Once the module meta is fetched, we want to add helper properties
     // to it to facilitate further processing.
     function moduleFetched(moduleMeta) {
+      if (!moduleMeta.name) {
+        moduleMeta.name = name;
+      }
+
       moduleMeta.deps    = moduleMeta.deps || [];
       moduleMeta.manager = manager;
       return moduleMeta;
@@ -5440,7 +5455,7 @@ module.exports = new Logger();
   module.exports = MetaFetch;
 })();
 
-},{"../logger":6,"../utils":18}],10:[function(require,module,exports){
+},{"../logger":6,"../utils":18,"spromise":1}],10:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5479,7 +5494,7 @@ module.exports = new Logger();
       throw new TypeError("Must provide a ModuleMeta");
     }
 
-    if (typeof(moduleMeta.compile) !== "function") {
+    if (!moduleMeta.hasOwnProperty("code") && typeof(moduleMeta.compile) !== "function") {
       throw new TypeError("ModuleMeta must provide have a `compile` interface that creates and returns an instance of Module");
     }
 
@@ -6078,7 +6093,7 @@ module.exports = new Logger();
 },{}]},{},[2])(2)
 });
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../logger":undefined,"../utils":undefined,"./fetch":undefined,"./import":undefined,"./loader":undefined,"./logger":undefined,"./meta/compilation":undefined,"./meta/dependencies":undefined,"./meta/fetch":undefined,"./meta/transform":undefined,"./meta/validation":undefined,"./middleware":undefined,"./module":undefined,"./module/linker":undefined,"./pipeline":undefined,"./registry":undefined,"./stateful-items":undefined,"./utils":undefined,"_process":5,"spromise":13}],5:[function(require,module,exports){
+},{"../logger":undefined,"../module":undefined,"../utils":undefined,"./fetch":undefined,"./import":undefined,"./loader":undefined,"./logger":undefined,"./meta/compilation":undefined,"./meta/dependencies":undefined,"./meta/fetch":undefined,"./meta/transform":undefined,"./meta/validation":undefined,"./middleware":undefined,"./module":undefined,"./module/linker":undefined,"./pipeline":undefined,"./registry":undefined,"./stateful-items":undefined,"./utils":undefined,"_process":5,"spromise":13}],5:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
