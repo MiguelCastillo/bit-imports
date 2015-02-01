@@ -1,6 +1,6 @@
 var Importer = require("dist/bit-imports");
 
-describe("Packages suite", function() {
+describe("Packages Test Suite", function() {
   var importer;
   beforeEach(function() {
     importer = new Importer({

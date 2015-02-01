@@ -3084,13 +3084,18 @@
        fileName = name;
     }
 
-    fileName = File.addExtension(fileName, "js");
-    baseUrl  = Resolver.useBase(fileName) && baseUrl ? baseUrl : settings.baseUrl;
-    file     = new File(urlArgs ? fileName + "?" + urlArgs : fileName, baseUrl);
+    // Let's assume .js extension for everything that is not defined with plugins
+    if (plugins.length === 0 && /\.js$/.test(fileName) === false) {
+      fileName += ".js";
+    }
+
+    baseUrl = Resolver.useBase(fileName) && baseUrl ? baseUrl : settings.baseUrl;
+    file    = new File(urlArgs ? fileName + "?" + urlArgs : fileName, baseUrl);
 
     return {
       name: name,
-      file: file,
+      file: file, // Deprecated in favor of `url`
+      url: file.url,
       shim: shim,
       plugins: plugins
     };
@@ -4916,12 +4921,16 @@ function isNullOrUndefined(arg) {
     }
 
     function loadModule(name) {
-      return manager.load(name).then(getModuleCode, Utils.forwardError);
-    }
+      function getModuleCode(mod) {
+        if (name !== mod.name) {
+          throw new TypeError("Module name must be the same as the name used for loading the Module itself");
+        }
 
-    function getModuleCode(mod) {
-      importer.removeModule(mod.name);
-      return manager.getModuleCode(mod.name);
+        importer.removeModule(mod.name);
+        return manager.getModuleCode(mod.name);
+      }
+
+      return manager.load(name).then(getModuleCode, Utils.forwardError);
     }
   };
 
@@ -5032,7 +5041,8 @@ function isNullOrUndefined(arg) {
       return Promise.resolve(loader.getModule(name));
     }
 
-    return loader.fetch(name, parentMeta)
+    return loader
+      .fetch(name, parentMeta)
       .then(function moduleFetched(getModuleDelegate) {
         return getModuleDelegate();
       }, Utils.forwardError);
@@ -5102,6 +5112,31 @@ function isNullOrUndefined(arg) {
 
 
   /**
+   * Utility helper that runs a module meta object through the transformation workflow.
+   * The module meta object passed *must* have a string source property, which is what
+   * the transformation workflow primarily operates against.
+   *
+   * @param {object} moduleMeta - Module meta object with require `source` property that
+   *  is processed by the transformation pipeline.
+   *
+   * @returns {Promise} That when resolved, the fully tranformed module meta is returned.
+   *
+   */
+  Loader.prototype.transform = function(moduleMeta) {
+    if (!moduleMeta) {
+      throw new TypeError("Must provide a module meta object");
+    }
+
+    if (typeof(moduleMeta.source) !== "string") {
+      throw new TypeError("Must provide a source string property with the content to transform");
+    }
+
+    moduleMeta.deps = moduleMeta.deps || [];
+    return metaTransform(this.manager, moduleMeta);
+  };
+
+
+  /**
    * Put a module meta object through the pipeline, which includes the transformation
    * and dependency loading stages.
    *
@@ -5111,7 +5146,9 @@ function isNullOrUndefined(arg) {
   Loader.prototype.pipelineModuleMeta = function(moduleMeta) {
     return this.pipeline
       .run(this.manager, moduleMeta)
-      .then(function pipelineFinished() {return moduleMeta;}, Utils.forwardError);
+      .then(function pipelineFinished() {
+        return moduleMeta;
+      }, Utils.forwardError);
   };
 
 
@@ -5357,12 +5394,19 @@ module.exports = new Logger();
       logger = Logger.factory("Meta/Compilation");
 
   function compile(moduleMeta) {
+    var mod;
+
     if (moduleMeta.hasOwnProperty("code")) {
-      return new Module(moduleMeta);
+      mod = new Module(moduleMeta);
     }
     else if (typeof(moduleMeta.compile) === 'function') {
-      return moduleMeta.compile();
+      mod = moduleMeta.compile();
     }
+
+    // We will coerce the name no matter what name (if one at all) the Module was
+    // created with. This will ensure a consistent state in the loading engine.
+    mod.name = moduleMeta.name;
+    return mod;
   }
 
   /**
@@ -5470,7 +5514,9 @@ module.exports = new Logger();
   function MetaTransform(manager, moduleMeta) {
     logger.log(moduleMeta.name, moduleMeta);
     return manager.transform.runAll(moduleMeta)
-      .then(function() {return moduleMeta;}, manager.Utils.forwardError);
+      .then(function() {
+        return moduleMeta;
+      }, manager.Utils.forwardError);
   }
 
   module.exports = MetaTransform;
@@ -5495,7 +5541,7 @@ module.exports = new Logger();
     }
 
     if (!moduleMeta.hasOwnProperty("code") && typeof(moduleMeta.compile) !== "function") {
-      throw new TypeError("ModuleMeta must provide have a `compile` interface that creates and returns an instance of Module");
+      throw new TypeError("ModuleMeta must provide have a `compile` interface that returns an instance of Module. Or a `code` property, which is used to build an instance of Module.");
     }
 
     return moduleMeta;
@@ -7826,14 +7872,40 @@ function isNullOrUndefined(arg) {
     this.define.amd = {};
   }
 
+
   Bitimports.prototype.config = function(options) {
     Bitloader.Utils.merge(this.settings, options);
     return this.factory(options);
   };
 
+
   Bitimports.prototype.factory = function(options) {
     return new Bitimports(options);
   };
+
+
+  Bitimports.prototype.transform = function(source) {
+    return this.loader.providers.loader
+      .transform({source: source})
+      .then(function(moduleMeta) {
+        return moduleMeta.source;
+      }, Bitloader.Utils.forwardError);
+  };
+
+
+  /**
+   * Copy a few things over to make things a bit more accessible.
+   */
+  Bitimports.prototype.Promise = Bitloader.Promise;
+  Bitimports.prototype.Module  = Bitloader.Module;
+  Bitimports.prototype.Logger  = Bitloader.Logger;
+  Bitimports.prototype.Utils   = Bitloader.Utils;
+
+  Bitimports.Promise = Bitloader.Promise;
+  Bitimports.Module  = Bitloader.Module;
+  Bitimports.Logger  = Bitloader.Logger;
+  Bitimports.Utils   = Bitloader.Utils;
+
 
   /**
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
@@ -7850,8 +7922,6 @@ function isNullOrUndefined(arg) {
   }
 
   root.Bitimports = new Bitimports(options);
-  root.Bitimports.Logger = Bitloader.Logger;
-  Bitimports.Logger = Bitloader.Logger;
   module.exports = Bitimports;
 })(typeof(window) !== 'undefined' ? window : this);
 
@@ -7998,11 +8068,12 @@ function isNullOrUndefined(arg) {
     this.resolver = new Resolver(settings);
   }
 
+
   Fetcher.prototype.fetch = function(name, parentMeta) {
     var fetcher    = this,
         cwd        = getWorkingDirectory(parentMeta),
         moduleMeta = this.resolver.resolve(name, cwd),
-        url        = moduleMeta.file.url.href;
+        url        = moduleMeta.url.href;
 
     var logger = this.loader.Logger.factory("Bitimporter/Fetch");
     logger.log(moduleMeta.name, moduleMeta, url);
@@ -8015,14 +8086,14 @@ function isNullOrUndefined(arg) {
   };
 
 
-  function compileModuleMeta(fetcher, moduleMeta /*, parentMeta*/) {
+  function compileModuleMeta(fetcher, moduleMeta, parentMeta) {
     var importer = fetcher.importer,
         loader   = fetcher.loader;
 
     return function compile() {
-      var __module = {exports: {}},
-          url      = moduleMeta.file.url.href,
-          logger   = loader.Logger.factory("Bitimporter/Compile");
+      var url      = moduleMeta.url.href,
+          logger   = loader.Logger.factory("Bitimporter/Compile"),
+          __module = {exports: {}, url: url, parent: parentMeta};
 
       logger.log(moduleMeta.name, moduleMeta);
 
@@ -8063,7 +8134,7 @@ function isNullOrUndefined(arg) {
    * Gets the url form the module data if it exists.
    */
   function getWorkingDirectory(moduleMeta) {
-    return moduleMeta ? moduleMeta.file.url.href : "";
+    return moduleMeta ? moduleMeta.url.href : "";
   }
 
   /**

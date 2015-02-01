@@ -46,14 +46,40 @@
     this.define.amd = {};
   }
 
+
   Bitimports.prototype.config = function(options) {
     Bitloader.Utils.merge(this.settings, options);
     return this.factory(options);
   };
 
+
   Bitimports.prototype.factory = function(options) {
     return new Bitimports(options);
   };
+
+
+  Bitimports.prototype.transform = function(source) {
+    return this.loader.providers.loader
+      .transform({source: source})
+      .then(function(moduleMeta) {
+        return moduleMeta.source;
+      }, Bitloader.Utils.forwardError);
+  };
+
+
+  /**
+   * Copy a few things over to make things a bit more accessible.
+   */
+  Bitimports.prototype.Promise = Bitloader.Promise;
+  Bitimports.prototype.Module  = Bitloader.Module;
+  Bitimports.prototype.Logger  = Bitloader.Logger;
+  Bitimports.prototype.Utils   = Bitloader.Utils;
+
+  Bitimports.Promise = Bitloader.Promise;
+  Bitimports.Module  = Bitloader.Module;
+  Bitimports.Logger  = Bitloader.Logger;
+  Bitimports.Utils   = Bitloader.Utils;
+
 
   /**
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
@@ -70,7 +96,5 @@
   }
 
   root.Bitimports = new Bitimports(options);
-  root.Bitimports.Logger = Bitloader.Logger;
-  Bitimports.Logger = Bitloader.Logger;
   module.exports = Bitimports;
 })(typeof(window) !== 'undefined' ? window : this);

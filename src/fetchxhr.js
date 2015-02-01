@@ -13,11 +13,12 @@
     this.resolver = new Resolver(settings);
   }
 
+
   Fetcher.prototype.fetch = function(name, parentMeta) {
     var fetcher    = this,
         cwd        = getWorkingDirectory(parentMeta),
         moduleMeta = this.resolver.resolve(name, cwd),
-        url        = moduleMeta.file.url.href;
+        url        = moduleMeta.url.href;
 
     var logger = this.loader.Logger.factory("Bitimporter/Fetch");
     logger.log(moduleMeta.name, moduleMeta, url);
@@ -30,14 +31,14 @@
   };
 
 
-  function compileModuleMeta(fetcher, moduleMeta /*, parentMeta*/) {
+  function compileModuleMeta(fetcher, moduleMeta, parentMeta) {
     var importer = fetcher.importer,
         loader   = fetcher.loader;
 
     return function compile() {
-      var __module = {exports: {}},
-          url      = moduleMeta.file.url.href,
-          logger   = loader.Logger.factory("Bitimporter/Compile");
+      var url      = moduleMeta.url.href,
+          logger   = loader.Logger.factory("Bitimporter/Compile"),
+          __module = {exports: {}, url: url, parent: parentMeta};
 
       logger.log(moduleMeta.name, moduleMeta);
 
@@ -78,7 +79,7 @@
    * Gets the url form the module data if it exists.
    */
   function getWorkingDirectory(moduleMeta) {
-    return moduleMeta ? moduleMeta.file.url.href : "";
+    return moduleMeta ? moduleMeta.url.href : "";
   }
 
   /**
