@@ -4819,7 +4819,7 @@ function isNullOrUndefined(arg) {
   module.exports       = Bitloader;
 })();
 
-},{"./fetch":3,"./import":4,"./loader":5,"./logger":6,"./middleware":12,"./module":13,"./registry":16,"./utils":18,"spromise":1}],3:[function(require,module,exports){
+},{"./fetch":3,"./import":4,"./loader":5,"./logger":6,"./middleware":11,"./module":12,"./registry":15,"./utils":17,"spromise":1}],3:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -4958,7 +4958,7 @@ function isNullOrUndefined(arg) {
   module.exports = Import;
 })();
 
-},{"./stateful-items":17,"./utils":18,"spromise":1}],5:[function(require,module,exports){
+},{"./stateful-items":16,"./utils":17,"spromise":1}],5:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -4968,7 +4968,6 @@ function isNullOrUndefined(arg) {
       StatefulItems    = require('./stateful-items'),
       moduleLinker     = require('./module/linker'),
       metaFetch        = require('./meta/fetch'),
-      metaValidation   = require('./meta/validation'),
       metaTransform    = require('./meta/transform'),
       metaDependencies = require('./meta/dependencies'),
       metaCompilation  = require('./meta/compilation');
@@ -4998,7 +4997,7 @@ function isNullOrUndefined(arg) {
     }
 
     this.manager  = manager;
-    this.pipeline = new Pipeline([metaValidation, metaTransform, metaDependencies]);
+    this.pipeline = new Pipeline([metaTransform, metaDependencies]);
     this.modules  = new StatefulItems();
   }
 
@@ -5297,7 +5296,7 @@ function isNullOrUndefined(arg) {
   module.exports = Loader;
 })();
 
-},{"./meta/compilation":7,"./meta/dependencies":8,"./meta/fetch":9,"./meta/transform":10,"./meta/validation":11,"./module/linker":14,"./pipeline":15,"./stateful-items":17,"./utils":18,"spromise":1}],6:[function(require,module,exports){
+},{"./meta/compilation":7,"./meta/dependencies":8,"./meta/fetch":9,"./meta/transform":10,"./module/linker":13,"./pipeline":14,"./stateful-items":16,"./utils":17,"spromise":1}],6:[function(require,module,exports){
 var _enabled = false,
     _only    = false;
 
@@ -5437,7 +5436,7 @@ module.exports = new Logger();
   module.exports = MetaCompilation;
 })();
 
-},{"../logger":6,"../module":13}],8:[function(require,module,exports){
+},{"../logger":6,"../module":12}],8:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5486,6 +5485,8 @@ module.exports = new Logger();
     // Once the module meta is fetched, we want to add helper properties
     // to it to facilitate further processing.
     function moduleFetched(moduleMeta) {
+      manager.Module.MetaValidation(moduleMeta);
+
       if (!moduleMeta.name) {
         moduleMeta.name = name;
       }
@@ -5499,7 +5500,7 @@ module.exports = new Logger();
   module.exports = MetaFetch;
 })();
 
-},{"../logger":6,"../utils":18,"spromise":1}],10:[function(require,module,exports){
+},{"../logger":6,"../utils":17,"spromise":1}],10:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5523,34 +5524,6 @@ module.exports = new Logger();
 })();
 
 },{"../logger":6}],11:[function(require,module,exports){
-(function() {
-  "use strict";
-
-  var Logger = require('../logger'),
-      logger = Logger.factory("Meta/Validation");
-
-  /**
-   * Method to ensure we have a valid module meta object before we continue on with
-   * the rest of the pipeline.
-   */
-  function MetaValidation(manager, moduleMeta) {
-    logger.log(moduleMeta.name, moduleMeta);
-
-    if (!moduleMeta) {
-      throw new TypeError("Must provide a ModuleMeta");
-    }
-
-    if (!moduleMeta.hasOwnProperty("code") && typeof(moduleMeta.compile) !== "function") {
-      throw new TypeError("ModuleMeta must provide have a `compile` interface that returns an instance of Module. Or a `code` property, which is used to build an instance of Module.");
-    }
-
-    return moduleMeta;
-  }
-
-  module.exports = MetaValidation;
-})();
-
-},{"../logger":6}],12:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5805,7 +5778,7 @@ module.exports = new Logger();
   module.exports = Middleware;
 })();
 
-},{"./logger":6,"./utils":18,"spromise":1}],13:[function(require,module,exports){
+},{"./logger":6,"./utils":17,"spromise":1}],12:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5817,6 +5790,7 @@ module.exports = new Logger();
     "CJS"     : "CJS",     //CommonJS
     "IEFF"    : "IEFF"     //Immediately Executed Factory Function
   };
+
 
   function Module(options) {
     if (!options) {
@@ -5837,11 +5811,34 @@ module.exports = new Logger();
     this.settings = Utils.extend({}, options);
   }
 
+
+  function MetaValidation(options) {
+    if (!options) {
+      throw new TypeError("Must provide options");
+    }
+
+    if (!MetaValidation.hasCode(options) && !MetaValidation.canCompile(options)) {
+      throw new TypeError("ModuleMeta must provide a `source` string and `compile` interface, or `code`.");
+    }
+  }
+
+
+  MetaValidation.hasCode = function(options) {
+    return options.hasOwnProperty("code");
+  };
+
+
+  MetaValidation.canCompile = function(options) {
+    return typeof(options.source) === "string" && typeof(options.compile) === "function";
+  };
+
+
+  Module.MetaValidation = MetaValidation;
   Module.Type = Type;
   module.exports = Module;
 })();
 
-},{"./utils":18}],14:[function(require,module,exports){
+},{"./utils":17}],13:[function(require,module,exports){
 (function(root) {
   "use strict";
 
@@ -5874,7 +5871,7 @@ module.exports = new Logger();
   module.exports = ModuleLinker;
 })(typeof(window) !== 'undefined' ? window : this);
 
-},{"../logger":6}],15:[function(require,module,exports){
+},{"../logger":6}],14:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5904,7 +5901,7 @@ module.exports = new Logger();
   module.exports = Pipeline;
 })();
 
-},{"spromise":1}],16:[function(require,module,exports){
+},{"spromise":1}],15:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5937,7 +5934,7 @@ module.exports = new Logger();
   module.exports = Registry;
 })();
 
-},{}],17:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5998,7 +5995,7 @@ module.exports = new Logger();
   module.exports = StatefulItems;
 })();
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -6139,7 +6136,7 @@ module.exports = new Logger();
 },{}]},{},[2])(2)
 });
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../logger":undefined,"../module":undefined,"../utils":undefined,"./fetch":undefined,"./import":undefined,"./loader":undefined,"./logger":undefined,"./meta/compilation":undefined,"./meta/dependencies":undefined,"./meta/fetch":undefined,"./meta/transform":undefined,"./meta/validation":undefined,"./middleware":undefined,"./module":undefined,"./module/linker":undefined,"./pipeline":undefined,"./registry":undefined,"./stateful-items":undefined,"./utils":undefined,"_process":5,"spromise":13}],5:[function(require,module,exports){
+},{"../logger":undefined,"../module":undefined,"../utils":undefined,"./fetch":undefined,"./import":undefined,"./loader":undefined,"./logger":undefined,"./meta/compilation":undefined,"./meta/dependencies":undefined,"./meta/fetch":undefined,"./meta/transform":undefined,"./middleware":undefined,"./module":undefined,"./module/linker":undefined,"./pipeline":undefined,"./registry":undefined,"./stateful-items":undefined,"./utils":undefined,"_process":5,"spromise":13}],5:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
