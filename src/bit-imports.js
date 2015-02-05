@@ -32,6 +32,7 @@
     this.settings = Utils.merge({}, defaults, options);
     this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
     this.import   = this.loader.import;
+    this.register = this.loader.register;
 
     // Setup require interface
     var require  = new Require(this);
