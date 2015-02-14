@@ -7,10 +7,9 @@
   "globals":{
     "module": true,
     "require": true,
+    "define": true,
     "System": true,
     "Bitimports": true,
-    "define": true,
-    "$": true,
     "window": true,
     "describe": true,
     "it": true,
