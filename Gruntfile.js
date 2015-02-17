@@ -67,7 +67,7 @@ module.exports = function(grunt) {
           browserifyOptions: {
             "detectGlobals": true,
             "ignoreMissing": true,
-            "standalone": "bit-imports"
+            "standalone": "Bitimports"
           }
         }
       }
