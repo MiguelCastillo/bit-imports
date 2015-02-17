@@ -31,17 +31,20 @@
 
     this.settings = Utils.merge({}, defaults, options);
     this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
+
+    // Expose primary interfaces for importing/registering modules
     this.import   = this.loader.import;
     this.register = this.loader.register;
 
     // Setup require interface
-    var require  = new Require(this);
-    this.require = require.require.bind(require);
+    var require   = new Require(this);
+    this.require  = require.require.bind(require);
+    this._require = require;
 
     // Setup define interface
-    var define  = new Define(this);
-    this.define = define.define.bind(define);
-    this.define.instance = define;
+    var define   = new Define(this);
+    this.define  = define.define.bind(define);
+    this._define = define;
 
     // Add `amd` for compliance
     this.define.amd = {};
@@ -86,8 +89,8 @@
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
    */
   function fetchFactory(importer) {
-    return function fetch(loader) {
-      return new Fetcher(loader, importer);
+    return function fetch() {
+      return new Fetcher(importer);
     };
   }
 
