@@ -4,7 +4,7 @@ describe("Register Test Suite", function() {
   describe("When registering a module with no dependencies", function() {
     var importer, moduleA, factoryStub, moduleImportedStub;
     beforeEach(function() {
-      importer = new Importer();
+      importer = Importer.factory();
       moduleA = {"s": "data"};
 
       moduleImportedStub = sinon.stub();
@@ -26,7 +26,7 @@ describe("Register Test Suite", function() {
   describe("When registering a module with one dependency", function() {
     var importer, moduleA, factoryStub, moduleImportedStub;
     beforeEach(function() {
-      importer = new Importer({
+      importer = Importer.factory({
         baseUrl: "."
       });
 
@@ -50,7 +50,7 @@ describe("Register Test Suite", function() {
   describe("When registering a module with one dependency that has mode `System.register` calls", function() {
     var importer, result, moduleImportedStub;
     beforeEach(function() {
-      importer = new Importer({
+      importer = Importer.factory({
         baseUrl: "."
       });
 
@@ -88,7 +88,7 @@ describe("Register Test Suite", function() {
   describe("When registering a module with one dependency that has mode `System.register` mixed with AMD and CJS", function() {
     var importer, result, moduleImportedStub;
     beforeEach(function() {
-      importer = new Importer({
+      importer = Importer.factory({
         baseUrl: "."
       });
 

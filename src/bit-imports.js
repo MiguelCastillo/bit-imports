@@ -1,4 +1,4 @@
-(function(root) {
+(function() {
   "use strict";
 
   var Fetcher      = require("./fetchxhr"),
@@ -6,10 +6,8 @@
       Require      = require('./require'),
       dependencies = require('./transforms/dependencies'),
       acorn        = require('acorn'),
-      Bitloader    = require('bit-loader'),
-      Utils        = Bitloader.Utils;
-
-  acorn.walk = require('acorn/util/walk');
+      acornWalker  = require('acorn/util/walk'),
+      Bitloader    = require('bit-loader');
 
   var defaultTransform = [{
       name: "deps",
@@ -25,23 +23,30 @@
     transforms : []
   };
 
+
+  /**
+   * @constructor
+   */
   function Bitimports(options) {
     options = options || {};
     options.transforms = (options.transforms || []).concat(defaultTransform);
 
-    this.settings = Utils.merge({}, defaults, options);
+    this.settings = Bitimports.Utils.merge({}, defaults, options);
     this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
+
+    // Expose primary interface for importing/registering modules
     this.import   = this.loader.import;
     this.register = this.loader.register;
 
     // Setup require interface
-    var require  = new Require(this);
-    this.require = require.require.bind(require);
+    var require   = new Require(this);
+    this.require  = require.require.bind(require);
+    this._require = require;
 
     // Setup define interface
-    var define  = new Define(this);
-    this.define = define.define.bind(define);
-    this.define.instance = define;
+    var define   = new Define(this);
+    this.define  = define.define.bind(define);
+    this._define = define;
 
     // Add `amd` for compliance
     this.define.amd = {};
@@ -49,7 +54,7 @@
 
 
   Bitimports.prototype.config = function(options) {
-    Bitloader.Utils.merge(this.settings, options);
+    Bitimports.Utils.merge(this.settings, options);
     return this.factory(options);
   };
 
@@ -64,7 +69,15 @@
       .transform({source: source})
       .then(function(moduleMeta) {
         return moduleMeta.source;
-      }, Bitloader.Utils.forwardError);
+      }, Bitimports.Utils.forwardError);
+  };
+
+
+  Bitimports.prototype.AST = function(source, options) {
+    return {
+      ast: acorn.parse(source, options),
+      walk: acornWalker
+    };
   };
 
 
@@ -86,16 +99,10 @@
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
    */
   function fetchFactory(importer) {
-    return function fetch(loader) {
-      return new Fetcher(loader, importer);
+    return function fetch() {
+      return new Fetcher(importer);
     };
   }
 
-  var options;
-  if (Utils.isPlainObject(root.require || root.requirejs)) {
-    options = root.require || root.requirejs;
-  }
-
-  root.Bitimports = new Bitimports(options);
-  module.exports = Bitimports;
-})(typeof(window) !== 'undefined' ? window : this);
+  module.exports = new Bitimports();
+})();

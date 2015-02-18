@@ -2,37 +2,47 @@
   'user strict';
 
   function compileModuleMeta(fetcher, moduleMeta, parentMeta) {
-    var importer = fetcher.importer,
-        loader   = fetcher.loader;
+    var importer = fetcher.importer;
 
-    return function compile() {
-      var url      = moduleMeta.url.href,
-          logger   = loader.Logger.factory("Bitimporter/Compile"),
-          __module = {exports: {}, url: url, parent: parentMeta};
-
-      logger.log(moduleMeta.name, moduleMeta);
+    function evaluate() {
+      var url     = moduleMeta.url.href;
+      var source  = moduleMeta.source + getSourceUrl(url);
+      var _module = {exports: {}, url: url, meta: moduleMeta, parent: parentMeta};
 
       /* jshint -W061, -W054 */
-      var result = (new Function("System", "define", "require", "module", "exports", "meta", (moduleMeta.source) + getSourceUrl(url)))(importer, importer.define, importer.require, __module, __module.exports, moduleMeta);
+      var execute = new Function("System", "define", "require", "module", "exports", source);
       /* jshint +W061, +W054 */
 
-      var mod = importer.define.instance.compileDefinitions(moduleMeta);
+      var result = execute(importer, importer.define, importer.require, _module, _module.exports);
 
-      // If `compileGlobalDefitions` does not return a module that means there were no calls
-      // to `define`.  So we will build a module from either the return of the execution of
-      // the module factory, or module.exports.
-      if (!mod) {
-        // If `define` was not called, the we will try to assign the result of the function
-        // call to support IEFF, or exports.
-        mod = new loader.Module({
-          type: result ? loader.Module.Type.IEFF : loader.Module.Type.CJS,
-          name: moduleMeta.name,
-          code: result || __module.exports
-        });
+      return {
+        result: result,
+        module: _module
+      };
+    }
+
+    function compile() {
+      var logger = importer.Logger.factory("Bitimporter/Compile");
+      logger.log(moduleMeta.name, moduleMeta);
+
+      // Evaluation will execute the module meta source, which might call `define`.
+      // When that happens, `getDefinitions` will get us the proper module definitions.
+      var evaluated   = evaluate();
+      var definitions = importer._define.getDefinitions(moduleMeta.name);
+
+      if (definitions) {
+        definitions.type = importer.Module.Type.AMD;
+        return new importer.Module(definitions);
       }
 
-      return mod;
-    };
+      // If `define` was not called, the we will try to assign the result of the function
+      // call to support IEFF, or exports.
+      moduleMeta.type = evaluated.result ? importer.Module.Type.IEFF : importer.Module.Type.CJS;
+      moduleMeta.code = evaluated.result || evaluated.module.exports;
+      return new importer.Module(moduleMeta);
+    }
+
+    return compile;
   }
 
   /**

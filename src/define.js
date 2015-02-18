@@ -3,8 +3,8 @@
 
   function Define(importer) {
     this.importer = importer;
-    this.loader   = importer.loader;
   }
+
 
   /**
    * Defines a module to be loaded and consumed by other modules.  Two types of
@@ -12,7 +12,7 @@
    */
   Define.prototype.define = function () {
     var mod     = Define.adapters.apply(this, arguments),
-        context = this.getContext();
+        context = this._getContext();
 
     if (mod.name) {
       // Do no allow modules to override other modules...
@@ -29,36 +29,25 @@
   };
 
 
-  Define.prototype.getContext = function() {
-    return this.context || (this.context = {
-      modules: {},
-      anonymous: []
-    });
-  };
-
-
-  Define.prototype.clearContext = function() {
-    var context = this.context;
-    delete this.context;
-    return context;
-  };
-
-
-  Define.prototype.compileDefinitions = function(moduleMeta) {
-    var context = this.clearContext();
+  /**
+   * Processes the current context making sure that any anonymous module definitions
+   * are properly converted to named defintions when applicable.
+   */
+  Define.prototype.getDefinitions = function(name) {
+    var context = this._clearContext();
 
     // define was never called...
     if (!context) {
-      return mod;
+      return;
     }
 
     var anonymous = context.anonymous,
         modules   = context.modules,
-        mod       = modules[moduleMeta.name];
+        mod       = modules[name];
 
     if (!mod && anonymous.length) {
       mod      = anonymous.shift();
-      mod.name = moduleMeta.name;
+      mod.name = name;
       modules[mod.name] = mod;
     }
 
@@ -67,6 +56,29 @@
     }
 
     return mod;
+  };
+
+
+  /**
+   * @private
+   * Gets the current context.  If it does not exist, one is created.
+   */
+  Define.prototype._getContext = function() {
+    return this.context || (this.context = {
+      modules: {},
+      anonymous: []
+    });
+  };
+
+
+  /**
+   * @private
+   * Deletes and returns the current context.
+   */
+  Define.prototype._clearContext = function() {
+    var context = this.context;
+    delete this.context;
+    return context;
   };
 
 
@@ -86,24 +98,20 @@
 
 
   Define.adapters.create = function (name, deps, factory) {
-    var loader = this.importer.loader;
-
-    var mod = {
-      type: loader.Module.Type.AMD,
+    var moduleMeta = {
       name: name,
       deps: deps
     };
 
     if (typeof(factory) === "function") {
-      mod.factory = factory;
+      moduleMeta.factory = factory;
     }
     else {
-      mod.code = factory;
+      moduleMeta.code = factory;
     }
 
-    return new loader.Module(mod);
+    return moduleMeta;
   };
-
 
 
   /**

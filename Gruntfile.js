@@ -67,7 +67,7 @@ module.exports = function(grunt) {
           browserifyOptions: {
             "detectGlobals": true,
             "ignoreMissing": true,
-            "standalone": "bit-imports"
+            "standalone": "Bitimports"
           }
         }
       }
@@ -75,7 +75,7 @@ module.exports = function(grunt) {
     uglify: {
       "build": {
         options: {
-          sourceMap: false
+          sourceMap: true
         },
         files: {
           "dist/bit-imports.min.js": ["dist/bit-imports.js"]

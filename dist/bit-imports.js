@@ -1,4 +1,4 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.bitImports=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Bitimports=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 // Acorn is a tiny, fast JavaScript parser written in JavaScript.
 //
 // Acorn was written by Marijn Haverbeke and various contributors and
@@ -4661,12 +4661,26 @@ function isNullOrUndefined(arg) {
       Registry   = require('./registry'),
       Middleware = require('./middleware');
 
+  var registryId = 0;
+  function getRegistryId() {
+    return 'bitloader-' + registryId++;
+  }
 
+  var ModuleState = {
+    LOADED: "loaded"
+  };
+
+
+  /**
+   * @class
+   *
+   * Facade for relevant interfaces to register and import modules
+   */
   function Bitloader(options, factories) {
     options   = options   || {};
     factories = factories || {};
 
-    this.context   = Registry.getById();
+    this.context   = Registry.getById(getRegistryId());
     this.transform = Middleware.factory(this);
     this.plugin    = Middleware.factory(this);
 
@@ -4685,7 +4699,7 @@ function isNullOrUndefined(arg) {
       importer : factories.import ? factories.import(this) : new Bitloader.Import(this)
     };
 
-    // Expose interfaces
+    // Public Interface
     this.providers = providers;
     this.fetch     = providers.fetcher.fetch.bind(providers.fetcher);
     this.load      = providers.loader.load.bind(providers.loader);
@@ -4699,7 +4713,7 @@ function isNullOrUndefined(arg) {
    * will be deleted.
    */
   Bitloader.prototype.clear = function() {
-    Registry.clearById(this.context._id);
+    this.context.clear();
   };
 
 
@@ -4707,7 +4721,7 @@ function isNullOrUndefined(arg) {
    * Checks if the module instance is in the module registry
    */
   Bitloader.prototype.hasModule = function(name) {
-    return this.isModuleCached(name) || this.providers.loader.isLoaded(name);
+    return this.context.hasModule(name) || this.providers.loader.isLoaded(name);
   };
 
 
@@ -4720,11 +4734,11 @@ function isNullOrUndefined(arg) {
       throw new TypeError("Module `" + name + "` has not yet been loaded");
     }
 
-    if (!this.isModuleCached(name)) {
-      this.context.modules[name] = this.providers.loader.buildModule(name);
+    if (!this.context.hasModule(name)) {
+      return this.context.setModule(ModuleState.LOADED, name, this.providers.loader.syncBuildModule(name));
     }
 
-    return this.context.modules[name];
+    return this.context.getModule(name);
   };
 
 
@@ -4743,11 +4757,15 @@ function isNullOrUndefined(arg) {
       throw new TypeError("Module `" + name + "` is not an instance of Module");
     }
 
-    if (this.isModuleCached(name)) {
+    if (!name || typeof(name) !== 'string') {
+      throw new TypeError("Module must have a name");
+    }
+
+    if (this.context.hasModule(name)) {
       throw new TypeError("Module instance `" + name + "` already exists");
     }
 
-    return (this.context.modules[name] = mod);
+    return this.context.setModule(ModuleState.LOADED, name, mod);
   };
 
 
@@ -4759,13 +4777,11 @@ function isNullOrUndefined(arg) {
    * @returns {Module} Deleted module
    */
   Bitloader.prototype.deleteModule = function(name) {
-    if (!this.isModuleCached(name)) {
+    if (!this.context.hasModule(name)) {
       throw new TypeError("Module instance `" + name + "` does not exists");
     }
 
-    var mod = this.context.modules[name];
-    delete this.context.modules[name];
-    return mod;
+    return this.context.deleteModule(name);
   };
 
 
@@ -4816,7 +4832,7 @@ function isNullOrUndefined(arg) {
    * get stored in the module registry
    */
   Bitloader.prototype.isModuleCached = function(name) {
-    return this.context.modules.hasOwnProperty(name);
+    return this.context.hasModule(name);
   };
 
 
@@ -4838,7 +4854,7 @@ function isNullOrUndefined(arg) {
   module.exports       = Bitloader;
 })();
 
-},{"./fetch":3,"./import":4,"./loader":5,"./logger":6,"./middleware":12,"./module":13,"./registry":16,"./utils":18,"spromise":1}],3:[function(require,module,exports){
+},{"./fetch":3,"./import":4,"./loader":5,"./logger":6,"./middleware":11,"./module":12,"./registry":15,"./utils":17,"spromise":1}],3:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -4856,13 +4872,18 @@ function isNullOrUndefined(arg) {
 (function() {
   "use strict";
 
-  var Promise       = require('spromise'),
-      StatefulItems = require('./stateful-items'),
-      Utils         = require('./utils');
+  var Promise  = require('spromise'),
+      Registry = require('./registry'),
+      Utils    = require('./utils');
+
+  var registryId = 0;
+  function getRegistryId() {
+    return 'import-' + registryId++;
+  }
 
 
-  var StateTypes = {
-    loading: "loading"
+  var ModuleState = {
+    LOADING: "loading"
   };
 
 
@@ -4876,12 +4897,12 @@ function isNullOrUndefined(arg) {
     }
 
     this.manager = manager;
-    this.modules = new StatefulItems();
+    this.context = Registry.getById(getRegistryId());
   }
 
 
   /**
-   * Import is the interface to load a Module
+   * Import is the method to load a Module
    *
    * @param {Array<string> | string} names - module(s) to import
    *
@@ -4971,7 +4992,7 @@ function isNullOrUndefined(arg) {
         throw new TypeError("Module name must be the same as the name used for loading the Module itself");
       }
 
-      importer.removeModule(mod.name);
+      importer.deleteModule(mod.name);
       return importer.manager.getModuleCode(mod.name);
     };
   };
@@ -4982,29 +5003,26 @@ function isNullOrUndefined(arg) {
   }
 
   Import.prototype.hasModule = function(name) {
-    return this.modules.hasItemWithState(StateTypes.loading, name);
+    return this.context.hasModuleWithState(ModuleState.LOADING, name);
   };
-
 
   Import.prototype.getModule = function(name) {
-    return this.modules.getItem(StateTypes.loading, name);
+    return this.context.getModuleWithState(ModuleState.LOADING, name);
   };
-
 
   Import.prototype.setModule = function(name, item) {
-    return this.modules.setItem(StateTypes.loading, name, item);
+    return this.context.setModule(ModuleState.LOADING, name, item);
   };
 
-
-  Import.prototype.removeModule = function(name) {
-    return this.modules.removeItem(name);
+  Import.prototype.deleteModule = function(name) {
+    return this.context.deleteModule(name);
   };
-
 
   module.exports = Import;
 })();
 
-},{"./stateful-items":17,"./utils":18,"spromise":1}],5:[function(require,module,exports){
+
+},{"./registry":15,"./utils":17,"spromise":1}],5:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5012,13 +5030,19 @@ function isNullOrUndefined(arg) {
       Module           = require('./module'),
       Utils            = require('./utils'),
       Pipeline         = require('./pipeline'),
-      StatefulItems    = require('./stateful-items'),
+      Registry         = require('./registry'),
       moduleLinker     = require('./module/linker'),
       metaFetch        = require('./meta/fetch'),
-      metaValidation   = require('./meta/validation'),
       metaTransform    = require('./meta/transform'),
       metaDependencies = require('./meta/dependencies'),
       metaCompilation  = require('./meta/compilation');
+
+
+  var registryId = 0;
+  function getRegistryId() {
+    return 'loader-' + registryId++;
+  }
+
 
   /**
    * - Loaded means that the module meta is all processed and it is ready to be
@@ -5031,10 +5055,10 @@ function isNullOrUndefined(arg) {
    * - Loading means that the module meta is currently being loaded. Only for ASYNC
    *  processing.
    */
-  var StateTypes = {
-    loaded:  "loaded",
-    pending: "pending",
-    loading: "loading"
+  var ModuleState = {
+    LOADING: "loading",
+    LOADED:  "loaded",
+    PENDING: "pending"
   };
 
 
@@ -5057,8 +5081,8 @@ function isNullOrUndefined(arg) {
     }
 
     this.manager  = manager;
+    this.context  = Registry.getById(getRegistryId());
     this.pipeline = new Pipeline([metaTransform, metaDependencies]);
-    this.modules  = new StatefulItems();
   }
 
 
@@ -5130,6 +5154,10 @@ function isNullOrUndefined(arg) {
     var loader  = this,
         manager = this.manager;
 
+    if (!name) {
+      return Promise.reject(new TypeError("Must provide the name of the module to fetch"));
+    }
+
     if (manager.hasModule(name)) {
       return Promise.resolve();
     }
@@ -5139,7 +5167,7 @@ function isNullOrUndefined(arg) {
     }
 
     var loading = loader
-      .fetchModuleMeta(name, parentMeta)
+      ._fetchModuleMeta(name, parentMeta)
       .then(moduleMetaReady, handleError);
 
     return loader.setLoading(name, loading);
@@ -5151,120 +5179,25 @@ function isNullOrUndefined(arg) {
 
 
   /**
-   * Calls the fetch provider to get a module meta object, and then puts it through
-   * the module meta pipeline
-   *
-   * @param {string} name - Module name for which to build the module meta for
-   * @param {Object} parentMeta - Is the module meta object that is requesting the fetch
-   *   transaction, which is important when processing sub dependencies.
-   *
-   * @returns {Promise} When resolved, a module meta that has gone through the pipeline
-   *   is returned.
-   */
-  Loader.prototype.fetchModuleMeta = function(name, parentMeta) {
-    var loader = this;
-
-    // This is where the call to fetch the module meta takes place. Once the
-    // module meta is loaded, it is put through the transformation pipeline.
-    return metaFetch(this.manager, name, parentMeta)
-      .then(pipelineModuleMeta, Utils.forwardError);
-
-    function pipelineModuleMeta(moduleMeta) {
-      return loader.pipelineModuleMeta(moduleMeta);
-    }
-  };
-
-
-  /**
-   * Put a module meta object through the pipeline, which includes the transformation
-   * and dependency loading stages.
-   *
-   * @param {object} moduleMeta - Module meta object to run through the pipeline.
-   *
-   * @returns {Promise} that when fulfilled, the processed module meta object is returned.
-   */
-  Loader.prototype.pipelineModuleMeta = function(moduleMeta) {
-    if (!metaValidation(this.manager, moduleMeta)) {
-      return Promise.resolve(moduleMeta);
-    }
-
-    return this.pipeline
-      .run(this.manager, moduleMeta)
-      .then(pipelineFinished, Utils.forwardError);
-
-    function pipelineFinished() {
-      return moduleMeta;
-    }
-  };
-
-
-  /**
-   * Convert a module meta object into a proper Module instance.
-   *
-   * @param {string} name - Name of the module meta object to be converted.
-   *
-   * @returns {Module}
-   */
-  Loader.prototype.compileModuleMeta = function(name) {
-    var moduleMeta;
-    var manager = this.manager;
-
-    if (this.isLoaded(name)) {
-      moduleMeta = this.removeModule(name);
-    }
-    else if (this.manager.isModuleCached(name)) {
-      throw new TypeError("Module `" + name + "` is already loaded, so you can just call `manager.getModule(name)`");
-    }
-    else {
-      throw new TypeError("Module `" + name + "` is not loaded yet. Make sure to call `load` or `fetch` prior to calling `linkModuleMeta`");
-    }
-
-    // Compile module meta to create a Module instance
-    return metaCompilation(manager, moduleMeta);
-  };
-
-
-  /**
-   * Finalizes a Module instance by pulling in all the dependencies and calling the module
-   * factory method if available.  This is the very last stage of the Module building process
-   *
-   * @param {Module} mod - Module instance to link
-   *
-   * @returns {Module} Instance all linked
-   */
-  Loader.prototype.linkModule = function(mod) {
-    if (!(mod instanceof(Module))) {
-      throw new TypeError("Module `" + mod.name + "` is not an instance of Module");
-    }
-
-    ////
-    // This is the sweet spot when synchronous build process and dynamic module registration meet.
-    //
-    // Module registration/import are async operations. Build process is sync.  So the challenge
-    // is to make sure these two don't cross paths.  We solve this problem by making sure we
-    // only process pending module meta objects in async module loading interfaces such as
-    // `import`, because that interface is asynchronous.  We want async operations to run early
-    // and finish all they work.  And then ONLY run sync operations so that calls like `require`
-    // can behave synchronously.
-    ////
-    if (this.isPending(mod.name)) {
-      console.warn("Module '" + mod.name + "' is being dynamically registered while being loaded.", "You don't need to call 'System.register' when the module is already being loaded.");
-    }
-
-    // Run the Module instance through the module linker
-    return moduleLinker(this.manager, mod);
-  };
-
-
-  /**
    * Converts a module meta object to a full Module instance.
    *
    * @param {string} name - The name of the module meta to convert to an instance of Module.
    *
    * @returns {Module} Module instance from the conversion of module meta
    */
-  Loader.prototype.buildModule = function(name) {
-    return this.linkModule(this.compileModuleMeta(name));
+  Loader.prototype.syncBuildModule = function(name) {
+    var mod = this._compileModuleMeta(name);
+
+    if (!mod) {
+      if (this.isPending(name)) {
+        throw new TypeError("Unable to synchronously build dynamic module '" + name + "'");
+      }
+      else {
+        throw new TypeError("Unable to synchronously build module '" + name + "'");
+      }
+    }
+
+    return this._linkModule(mod);
   };
 
 
@@ -5282,24 +5215,21 @@ function isNullOrUndefined(arg) {
     var mod;
 
     if (this.isLoaded(name)) {
-      mod = this.compileModuleMeta(name);
+      mod = this._compileModuleMeta(name);
     }
     else if (this.manager.hasModule(name)) {
       return Promise.resolve(this.manager.getModule(name));
-    }
-    else if (!this.isPending(name)) {
-      return Promise.reject(new TypeError("Module `" + name + "` must be in the loaded or pending state to be asynchronously built"));
     }
 
     // If the module evaluation didn't register a new module, then we return whatever
     // was produced.
     if (!this.isPending(name)) {
-      return Promise.resolve(this.linkModule(mod));
+      return Promise.resolve(this._linkModule(mod));
     }
 
     // Right here is where we handle dynamic registration of modules while are being loaded.
     // E.g. System.register to register a module that's being loaded
-    return metaDependencies(loader.manager, loader.removeModule(name))
+    return metaDependencies(loader.manager, loader.deleteModule(name))
       .then(buildDependencies, Utils.forwardError)
       .then(linkModuleMeta, Utils.forwardError);
 
@@ -5320,7 +5250,7 @@ function isNullOrUndefined(arg) {
     }
 
     function linkModuleMeta(moduleMeta) {
-      return loader.linkModule(new Module(moduleMeta));
+      return loader._linkModule(new Module(moduleMeta));
     }
   };
 
@@ -5328,7 +5258,7 @@ function isNullOrUndefined(arg) {
   /**
    * Interface to register a module meta that can be put compiled to a Module instance
    */
-  Loader.prototype.register = function(name, deps, factory) {
+  Loader.prototype.register = function(name, deps, factory, type) {
     if (this.manager.hasModule(name) || this.hasModule(name)) {
       throw new TypeError("Module '" + name + "' is already loaded");
     }
@@ -5336,7 +5266,8 @@ function isNullOrUndefined(arg) {
     this.setPending(name, {
       name    : name,
       deps    : deps,
-      factory : factory
+      factory : factory,
+      type    : type
     });
   };
 
@@ -5367,6 +5298,112 @@ function isNullOrUndefined(arg) {
 
 
   /**
+   * Calls the fetch provider to get a module meta object, and then puts it through
+   * the module meta pipeline
+   *
+   * @param {string} name - Module name for which to build the module meta for
+   * @param {Object} parentMeta - Is the module meta object that is requesting the fetch
+   *   transaction, which is important when processing sub dependencies.
+   *
+   * @returns {Promise} When resolved, a module meta that has gone through the pipeline
+   *   is returned.
+   */
+  Loader.prototype._fetchModuleMeta = function(name, parentMeta) {
+    var loader = this;
+
+    // This is where the call to fetch the module meta takes place. Once the
+    // module meta is loaded, it is put through the transformation pipeline.
+    return metaFetch(this.manager, name, parentMeta)
+      .then(pipelineModuleMeta, Utils.forwardError);
+
+    function pipelineModuleMeta(moduleMeta) {
+      return loader._pipelineModuleMeta(moduleMeta);
+    }
+  };
+
+
+  /**
+   * Put a module meta object through the pipeline, which includes the transformation
+   * and dependency loading stages.
+   *
+   * @param {object} moduleMeta - Module meta object to run through the pipeline.
+   *
+   * @returns {Promise} that when fulfilled, the processed module meta object is returned.
+   */
+  Loader.prototype._pipelineModuleMeta = function(moduleMeta) {
+    if (Module.Meta.isCompiled(moduleMeta)) {
+      return Promise.resolve(moduleMeta);
+    }
+
+    return this.pipeline
+      .run(this.manager, moduleMeta)
+      .then(pipelineFinished, Utils.forwardError);
+
+    function pipelineFinished() {
+      return moduleMeta;
+    }
+  };
+
+
+  /**
+   * Convert a module meta object into a proper Module instance.
+   *
+   * @param {string} name - Name of the module meta object to be converted.
+   *
+   * @returns {Module}
+   */
+  Loader.prototype._compileModuleMeta = function(name) {
+    var moduleMeta;
+    var manager = this.manager;
+
+    if (this.isLoaded(name)) {
+      moduleMeta = this.deleteModule(name);
+    }
+    else if (this.manager.isModuleCached(name)) {
+      throw new TypeError("Module `" + name + "` is already loaded, so you can just call `manager.getModule(name)`");
+    }
+    else {
+      throw new TypeError("Module `" + name + "` is not loaded yet. Make sure to call `load` or `fetch` prior to calling `linkModuleMeta`");
+    }
+
+    // Compile module meta to create a Module instance
+    return metaCompilation(manager, moduleMeta);
+  };
+
+
+  /**
+   * Finalizes a Module instance by pulling in all the dependencies and calling the module
+   * factory method if available.  This is the very last stage of the Module building process
+   *
+   * @param {Module} mod - Module instance to link
+   *
+   * @returns {Module} Instance all linked
+   */
+  Loader.prototype._linkModule = function(mod) {
+    if (!(mod instanceof(Module))) {
+      throw new TypeError("Module `" + mod.name + "` is not an instance of Module");
+    }
+
+    ////
+    // This is the sweet spot when synchronous build process and dynamic module registration meet.
+    //
+    // Module registration/import are async operations. Build process is sync.  So the challenge
+    // is to make sure these two don't cross paths.  We solve this problem by making sure we
+    // only process pending module meta objects in async module loading methods such as
+    // `import`, because that method is asynchronous.  We want async operations to run early
+    // and finish all they work.  And then ONLY run sync operations so that calls like `require`
+    // can behave synchronously.
+    ////
+    if (this.isPending(mod.name)) {
+      console.warn("Module '" + mod.name + "' is being dynamically registered while being loaded.", "You don't need to call 'System.register' when the module is already being loaded.");
+    }
+
+    // Run the Module instance through the module linker
+    return moduleLinker(this.manager, mod);
+  };
+
+
+  /**
    * Check if there is currently a module loading or loaded.
    *
    * @param {string} name - The name of the module meta to check
@@ -5374,7 +5411,7 @@ function isNullOrUndefined(arg) {
    * @returns {Boolean}
    */
   Loader.prototype.hasModule = function(name) {
-    return this.modules.hasItem(name);
+    return this.context.hasModule(name);
   };
 
 
@@ -5388,19 +5425,7 @@ function isNullOrUndefined(arg) {
    * @returns {object | Promise}
    */
   Loader.prototype.getModule = function(name) {
-    return this.modules.getItem(this.modules.getState(name), name);
-  };
-
-
-  /**
-   * Return the state of the module.
-   *
-   * @param {string} name - Name of the module for which to get the state
-   *
-   * @returns {StateTypes} State of the Module.
-   */
-  Loader.prototype.getModuleState = function(name) {
-    return this.modules.getState(name);
+    return this.context.getModule(name);
   };
 
 
@@ -5412,7 +5437,7 @@ function isNullOrUndefined(arg) {
    * @returns {Boolean} - true if the module name is being loaded, false otherwise.
    */
   Loader.prototype.isLoading = function(name) {
-    return this.modules.hasItemWithState(StateTypes.loading, name);
+    return this.context.hasModuleWithState(ModuleState.LOADING, name);
   };
 
 
@@ -5424,7 +5449,7 @@ function isNullOrUndefined(arg) {
    * @returns {Promise}
    */
   Loader.prototype.getLoading = function(name) {
-    return this.modules.getItem(StateTypes.loading, name);
+    return this.context.getModuleWithState(ModuleState.LOADING, name);
   };
 
 
@@ -5437,7 +5462,7 @@ function isNullOrUndefined(arg) {
    * @returns {Object} The module meta being set
    */
   Loader.prototype.setLoading = function(name, item) {
-    return this.modules.setItem(StateTypes.loading, name, item);
+    return this.context.setModule(ModuleState.LOADING, name, item);
   };
 
 
@@ -5451,7 +5476,7 @@ function isNullOrUndefined(arg) {
    * @returns {Boolean}
    */
   Loader.prototype.isPending = function(name) {
-    return this.modules.hasItemWithState(StateTypes.pending, name);
+    return this.context.hasModuleWithState(ModuleState.PENDING, name);
   };
 
 
@@ -5463,7 +5488,7 @@ function isNullOrUndefined(arg) {
    * @returns {Object} Module meta object
    */
   Loader.prototype.getPending = function(name) {
-    return this.modules.getItem(StateTypes.pending, name);
+    return this.context.getModuleWithState(ModuleState.PENDING, name);
   };
 
 
@@ -5476,7 +5501,7 @@ function isNullOrUndefined(arg) {
    * @returns {Object} Module meta being set
    */
   Loader.prototype.setPending = function(name, item) {
-    return this.modules.setItem(StateTypes.pending, name, item);
+    return this.context.setModule(ModuleState.PENDING, name, item);
   };
 
 
@@ -5488,7 +5513,7 @@ function isNullOrUndefined(arg) {
    * @returns {Boolean}
    */
   Loader.prototype.isLoaded = function(name) {
-    return this.modules.hasItemWithState(StateTypes.loaded, name);
+    return this.context.hasModuleWithState(ModuleState.LOADED, name);
   };
 
 
@@ -5500,7 +5525,7 @@ function isNullOrUndefined(arg) {
    * @returns {Object} The loaded module meta
    */
   Loader.prototype.getLoaded = function(name) {
-    return this.modules.getItem(StateTypes.loaded, name);
+    return this.context.getModuleWithState(ModuleState.LOADED, name);
   };
 
 
@@ -5513,7 +5538,7 @@ function isNullOrUndefined(arg) {
    * @returns {Object} The module meta being set
    */
   Loader.prototype.setLoaded = function(name, item) {
-    return this.modules.setItem(StateTypes.loaded, name, item);
+    return this.context.setModule(ModuleState.LOADED, name, item);
   };
 
 
@@ -5524,8 +5549,8 @@ function isNullOrUndefined(arg) {
    *
    * @returns {Object} The module meta being removed
    */
-  Loader.prototype.removeModule = function(name) {
-    return this.modules.removeItem(name);
+  Loader.prototype.deleteModule = function(name) {
+    return this.context.deleteModule(name);
   };
 
 
@@ -5537,7 +5562,7 @@ function isNullOrUndefined(arg) {
   module.exports = Loader;
 })();
 
-},{"./meta/compilation":7,"./meta/dependencies":8,"./meta/fetch":9,"./meta/transform":10,"./meta/validation":11,"./module":13,"./module/linker":14,"./pipeline":15,"./stateful-items":17,"./utils":18,"spromise":1}],6:[function(require,module,exports){
+},{"./meta/compilation":7,"./meta/dependencies":8,"./meta/fetch":9,"./meta/transform":10,"./module":12,"./module/linker":13,"./pipeline":14,"./registry":15,"./utils":17,"spromise":1}],6:[function(require,module,exports){
 var _enabled = false,
     _only    = false;
 
@@ -5643,29 +5668,28 @@ module.exports = new Logger();
     logger.log(moduleMeta.name, moduleMeta);
 
     var mod;
-    if (moduleMeta.hasOwnProperty("code") || typeof(moduleMeta.factory) === 'function') {
-      mod = new Module(moduleMeta);
-    }
-    else if (typeof(moduleMeta.compile) === 'function') {
+    if (Module.Meta.canCompile(moduleMeta)) {
       mod = moduleMeta.compile();
     }
-    else {
-      throw new TypeError("Unable to create Module instance due to invalid module meta object");
+    else if (Module.Meta.isCompiled(moduleMeta)) {
+      mod = new Module(moduleMeta);
     }
 
-    // We will coerce the name no matter what name (if one at all) the Module was
-    // created with. This will ensure a consistent state in the loading engine.
-    mod.name = moduleMeta.name;
+    if (mod) {
+      // We will coerce the name no matter what name (if one at all) the Module was
+      // created with. This will ensure a consistent state in the loading engine.
+      mod.name = moduleMeta.name;
 
-    // Set the mod.meta for convenience
-    mod.meta = moduleMeta;
-    return mod;
+      // Set the mod.meta for convenience
+      mod.meta = moduleMeta;
+      return mod;
+    }
   }
 
   module.exports = MetaCompilation;
 })();
 
-},{"../logger":6,"../module":13}],8:[function(require,module,exports){
+},{"../logger":6,"../module":12}],8:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5720,13 +5744,12 @@ module.exports = new Logger();
     // Once the module meta is fetched, we want to add helper properties
     // to it to facilitate further processing.
     function moduleFetched(moduleMeta) {
-      Module.MetaValidation(moduleMeta);
-
-      if (!moduleMeta.name) {
-        moduleMeta.name = name;
+      if (!(moduleMeta instanceof Module.Meta)) {
+        Module.Meta.validate(moduleMeta);
+        moduleMeta.deps = moduleMeta.deps || [];
       }
 
-      moduleMeta.deps    = moduleMeta.deps || [];
+      moduleMeta.name = name;
       moduleMeta.manager = manager;
       return moduleMeta;
     }
@@ -5735,7 +5758,7 @@ module.exports = new Logger();
   module.exports = MetaFetch;
 })();
 
-},{"../logger":6,"../module":13,"../utils":18,"spromise":1}],10:[function(require,module,exports){
+},{"../logger":6,"../module":12,"../utils":17,"spromise":1}],10:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -5762,21 +5785,6 @@ module.exports = new Logger();
 })();
 
 },{"../logger":6}],11:[function(require,module,exports){
-(function() {
-  "use strict";
-
-  /**
-   * Simple validation hook to make sure the module meta object can be
-   * pushed through the loader pipeline.
-   */
-  function MetaValidation(manager, moduleMeta) {
-    return !moduleMeta.hasOwnProperty("code");
-  }
-
-  module.exports = MetaValidation;
-})();
-
-},{}],12:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -6031,7 +6039,7 @@ module.exports = new Logger();
   module.exports = Middleware;
 })();
 
-},{"./logger":6,"./utils":18,"spromise":1}],13:[function(require,module,exports){
+},{"./logger":6,"./utils":17,"spromise":1}],12:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -6065,33 +6073,43 @@ module.exports = new Logger();
   }
 
 
-  function MetaValidation(options) {
-    if (!options) {
-      throw new TypeError("Must provide options");
-    }
+  function Meta(options) {
+    Meta.validate(options);
+    Utils.extend(this, options);
 
-    if (!MetaValidation.hasCode(options) && !MetaValidation.canCompile(options)) {
-      throw new TypeError("ModuleMeta must provide a `source` string and `compile` interface, or `code`.");
+    if (!options.deps) {
+      this.deps = [];
     }
   }
 
 
-  MetaValidation.hasCode = function(options) {
-    return options.hasOwnProperty("code");
+  Meta.validate = function(options) {
+    if (!options) {
+      throw new TypeError("Must provide options");
+    }
+
+    if (!Meta.isCompiled(options) && !Meta.canCompile(options)) {
+      throw new TypeError("ModuleMeta must provide a `source` string and `compile` interface, or `code`.");
+    }
   };
 
 
-  MetaValidation.canCompile = function(options) {
-    return typeof(options.source) === "string" && typeof(options.compile) === "function";
+  Meta.isCompiled = function(options) {
+    return options.hasOwnProperty("code") || typeof(options.factory) === "function";
   };
 
 
-  Module.MetaValidation = MetaValidation;
+  Meta.canCompile = function(options) {
+    return !Meta.isCompiled(options) && typeof(options.source) === "string" && typeof(options.compile) === "function";
+  };
+
+
+  Module.Meta = Meta;
   Module.Type = Type;
   module.exports = Module;
 })();
 
-},{"./utils":18}],14:[function(require,module,exports){
+},{"./utils":17}],13:[function(require,module,exports){
 (function(root) {
   "use strict";
 
@@ -6124,7 +6142,7 @@ module.exports = new Logger();
   module.exports = ModuleLinker;
 })(typeof(window) !== 'undefined' ? window : this);
 
-},{"../logger":6}],15:[function(require,module,exports){
+},{"../logger":6}],14:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -6154,40 +6172,98 @@ module.exports = new Logger();
   module.exports = Pipeline;
 })();
 
-},{"spromise":1}],16:[function(require,module,exports){
+},{"spromise":1}],15:[function(require,module,exports){
 (function() {
   "use strict";
 
+  var StatefulItems = require('./stateful-items');
   var storage = {};
 
-  function Registry() {
+  var registryId = 0;
+  function getRegistryId() {
+    return 'generic-' + registryId++;
   }
 
+
+  /**
+   * Module registry
+   */
+  function Registry(options) {
+    options = options || {};
+    this._id     = options.id || getRegistryId();
+    this.modules = options.modules || new StatefulItems();
+  }
+
+
+  Registry.prototype.clear = function() {
+    if (storage.hasOwnProperty(this._id)) {
+      delete storage[this._id];
+    }
+    return this;
+  };
+
+
+  Registry.prototype.hasModule = function(name) {
+    return this.modules.hasItem(name);
+  };
+
+
+  Registry.prototype.getModule = function(name) {
+    return this.modules.getItem(name);
+  };
+
+
+  Registry.prototype.deleteModule = function(name) {
+    return this.modules.removeItem(name);
+  };
+
+
+  Registry.prototype.setModule = function(state, name, item) {
+    return this.modules.setItem(state, name, item);
+  };
+
+
+  Registry.prototype.getModuleState = function(name) {
+    return this.modules.getState(name);
+  };
+
+
+  Registry.prototype.hasModuleWithState = function(state, name) {
+    return this.modules.hasItemWithState(state, name);
+  };
+
+
+  Registry.prototype.getModuleWithState = function(state, name) {
+    return this.modules.getItemWithState(state, name);
+  };
+
+
+  /**
+   * Factory method that creates Registries with an id
+   */
   Registry.getById = function(id) {
     if (!id) {
-      id = (new Date()).getTime().toString();
+      id = getRegistryId();
     }
 
-    return storage[id] || (storage[id] = {
-      _id     : id,
-      code    : {},
-      modules : {}
-    });
+    return storage[id] || (storage[id] = new Registry({id: id}));
   };
 
+
+  /**
+   * Destroys Registries by id.
+   */
   Registry.clearById = function(id) {
-    var _item;
     if (storage.hasOwnProperty(id)) {
-      _item = storage[id];
-      delete storage[id];
+      return storage[id].clear();
     }
-    return _item;
   };
+
 
   module.exports = Registry;
 })();
 
-},{}],17:[function(require,module,exports){
+},{"./stateful-items":16}],16:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -6215,12 +6291,7 @@ module.exports = new Logger();
   };
 
 
-  StatefulItems.prototype.hasItem = function(name) {
-    return this.items.hasOwnProperty(name);
-  };
-
-
-  StatefulItems.prototype.getItem = function(state, name) {
+  StatefulItems.prototype.getItemWithState = function(state, name) {
     if (!this.hasItemWithState(state, name)) {
       throw new TypeError("`" + name + "` is not " + state);
     }
@@ -6229,8 +6300,17 @@ module.exports = new Logger();
   };
 
 
-  StatefulItems.prototype.setItem = function(state, name, item) {
-    return (this.items[name] = {item: item, state: state}).item;
+  StatefulItems.prototype.hasItem = function(name) {
+    return this.items.hasOwnProperty(name);
+  };
+
+
+  StatefulItems.prototype.getItem = function(name) {
+    if (!this.hasItem(name)) {
+      throw new TypeError("`" + name + "` not found");
+    }
+
+    return this.items[name].item;
   };
 
 
@@ -6245,10 +6325,15 @@ module.exports = new Logger();
   };
 
 
+  StatefulItems.prototype.setItem = function(state, name, item) {
+    return (this.items[name] = {item: item, state: state}).item;
+  };
+
+
   module.exports = StatefulItems;
 })();
 
-},{}],18:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -6389,7 +6474,7 @@ module.exports = new Logger();
 },{}]},{},[2])(2)
 });
 }).call(this,require('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"../logger":undefined,"../module":undefined,"../utils":undefined,"./fetch":undefined,"./import":undefined,"./loader":undefined,"./logger":undefined,"./meta/compilation":undefined,"./meta/dependencies":undefined,"./meta/fetch":undefined,"./meta/transform":undefined,"./meta/validation":undefined,"./middleware":undefined,"./module":undefined,"./module/linker":undefined,"./pipeline":undefined,"./registry":undefined,"./stateful-items":undefined,"./utils":undefined,"_process":5,"spromise":13}],5:[function(require,module,exports){
+},{"../logger":undefined,"../module":undefined,"../utils":undefined,"./fetch":undefined,"./import":undefined,"./loader":undefined,"./logger":undefined,"./meta/compilation":undefined,"./meta/dependencies":undefined,"./meta/fetch":undefined,"./meta/transform":undefined,"./middleware":undefined,"./module":undefined,"./module/linker":undefined,"./pipeline":undefined,"./registry":undefined,"./stateful-items":undefined,"./utils":undefined,"_process":5,"spromise":13}],5:[function(require,module,exports){
 // shim for using process in browser
 
 var process = module.exports = {};
@@ -8074,7 +8159,7 @@ function isNullOrUndefined(arg) {
 (function(e,t){typeof require=="function"&&typeof exports=="object"&&typeof module=="object"?module.exports=t():typeof define=="function"&&define.amd?define(t):e.spromise=t()})(this,function(){var e,t;return function(){function i(e){return typeof e.factory=="function"?t(e.deps,e.factory):e.factory}function s(e,t){var n,s,o,u,a=[];for(n=0,s=e.length;n<s;n++){o=e[n],u=r[o]||t[o];if(!u)throw new TypeError("Module "+o+" has not yet been loaded");r[o]?(u.hasOwnProperty("code")||(u.code=i(u)),a[n]=u.code):a[n]=u}return a}var n=this,r={};t=function o(e,t){var i,u,a={};return a.require=o,a.exports={},a.module={exports:a.exports},typeof e=="string"&&(i=e,e=[e]),e.length&&(e=s(e.slice(0),a)),typeof t=="function"?u=t.apply(n,e):u=r[i]?r[i].code:t,u===void 0?a.module.exports:u},e=function(t,n,i){r[t]={name:t,deps:n,factory:i}}}.call(this),e("src/samdy",function(){}),e("src/async",["require","exports","module"],function(e,t,n){function i(e){r(e)}var r;i.delay=function(e,t,n){setTimeout(e.apply.bind(e,this,n||[]),t)},typeof process=="object"&&typeof process.nextTick=="function"?r=process.nextTick:typeof setImmediate=="function"?r=setImmediate:r=function(e){setTimeout(e,0)},i.nextTick=r,n.exports=i}),e("src/promise",["require","exports","module","src/async"],function(e,t,n){function o(e,t){t=t||new u;var n=this;n.then=function(e,n){return t.then(e,n)},n.resolve=function(){return t.transition(i.resolved,arguments,this),n},n.reject=function(){return t.transition(i.rejected,arguments,this),n},n.promise={then:n.then,always:n.always,done:n.done,"catch":n.fail,fail:n.fail,notify:n.notify,state:n.state,constructor:o},n.promise.promise=n.promise,n.then.stateManager=t,e&&e.call(n,n.resolve,n.reject)}function u(e){this.state=i.pending,e&&e.state&&this.transition(e.state,e.value,e.context)}function a(e){this.promise=e.promise}function l(e){c.debug&&(console.error(e),e&&e.stack&&console.log(e.stack))}function c(e){return new o(e)}var r=e("src/async"),i={pending:0,resolved:1,rejected:2,always:3,notify:4},s=["pending","resolved","rejected"];o.prototype.done=function(e){return this.then.stateManager.enqueue(i.resolved,e),this.promise},o.prototype.catch=o.prototype.fail=function(e){return this.then.stateManager.enqueue(i.rejected,e),this.promise},o.prototype.finally=o.prototype.always=function(e){return this.then.stateManager.enqueue(i.always,e),this.promise},o.prototype.notify=function(e){return this.then.stateManager.enqueue(i.notify,e),this.promise},o.prototype.state=function(){return s[this.then.stateManager.state]},o.prototype.isPending=function(){return this.then.stateManager.state===i.pending},o.prototype.isResolved=function(){return this.then.stateManager.state===i.resolved},o.prototype.isRejected=function(){return this.then.stateManager.state===i.resolved},o.prototype.delay=function(t){var n=this;return new o(function(e,i){n.then(function(){r.delay(e.bind(this),t,arguments)},i.bind(this))})},u.prototype.enqueue=function(e,t){function r(){n.state===e||i.always===e?t.apply(n.context,n.value):i.notify===e&&t.call(n.context,n.state,n.value)}this.state?f.asyncTask(r):(this.queue||(this.queue=[])).push(r);var n=this},u.prototype.transition=function(e,t,n){if(this.state)return;this.state=e,this.context=n,this.value=t;var r=this.queue;r&&(this.queue=null,f.asyncQueue(r))},u.prototype.then=function(e,t){var n=this;e=e&&typeof e=="function"?e:null,t=t&&typeof t=="function"?t:null;if(!e&&n.state===i.resolved||!t&&n.state===i.rejected)return new o(null,n);var r=new o;return n.enqueue(i.notify,function(s,o){var f=s===i.resolved?e||t:t||e;f&&(o=u.runHandler(s,o,this,r,f)),o!==!1&&(new a({promise:r})).finalize(s,o,this)}),r},u.runHandler=function(e,t,n,r,i){try{t=i.apply(n,t)}catch(s){return l(s),r.reject.call(n,s),!1}return t===undefined?[]:[t]},a.prototype.finalize=function(e,t,n){var r=this,s=this.promise,u,a;if(t.length){u=t[0];if(u===s)a=s.reject.call(n,new TypeError("Resolution input must not be the promise being resolved"));else if(u&&u.constructor===o)a=u.notify(function(t,n){r.finalize(t,n,this)});else if(u!==undefined&&u!==null)switch(typeof u){case"object":case"function":a=this.runThenable(u,n)}}a||(e===i.resolved?s.resolve.apply(n,t):s.reject.apply(n,t))},a.prototype.runThenable=function(e,t){var n=this,r=!1;try{var s=e.then;if(typeof s=="function")return s.call(e,function(){r||(r=!0,n.finalize(i.resolved,arguments,this))},function(){r||(r=!0,n.promise.reject.apply(this,arguments))}),!0}catch(o){return r||n.promise.reject.call(t,o),!0}return!1};var f={_asyncQueue:[],asyncTask:function(e){f._asyncQueue.push(e)===1&&r(f.taskRunner(f._asyncQueue))},asyncQueue:function(e){e.length===1?f.asyncTask(e[0]):f.asyncTask(f.taskRunner(e))},taskRunner:function(e){return function(){var n;while(n=e[0])f._runTask(n),e.shift()}},_runTask:function(e){try{e()}catch(t){l(t)}}};c.prototype=o.prototype,c.defer=function(){return new o},c.reject=function(){return new o(null,new u({context:this,value:arguments,state:i.rejected}))},c.resolve=c.thenable=function(e){if(e){if(e.constructor===o)return e;if(typeof e.then=="function")return new o(e.then)}return new o(null,new u({context:this,value:arguments,state:i.resolved}))},c.delay=function(t){var n=Array.prototype.slice(arguments,1);return new o(function(e){r.delay(e.bind(this),t,n)})},c.states=i,c.debug=!1,n.exports=c}),e("src/all",["require","exports","module","src/promise","src/async"],function(e,t,n){function s(e,t,n){return typeof e=="function"?e.apply(n,t||[]):e}function o(e){function a(){u--,u||n.resolve.call(o,t)}function f(e){return function(){t[e]=arguments.length===1?arguments[0]:arguments,a()}}function l(){var r,i,o;for(r=0,o=u;r<o;r++)i=e[r],i&&typeof i.then=="function"?i.then(f(r),n.reject):(t[r]=s(i),a())}e=e||[];var t=[],n=r.defer(),o=this,u=e.length;return e.length?(i(l),n):n.resolve(e)}var r=e("src/promise"),i=e("src/async");n.exports=o}),e("src/when",["require","exports","module","src/promise","src/all"],function(e,t,n){function s(){var e=this,t=arguments;return new r(function(n,r){i.call(e,t).then(function(t){n.apply(e,t)},function(t){r.call(e,t)})})}var r=e("src/promise"),i=e("src/all");n.exports=s}),e("src/race",["require","exports","module","src/promise"],function(e,t,n){function i(e){return e?new r(function(t,n){function o(){s||(s=!0,t.apply(this,arguments))}function u(){s||(s=!0,n.apply(this,arguments))}var r,i,s=!1;for(r=0,i=e.length;r<i;r++)e[r].then(o,u)}):r.resolve()}var r=e("src/promise");n.exports=i}),e("src/spromise",["require","exports","module","src/promise","src/async","src/when","src/all","src/race"],function(e,t,n){var r=e("src/promise");r.aync=e("src/async"),r.when=e("src/when"),r.all=e("src/all"),r.race=e("src/race"),n.exports=r}),t("src/spromise")});
 }).call(this,require('_process'))
 },{"_process":5}],14:[function(require,module,exports){
-(function(root) {
+(function() {
   "use strict";
 
   var Fetcher      = require("./fetchxhr"),
@@ -8082,10 +8167,8 @@ function isNullOrUndefined(arg) {
       Require      = require('./require'),
       dependencies = require('./transforms/dependencies'),
       acorn        = require('acorn'),
-      Bitloader    = require('bit-loader'),
-      Utils        = Bitloader.Utils;
-
-  acorn.walk = require('acorn/util/walk');
+      acornWalker  = require('acorn/util/walk'),
+      Bitloader    = require('bit-loader');
 
   var defaultTransform = [{
       name: "deps",
@@ -8101,23 +8184,30 @@ function isNullOrUndefined(arg) {
     transforms : []
   };
 
+
+  /**
+   * @constructor
+   */
   function Bitimports(options) {
     options = options || {};
     options.transforms = (options.transforms || []).concat(defaultTransform);
 
-    this.settings = Utils.merge({}, defaults, options);
+    this.settings = Bitimports.Utils.merge({}, defaults, options);
     this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
+
+    // Expose primary interface for importing/registering modules
     this.import   = this.loader.import;
     this.register = this.loader.register;
 
     // Setup require interface
-    var require  = new Require(this);
-    this.require = require.require.bind(require);
+    var require   = new Require(this);
+    this.require  = require.require.bind(require);
+    this._require = require;
 
     // Setup define interface
-    var define  = new Define(this);
-    this.define = define.define.bind(define);
-    this.define.instance = define;
+    var define   = new Define(this);
+    this.define  = define.define.bind(define);
+    this._define = define;
 
     // Add `amd` for compliance
     this.define.amd = {};
@@ -8125,7 +8215,7 @@ function isNullOrUndefined(arg) {
 
 
   Bitimports.prototype.config = function(options) {
-    Bitloader.Utils.merge(this.settings, options);
+    Bitimports.Utils.merge(this.settings, options);
     return this.factory(options);
   };
 
@@ -8140,7 +8230,15 @@ function isNullOrUndefined(arg) {
       .transform({source: source})
       .then(function(moduleMeta) {
         return moduleMeta.source;
-      }, Bitloader.Utils.forwardError);
+      }, Bitimports.Utils.forwardError);
+  };
+
+
+  Bitimports.prototype.AST = function(source, options) {
+    return {
+      ast: acorn.parse(source, options),
+      walk: acornWalker
+    };
   };
 
 
@@ -8162,56 +8260,60 @@ function isNullOrUndefined(arg) {
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
    */
   function fetchFactory(importer) {
-    return function fetch(loader) {
-      return new Fetcher(loader, importer);
+    return function fetch() {
+      return new Fetcher(importer);
     };
   }
 
-  var options;
-  if (Utils.isPlainObject(root.require || root.requirejs)) {
-    options = root.require || root.requirejs;
-  }
-
-  root.Bitimports = new Bitimports(options);
-  module.exports = Bitimports;
-})(typeof(window) !== 'undefined' ? window : this);
+  module.exports = new Bitimports();
+})();
 
 },{"./define":16,"./fetchxhr":17,"./require":18,"./transforms/dependencies":19,"acorn":1,"acorn/util/walk":2,"bit-loader":4}],15:[function(require,module,exports){
 (function() {
   'user strict';
 
   function compileModuleMeta(fetcher, moduleMeta, parentMeta) {
-    var importer = fetcher.importer,
-        loader   = fetcher.loader;
+    var importer = fetcher.importer;
 
-    return function compile() {
-      var url      = moduleMeta.url.href,
-          logger   = loader.Logger.factory("Bitimporter/Compile"),
-          __module = {exports: {}, url: url, parent: parentMeta};
-
-      logger.log(moduleMeta.name, moduleMeta);
+    function evaluate() {
+      var url     = moduleMeta.url.href;
+      var source  = moduleMeta.source + getSourceUrl(url);
+      var _module = {exports: {}, url: url, meta: moduleMeta, parent: parentMeta};
 
       /* jshint -W061, -W054 */
-      var result = (new Function("System", "define", "require", "module", "exports", "meta", (moduleMeta.source) + getSourceUrl(url)))(importer, importer.define, importer.require, __module, __module.exports, moduleMeta);
+      var execute = new Function("System", "define", "require", "module", "exports", source);
       /* jshint +W061, +W054 */
 
-      var mod = importer.define.instance.compileDefinitions(moduleMeta);
+      var result = execute(importer, importer.define, importer.require, _module, _module.exports);
 
-      // If `compileGlobalDefitions` does not return a module that means there were no calls
-      // to `define`.  So we will build a module from either the return of the execution of
-      // the module factory, or module.exports.
-      if (!mod) {
-        // If `define` was not called, the we will try to assign the result of the function
-        // call to support IEFF, or exports.
-        mod = new loader.Module({
-          type: result ? loader.Module.Type.IEFF : loader.Module.Type.CJS,
-          name: moduleMeta.name,
-          code: result || __module.exports
-        });
+      return {
+        result: result,
+        module: _module
+      };
+    }
+
+    function compile() {
+      var logger = importer.Logger.factory("Bitimporter/Compile");
+      logger.log(moduleMeta.name, moduleMeta);
+
+      // Evaluation will execute the module meta source, which might call `define`.
+      // When that happens, `getDefinitions` will get us the proper module definitions.
+      var evaluated   = evaluate();
+      var definitions = importer._define.getDefinitions(moduleMeta.name);
+
+      if (definitions) {
+        definitions.type = importer.Module.Type.AMD;
+        return new importer.Module(definitions);
       }
 
-      return mod;
-    };
+      // If `define` was not called, the we will try to assign the result of the function
+      // call to support IEFF, or exports.
+      moduleMeta.type = evaluated.result ? importer.Module.Type.IEFF : importer.Module.Type.CJS;
+      moduleMeta.code = evaluated.result || evaluated.module.exports;
+      return new importer.Module(moduleMeta);
+    }
+
+    return compile;
   }
 
   /**
@@ -8231,8 +8333,8 @@ function isNullOrUndefined(arg) {
 
   function Define(importer) {
     this.importer = importer;
-    this.loader   = importer.loader;
   }
+
 
   /**
    * Defines a module to be loaded and consumed by other modules.  Two types of
@@ -8240,7 +8342,7 @@ function isNullOrUndefined(arg) {
    */
   Define.prototype.define = function () {
     var mod     = Define.adapters.apply(this, arguments),
-        context = this.getContext();
+        context = this._getContext();
 
     if (mod.name) {
       // Do no allow modules to override other modules...
@@ -8257,36 +8359,25 @@ function isNullOrUndefined(arg) {
   };
 
 
-  Define.prototype.getContext = function() {
-    return this.context || (this.context = {
-      modules: {},
-      anonymous: []
-    });
-  };
-
-
-  Define.prototype.clearContext = function() {
-    var context = this.context;
-    delete this.context;
-    return context;
-  };
-
-
-  Define.prototype.compileDefinitions = function(moduleMeta) {
-    var context = this.clearContext();
+  /**
+   * Processes the current context making sure that any anonymous module definitions
+   * are properly converted to named defintions when applicable.
+   */
+  Define.prototype.getDefinitions = function(name) {
+    var context = this._clearContext();
 
     // define was never called...
     if (!context) {
-      return mod;
+      return;
     }
 
     var anonymous = context.anonymous,
         modules   = context.modules,
-        mod       = modules[moduleMeta.name];
+        mod       = modules[name];
 
     if (!mod && anonymous.length) {
       mod      = anonymous.shift();
-      mod.name = moduleMeta.name;
+      mod.name = name;
       modules[mod.name] = mod;
     }
 
@@ -8295,6 +8386,29 @@ function isNullOrUndefined(arg) {
     }
 
     return mod;
+  };
+
+
+  /**
+   * @private
+   * Gets the current context.  If it does not exist, one is created.
+   */
+  Define.prototype._getContext = function() {
+    return this.context || (this.context = {
+      modules: {},
+      anonymous: []
+    });
+  };
+
+
+  /**
+   * @private
+   * Deletes and returns the current context.
+   */
+  Define.prototype._clearContext = function() {
+    var context = this.context;
+    delete this.context;
+    return context;
   };
 
 
@@ -8314,24 +8428,20 @@ function isNullOrUndefined(arg) {
 
 
   Define.adapters.create = function (name, deps, factory) {
-    var loader = this.importer.loader;
-
-    var mod = {
-      type: loader.Module.Type.AMD,
+    var moduleMeta = {
       name: name,
       deps: deps
     };
 
     if (typeof(factory) === "function") {
-      mod.factory = factory;
+      moduleMeta.factory = factory;
     }
     else {
-      mod.code = factory;
+      moduleMeta.code = factory;
     }
 
-    return new loader.Module(mod);
+    return moduleMeta;
   };
-
 
 
   /**
@@ -8360,23 +8470,21 @@ function isNullOrUndefined(arg) {
       Resolver       = require('amd-resolver'),
       compileFactory = require('./compile');
 
-  function Fetcher(loader, importer) {
-    var settings     = loader.Utils.merge({}, importer.settings);
+  function Fetcher(importer) {
+    var settings     = importer.Utils.merge({}, importer.settings);
     settings.baseUrl = getBaseUrl(settings.baseUrl);
 
     this.importer = importer;
-    this.loader   = loader;
     this.resolver = new Resolver(settings);
   }
 
 
   Fetcher.prototype.fetch = function(name, parentMeta) {
     var fetcher    = this,
-        cwd        = getWorkingDirectory(parentMeta),
-        moduleMeta = this.resolver.resolve(name, cwd),
+        moduleMeta = this.resolver.resolve(name, getWorkingDirectory(parentMeta)),
         url        = moduleMeta.url.href;
 
-    var logger = this.loader.Logger.factory("Bitimporter/Fetch");
+    var logger = this.importer.Logger.factory("Bitimporter/Fetch");
     logger.log(moduleMeta.name, moduleMeta, url);
 
     return (new Ajax(url)).then(function(source) {
@@ -8439,10 +8547,6 @@ function isNullOrUndefined(arg) {
 var pullDeps = require('pulling-deps/src/index');
 
 function dependencies(moduleMeta) {
-  if (!moduleMeta.hasOwnProperty("source")) {
-     return;
-  }
-
   if (!ignoreModule(moduleMeta, this.ignore)) {
     loadDependencies(moduleMeta, pullDeps(moduleMeta.source, this.options).dependencies);
   }
