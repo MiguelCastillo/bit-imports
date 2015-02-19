@@ -99,8 +99,8 @@
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
    */
   function fetchFactory(importer) {
-    return function fetch() {
-      return new Fetcher(importer);
+    return function fetch(loader) {
+      return new Fetcher(loader, importer);
     };
   }
 

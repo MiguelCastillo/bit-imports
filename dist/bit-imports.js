@@ -4633,7 +4633,7 @@ function isNullOrUndefined(arg) {
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./decode":undefined,"./encode":undefined,"./file":undefined,"./url":undefined,"punycode":6,"querystring":9,"url":10}],4:[function(require,module,exports){
 (function (process,global){
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.bitLoader=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.Bitloader=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /**
  * spromise Copyright (c) 2014 Miguel Castillo.
  * Licensed under MIT
@@ -4792,7 +4792,7 @@ function isNullOrUndefined(arg) {
    *
    * @param {string} name - The name of the module code to get from the module registry
    *
-   * @return {generic} The module code.
+   * @return {object} The module code.
    */
   Bitloader.prototype.getModuleCode = function(name) {
     if (!this.hasModule(name)) {
@@ -4804,14 +4804,13 @@ function isNullOrUndefined(arg) {
 
 
   /**
-   * Sets module code directly in the module registry.
+   * Sets module evaluated code directly in the module registry.
    *
    * @param {string} name - The name of the module, which is used by other modules
    *  that need it as a dependency.
-   * @param {generic} code - The actual code that is returned consuming the module
-   *  as a dependency.
+   * @param {object} code - The evaluated code to be set
    *
-   * @returns {generic} The module code.
+   * @returns {object} The evaluated code.
    */
   Bitloader.prototype.setModuleCode = function(name, code) {
     if (this.hasModule(name)) {
@@ -5693,8 +5692,11 @@ module.exports = new Logger();
 (function() {
   "use strict";
 
-  var Logger = require('../logger'),
-      logger = Logger.factory("Meta/Dependencies");
+  var Promise = require('spromise'),
+      Module  = require('../module'),
+      Utils   = require('../utils'),
+      Logger  = require('../logger'),
+      logger  = Logger.factory("Meta/Dependencies");
 
   /**
    * Loads up all dependencies for the module
@@ -5706,16 +5708,16 @@ module.exports = new Logger();
     logger.log(moduleMeta.name, moduleMeta);
 
     // Return if the module has no dependencies
-    if (!moduleMeta.deps || !moduleMeta.deps.length) {
-      return manager.Promise.resolve(moduleMeta);
+    if (!Module.Meta.hasDependencies(moduleMeta)) {
+      return Promise.resolve(moduleMeta);
     }
 
     var loading = moduleMeta.deps.map(function fetchDependency(mod_name) {
       return manager.providers.loader.fetch(mod_name, moduleMeta);
     });
 
-    return manager.Promise.all(loading)
-      .then(dependenciesFetched, manager.Utils.forwardError);
+    return Promise.all(loading)
+      .then(dependenciesFetched, Utils.forwardError);
 
     function dependenciesFetched() {
       return moduleMeta;
@@ -5725,14 +5727,14 @@ module.exports = new Logger();
   module.exports = MetaDependencies;
 })();
 
-},{"../logger":6}],9:[function(require,module,exports){
+},{"../logger":6,"../module":12,"../utils":17,"spromise":1}],9:[function(require,module,exports){
 (function() {
   "use strict";
 
   var Promise = require('spromise'),
       Module  = require('../module'),
-      Logger  = require('../logger'),
       Utils   = require('../utils'),
+      Logger  = require('../logger'),
       logger  = Logger.factory("Meta/Fetch");
 
   function MetaFetch(manager, name, parentMeta) {
@@ -5750,7 +5752,6 @@ module.exports = new Logger();
       }
 
       moduleMeta.name = name;
-      moduleMeta.manager = manager;
       return moduleMeta;
     }
   }
@@ -5762,7 +5763,8 @@ module.exports = new Logger();
 (function() {
   "use strict";
 
-  var Logger = require('../logger'),
+  var Utils  = require('../utils'),
+      Logger = require('../logger'),
       logger = Logger.factory("Meta/Tranform");
 
   /**
@@ -5774,7 +5776,7 @@ module.exports = new Logger();
     logger.log(moduleMeta.name, moduleMeta);
 
     return manager.transform.runAll(moduleMeta)
-      .then(transformationFinished, manager.Utils.forwardError);
+      .then(transformationFinished, Utils.forwardError);
 
     function transformationFinished() {
       return moduleMeta;
@@ -5784,7 +5786,7 @@ module.exports = new Logger();
   module.exports = MetaTransform;
 })();
 
-},{"../logger":6}],11:[function(require,module,exports){
+},{"../logger":6,"../utils":17}],11:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -6083,24 +6085,29 @@ module.exports = new Logger();
   }
 
 
-  Meta.validate = function(options) {
-    if (!options) {
+  Meta.validate = function(moduleMeta) {
+    if (!moduleMeta) {
       throw new TypeError("Must provide options");
     }
 
-    if (!Meta.isCompiled(options) && !Meta.canCompile(options)) {
+    if (!Meta.isCompiled(moduleMeta) && !Meta.canCompile(moduleMeta)) {
       throw new TypeError("ModuleMeta must provide a `source` string and `compile` interface, or `code`.");
     }
   };
 
 
-  Meta.isCompiled = function(options) {
-    return options.hasOwnProperty("code") || typeof(options.factory) === "function";
+  Meta.hasDependencies = function(moduleMeta) {
+    return moduleMeta.deps && moduleMeta.deps.length;
   };
 
 
-  Meta.canCompile = function(options) {
-    return !Meta.isCompiled(options) && typeof(options.source) === "string" && typeof(options.compile) === "function";
+  Meta.isCompiled = function(moduleMeta) {
+    return moduleMeta.hasOwnProperty("code") || typeof(moduleMeta.factory) === "function";
+  };
+
+
+  Meta.canCompile = function(moduleMeta) {
+    return !Meta.isCompiled(moduleMeta) && typeof(moduleMeta.source) === "string" && typeof(moduleMeta.compile) === "function";
   };
 
 
@@ -8260,8 +8267,8 @@ function isNullOrUndefined(arg) {
    * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
    */
   function fetchFactory(importer) {
-    return function fetch() {
-      return new Fetcher(importer);
+    return function fetch(loader) {
+      return new Fetcher(loader, importer);
     };
   }
 
@@ -8470,11 +8477,12 @@ function isNullOrUndefined(arg) {
       Resolver       = require('amd-resolver'),
       compileFactory = require('./compile');
 
-  function Fetcher(importer) {
+  function Fetcher(loader, importer) {
     var settings     = importer.Utils.merge({}, importer.settings);
     settings.baseUrl = getBaseUrl(settings.baseUrl);
 
     this.importer = importer;
+    this.loader   = loader;
     this.resolver = new Resolver(settings);
   }
 
@@ -8486,6 +8494,9 @@ function isNullOrUndefined(arg) {
 
     var logger = this.importer.Logger.factory("Bitimporter/Fetch");
     logger.log(moduleMeta.name, moduleMeta, url);
+    
+    moduleMeta.loader   = this.loader;
+    moduleMeta.importer = this.importer;
 
     return (new Ajax(url)).then(function(source) {
       moduleMeta.source  = source;
