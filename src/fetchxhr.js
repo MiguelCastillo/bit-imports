@@ -5,11 +5,12 @@
       Resolver       = require('amd-resolver'),
       compileFactory = require('./compile');
 
-  function Fetcher(importer) {
+  function Fetcher(loader, importer) {
     var settings     = importer.Utils.merge({}, importer.settings);
     settings.baseUrl = getBaseUrl(settings.baseUrl);
 
     this.importer = importer;
+    this.loader   = loader;
     this.resolver = new Resolver(settings);
   }
 
@@ -21,6 +22,9 @@
 
     var logger = this.importer.Logger.factory("Bitimporter/Fetch");
     logger.log(moduleMeta.name, moduleMeta, url);
+    
+    moduleMeta.loader   = this.loader;
+    moduleMeta.importer = this.importer;
 
     return (new Ajax(url)).then(function(source) {
       moduleMeta.source  = source;
