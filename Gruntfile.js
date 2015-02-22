@@ -11,7 +11,15 @@ module.exports = function(grunt) {
           hostname: 'localhost'
         }
       },
-      keepalive: {
+      example: {
+        options: {
+          port: 8015,
+          hostname: 'localhost',
+          keepalive: true,
+          open: "http://localhost:8015/example/index.html"
+        }
+      },
+      testkeepalive: {
         options: {
           port: 8010,
           host: "localhost",
@@ -52,7 +60,7 @@ module.exports = function(grunt) {
     },
     concurrent: {
       test: {
-        tasks: ['connect:keepalive', 'watch:test'],
+        tasks: ['connect:testkeepalive', 'watch:test'],
         options: {
           logConcurrentOutput: true
         }
@@ -93,7 +101,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-browserify");
 
   grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build"]);
-  grunt.registerTask("server", ["connect:keepalive"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
+  grunt.registerTask("example", ["connect:example"]);
   grunt.registerTask("livereload", ["concurrent:test"]);
 };

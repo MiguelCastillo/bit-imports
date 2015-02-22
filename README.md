@@ -13,3 +13,7 @@ Currently bit imports implements an XHR fetch provider to load files, and levera
 So why does bit imports even exist?  Bottom line is to eliminate the *build* step during the development cycles required by tools like *browserify* and such. Also to provide you with a module loading system that allows you to leverage tools like [bable](https://github.com/babel/babel) to unlock access to latest ECMAScript features via transpilation, right in the browser. The key part of all this is that bit imports exists to help you during your development cycles, but you are encouraged to *build* your application with browserify when you are ready to deploy.
 
 bit imports also exposes two core methods from bit loader (`register` and `import`), which you can use to expand module loading format support.
+
+## Example
+
+Please see example [here](example)
