@@ -37,3 +37,12 @@ require = (function() {
 ## Modules - [main](main.js) and others in the [js](js) folder
 
 The example loads a combination of `AMD` and `CJS` modules simply to illustrate how both of these module formats can actually coexist. Please take a look at [main.js](main.js) and other modules in the [js](js) folder.
+
+## Running the example
+
+In order to run the example, you need to
+
+```
+npm install
+grunt example
+```
