@@ -89,10 +89,20 @@ module.exports = function(grunt) {
           "dist/bit-imports.min.js": ["dist/bit-imports.js"]
         }
       }
+    },
+    jsdoc : {
+      "build": {
+        src: ['src/**/*.js', 'README.md'],
+        options: {
+          destination: 'doc',
+          verbose: true
+        }
+      }
     }
   });
 
   grunt.loadNpmTasks("grunt-mocha");
+  grunt.loadNpmTasks("grunt-jsdoc");
   grunt.loadNpmTasks("grunt-concurrent");
   grunt.loadNpmTasks('grunt-contrib-uglify');
   grunt.loadNpmTasks("grunt-contrib-connect");
@@ -100,8 +110,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-jshint");
   grunt.loadNpmTasks("grunt-browserify");
 
-  grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build"]);
+  grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build", "jsdoc:build"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
   grunt.registerTask("example", ["connect:example"]);
+  grunt.registerTask("docs", ["jsdoc:build"]);
   grunt.registerTask("livereload", ["concurrent:test"]);
 };
