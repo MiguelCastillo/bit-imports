@@ -8166,393 +8166,595 @@ function isNullOrUndefined(arg) {
 (function(e,t){typeof require=="function"&&typeof exports=="object"&&typeof module=="object"?module.exports=t():typeof define=="function"&&define.amd?define(t):e.spromise=t()})(this,function(){var e,t;return function(){function i(e){return typeof e.factory=="function"?t(e.deps,e.factory):e.factory}function s(e,t){var n,s,o,u,a=[];for(n=0,s=e.length;n<s;n++){o=e[n],u=r[o]||t[o];if(!u)throw new TypeError("Module "+o+" has not yet been loaded");r[o]?(u.hasOwnProperty("code")||(u.code=i(u)),a[n]=u.code):a[n]=u}return a}var n=this,r={};t=function o(e,t){var i,u,a={};return a.require=o,a.exports={},a.module={exports:a.exports},typeof e=="string"&&(i=e,e=[e]),e.length&&(e=s(e.slice(0),a)),typeof t=="function"?u=t.apply(n,e):u=r[i]?r[i].code:t,u===void 0?a.module.exports:u},e=function(t,n,i){r[t]={name:t,deps:n,factory:i}}}.call(this),e("src/samdy",function(){}),e("src/async",["require","exports","module"],function(e,t,n){function i(e){r(e)}var r;i.delay=function(e,t,n){setTimeout(e.apply.bind(e,this,n||[]),t)},typeof process=="object"&&typeof process.nextTick=="function"?r=process.nextTick:typeof setImmediate=="function"?r=setImmediate:r=function(e){setTimeout(e,0)},i.nextTick=r,n.exports=i}),e("src/promise",["require","exports","module","src/async"],function(e,t,n){function o(e,t){t=t||new u;var n=this;n.then=function(e,n){return t.then(e,n)},n.resolve=function(){return t.transition(i.resolved,arguments,this),n},n.reject=function(){return t.transition(i.rejected,arguments,this),n},n.promise={then:n.then,always:n.always,done:n.done,"catch":n.fail,fail:n.fail,notify:n.notify,state:n.state,constructor:o},n.promise.promise=n.promise,n.then.stateManager=t,e&&e.call(n,n.resolve,n.reject)}function u(e){this.state=i.pending,e&&e.state&&this.transition(e.state,e.value,e.context)}function a(e){this.promise=e.promise}function l(e){c.debug&&(console.error(e),e&&e.stack&&console.log(e.stack))}function c(e){return new o(e)}var r=e("src/async"),i={pending:0,resolved:1,rejected:2,always:3,notify:4},s=["pending","resolved","rejected"];o.prototype.done=function(e){return this.then.stateManager.enqueue(i.resolved,e),this.promise},o.prototype.catch=o.prototype.fail=function(e){return this.then.stateManager.enqueue(i.rejected,e),this.promise},o.prototype.finally=o.prototype.always=function(e){return this.then.stateManager.enqueue(i.always,e),this.promise},o.prototype.notify=function(e){return this.then.stateManager.enqueue(i.notify,e),this.promise},o.prototype.state=function(){return s[this.then.stateManager.state]},o.prototype.isPending=function(){return this.then.stateManager.state===i.pending},o.prototype.isResolved=function(){return this.then.stateManager.state===i.resolved},o.prototype.isRejected=function(){return this.then.stateManager.state===i.resolved},o.prototype.delay=function(t){var n=this;return new o(function(e,i){n.then(function(){r.delay(e.bind(this),t,arguments)},i.bind(this))})},u.prototype.enqueue=function(e,t){function r(){n.state===e||i.always===e?t.apply(n.context,n.value):i.notify===e&&t.call(n.context,n.state,n.value)}this.state?f.asyncTask(r):(this.queue||(this.queue=[])).push(r);var n=this},u.prototype.transition=function(e,t,n){if(this.state)return;this.state=e,this.context=n,this.value=t;var r=this.queue;r&&(this.queue=null,f.asyncQueue(r))},u.prototype.then=function(e,t){var n=this;e=e&&typeof e=="function"?e:null,t=t&&typeof t=="function"?t:null;if(!e&&n.state===i.resolved||!t&&n.state===i.rejected)return new o(null,n);var r=new o;return n.enqueue(i.notify,function(s,o){var f=s===i.resolved?e||t:t||e;f&&(o=u.runHandler(s,o,this,r,f)),o!==!1&&(new a({promise:r})).finalize(s,o,this)}),r},u.runHandler=function(e,t,n,r,i){try{t=i.apply(n,t)}catch(s){return l(s),r.reject.call(n,s),!1}return t===undefined?[]:[t]},a.prototype.finalize=function(e,t,n){var r=this,s=this.promise,u,a;if(t.length){u=t[0];if(u===s)a=s.reject.call(n,new TypeError("Resolution input must not be the promise being resolved"));else if(u&&u.constructor===o)a=u.notify(function(t,n){r.finalize(t,n,this)});else if(u!==undefined&&u!==null)switch(typeof u){case"object":case"function":a=this.runThenable(u,n)}}a||(e===i.resolved?s.resolve.apply(n,t):s.reject.apply(n,t))},a.prototype.runThenable=function(e,t){var n=this,r=!1;try{var s=e.then;if(typeof s=="function")return s.call(e,function(){r||(r=!0,n.finalize(i.resolved,arguments,this))},function(){r||(r=!0,n.promise.reject.apply(this,arguments))}),!0}catch(o){return r||n.promise.reject.call(t,o),!0}return!1};var f={_asyncQueue:[],asyncTask:function(e){f._asyncQueue.push(e)===1&&r(f.taskRunner(f._asyncQueue))},asyncQueue:function(e){e.length===1?f.asyncTask(e[0]):f.asyncTask(f.taskRunner(e))},taskRunner:function(e){return function(){var n;while(n=e[0])f._runTask(n),e.shift()}},_runTask:function(e){try{e()}catch(t){l(t)}}};c.prototype=o.prototype,c.defer=function(){return new o},c.reject=function(){return new o(null,new u({context:this,value:arguments,state:i.rejected}))},c.resolve=c.thenable=function(e){if(e){if(e.constructor===o)return e;if(typeof e.then=="function")return new o(e.then)}return new o(null,new u({context:this,value:arguments,state:i.resolved}))},c.delay=function(t){var n=Array.prototype.slice(arguments,1);return new o(function(e){r.delay(e.bind(this),t,n)})},c.states=i,c.debug=!1,n.exports=c}),e("src/all",["require","exports","module","src/promise","src/async"],function(e,t,n){function s(e,t,n){return typeof e=="function"?e.apply(n,t||[]):e}function o(e){function a(){u--,u||n.resolve.call(o,t)}function f(e){return function(){t[e]=arguments.length===1?arguments[0]:arguments,a()}}function l(){var r,i,o;for(r=0,o=u;r<o;r++)i=e[r],i&&typeof i.then=="function"?i.then(f(r),n.reject):(t[r]=s(i),a())}e=e||[];var t=[],n=r.defer(),o=this,u=e.length;return e.length?(i(l),n):n.resolve(e)}var r=e("src/promise"),i=e("src/async");n.exports=o}),e("src/when",["require","exports","module","src/promise","src/all"],function(e,t,n){function s(){var e=this,t=arguments;return new r(function(n,r){i.call(e,t).then(function(t){n.apply(e,t)},function(t){r.call(e,t)})})}var r=e("src/promise"),i=e("src/all");n.exports=s}),e("src/race",["require","exports","module","src/promise"],function(e,t,n){function i(e){return e?new r(function(t,n){function o(){s||(s=!0,t.apply(this,arguments))}function u(){s||(s=!0,n.apply(this,arguments))}var r,i,s=!1;for(r=0,i=e.length;r<i;r++)e[r].then(o,u)}):r.resolve()}var r=e("src/promise");n.exports=i}),e("src/spromise",["require","exports","module","src/promise","src/async","src/when","src/all","src/race"],function(e,t,n){var r=e("src/promise");r.aync=e("src/async"),r.when=e("src/when"),r.all=e("src/all"),r.race=e("src/race"),n.exports=r}),t("src/spromise")});
 }).call(this,require('_process'))
 },{"_process":5}],14:[function(require,module,exports){
-(function() {
-  "use strict";
-
-  var Fetcher      = require("./fetchxhr"),
-      Define       = require('./define'),
-      Require      = require('./require'),
-      dependencies = require('./transforms/dependencies'),
-      acorn        = require('acorn'),
-      acornWalker  = require('acorn/util/walk'),
-      Bitloader    = require('bit-loader');
-
-  var defaultTransform = [{
-      name: "deps",
-      handler: dependencies
-    }];
-
-  var defaults = {
-    baseUrl    : "",
-    paths      : {},
-    shim       : {},
-    deps       : [],
-    packages   : [],
-    transforms : []
-  };
+var Fetcher      = require("./fetchxhr"),
+    Define       = require('./define'),
+    Require      = require('./require'),
+    dependencies = require('./transforms/dependencies'),
+    acorn        = require('acorn'),
+    acornWalker  = require('acorn/util/walk'),
+    Bitloader    = require('bit-loader');
 
 
-  /**
-   * @constructor
-   */
-  function Bitimports(options) {
-    options = options || {};
-    options.transforms = (options.transforms || []).concat(defaultTransform);
-
-    this.settings = Bitimports.Utils.merge({}, defaults, options);
-    this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
-
-    // Expose primary interface for importing/registering modules
-    this.import   = this.loader.import;
-    this.register = this.loader.register;
-
-    // Setup require interface
-    var require   = new Require(this);
-    this.require  = require.require.bind(require);
-    this._require = require;
-
-    // Setup define interface
-    var define   = new Define(this);
-    this.define  = define.define.bind(define);
-    this._define = define;
-
-    // Add `amd` for compliance
-    this.define.amd = {};
-  }
+var defaultTransform = [{
+    name: "deps",
+    handler: dependencies
+  }];
 
 
-  Bitimports.prototype.config = function(options) {
-    Bitimports.Utils.merge(this.settings, options);
-    return this.factory(options);
-  };
+var defaults = {
+  baseUrl    : "",
+  paths      : {},
+  shim       : {},
+  deps       : [],
+  packages   : [],
+  transforms : []
+};
 
 
-  Bitimports.prototype.factory = function(options) {
-    return new Bitimports(options);
-  };
+/**
+ * Bitimports is a facade that exposes an interface for module management.
+ * It exposes methods like `require`, `define`, `import`, and `register` to
+ * provide a comprehensive system for loading modules synchronously and
+ * asynchronously in `AMD` and `CJS` module formats.
+ *
+ * In the browser, the primary way of loading bit imports into the host
+ * application is via script tag, in which case it is exported to the global
+ * object as `Bitimports`. `Bitimports` is already a fully functioning instance
+ * that you generally configure to teach it how your application is structured.
+ * bit imports is `UMD` compliant, so feel free to load it via `AMD` or `CJS`.
+ * The goal of the configuration step is to help you make your code simple and
+ * readable when importing and exporting modules.
+ *
+ * @class
+ * @classdesc Bitimports is a facade that exposes an interface for module
+ *  management.
+ *
+ * @param {Object} options - Configuration settings to create bit imports
+ *  instance.
+ *  Please take a look over at [amd resolver]{@link https://github.com/MiguelCastillo/amd-resolver}
+ *  for details on the options.
+ * @param {string} options.baseUrl - Is the root URL that all modules are
+ *  relative to.
+ * @param {Object} options.paths - Is a map of module names to module locations
+ *  This really useful for setting up module names that are more legible and
+ *  easier to maintain.
+ * @param {Array.<string|Function|Object>} options.transforms[] - Collection of
+ *  transforms to be applied to module meta sources.
+ * @param {string} options.transforms[] - Transform to be loaded as a named
+ *  module.
+ * @param {Function} options.transforms[] - Anonymous transformation that
+ *  transforms module meta source.
+ * @param {Object} options.transforms[] - More specific transform configuration
+ *  where either a name or handler function must be provided.
+ * @param {string} options.transforms[].name - If item.handler isn't present,
+ *  then bit imports will load the transform as a module. Otherwise, it is
+ *  pretty much only used for logging purposes.
+ * @param {Function} options.transforms[].handler - If item.name isn't present,
+ *  then the handler is considered an anonymous transform, otherwise it is
+ *  considered a named transformed. Named transforms are very useful when
+ *  debugging because transforms' names are logged
+ *
+ */
+function Bitimports(options) {
+  options = options || {};
+  options.transforms = (options.transforms || []).concat(defaultTransform);
 
-
-  Bitimports.prototype.transform = function(source) {
-    return this.loader.providers.loader
-      .transform({source: source})
-      .then(function(moduleMeta) {
-        return moduleMeta.source;
-      }, Bitimports.Utils.forwardError);
-  };
-
-
-  Bitimports.prototype.AST = function(source, options) {
-    return {
-      ast: acorn.parse(source, options),
-      walk: acornWalker
-    };
-  };
+  this.settings = Bitimports.Utils.merge({}, defaults, options);
+  this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
+  this._require = new Require(this);
+  this._define  = new Define(this);
 
 
   /**
-   * Copy a few things over to make things a bit more accessible.
+   * Method to asynchronously load modules
+   *
+   * @param {string|Array.<string>} names - Module or list of modules names to
+   *  load. These names map back to the paths settings Bitimports was created
+   *  with.
+   *
+   * @returns {Promise} That when resolved, all the imported modules are passed
+   *  back as arguments.
+   *
+   * @function
    */
-  Bitimports.prototype.Promise = Bitloader.Promise;
-  Bitimports.prototype.Module  = Bitloader.Module;
-  Bitimports.prototype.Logger  = Bitloader.Logger;
-  Bitimports.prototype.Utils   = Bitloader.Utils;
-
-  Bitimports.Promise = Bitloader.Promise;
-  Bitimports.Module  = Bitloader.Module;
-  Bitimports.Logger  = Bitloader.Logger;
-  Bitimports.Utils   = Bitloader.Utils;
+  this.import = this.loader.import;
 
 
   /**
-   * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
+   * Method to define a module to be asynchronously loaded via the
+   * [import]{@link Bitimports#import} method
+   *
+   * @param {string} name - Name of the module to register
+   * @param {Array.<string>} deps - Collection of dependencies to be loaded and
+   *  passed into the factory callback method.
+   * @param {Function} factory - Function to be called in order to instantiate
+   *  (realize) the module
+   *
+   * @function
    */
-  function fetchFactory(importer) {
-    return function fetch(loader) {
-      return new Fetcher(loader, importer);
-    };
-  }
+  this.register = this.loader.register;
 
-  module.exports = new Bitimports();
-})();
+
+  /**
+   * Method to get modules.
+   *
+   * @param {string | Array.<string>} names - module name(s) to be loaded. When
+   *  array is provided, the ready callback is always called to get the
+   *  resulting modules.
+   * @param {Function} ready - Callback function, which is called when the
+   *  module(s) are loaded and ready for the application to consume.
+   * @param {Object} options - Configuration settings specific to the
+   *  [require]{@link Bitimports#require} call. For example, you can specify a
+   *  `modules` map to tell bit imports to use those modules before loading
+   *  them from storage or cache.
+   *  This is particularly useful for unit tests where dependency injection of
+   *  mocked modules is needed.
+   *
+   * @returns {Promise|Module} When `require` is called with a single string and
+   *  the module has already been loaded, then the actual module is returned.
+   *  This is to follow `CJS` module format. If more than one module is
+   *  `require`d, then a Promise is returned that when resolved, all the
+   *  `require`d modules are passed in.
+   *
+   * @function
+   */
+  this.require = this._require.require.bind(this._require);
+
+
+  /**
+   * Method to define a Module using AMD format, which can be dynamically
+   * imported.
+   *
+   * @param {string} [name] - is the name of the module to define. If no name
+   *  is present, then the last anonymous `define` is coerced to be the named
+   *  module definition. An anonymous module is one with no name.
+   * @param {Array.<string>} [dependencies] - list of module names to be loaded
+   *  before the module definition is processed and executed (evaluated).
+   * @param {*} factory - When factory is a function, it is called when the
+   *  module is executed (evaluated) to define the module code. Whatever is
+   *  returned from calling factory becomes the actual module code that's
+   *  returned when the module is imported.
+   *  When dependencies are defined, those are passed to factory as arguments.
+   *  If factory is not a function, then that is the actual module code that is
+   *  returned when the module is imported.
+   *
+   * @function
+   */
+  this.define = this._define.define.bind(this._define);
+
+  // Add `amd` for compliance
+  this.define.amd = {};
+}
+
+
+/**
+ * Method to configure an instance of bit imports.
+ *
+ * config applies configuration settings to the particular instance of bit
+ * imports. It will also create and return a new instance of bit imports with
+ * the configuration settings passed in. The config method is generally your
+ * primary way of configuring bit imports.
+ *
+ * @param {Object} [options] - Configuration settings used for creating the
+ *  instance of bit imports.
+ *
+ * @see [imports settings]{@link Bitimports} for more details.
+ *
+ * @returns {Bitimports} Instance of bit imports
+ *
+ */
+Bitimports.prototype.config = function(options) {
+  Bitimports.Utils.merge(this.settings, options);
+  return this.factory(options);
+};
+
+
+/**
+ * Method that creates bit import instances. Options is the same as
+ * [config]{@link Bitimports#config}, so please refer to that for details.
+ *
+ * @param {Object} options - Configuration settings used for creating the
+ *  instance of bit imports.
+ *
+ * @see [imports settings]{@link Bitimports} for more details.
+ *
+ * @returns {Bitimports} Instance of bit imports
+ */
+Bitimports.prototype.factory = function(options) {
+  return new Bitimports(options);
+};
+
+
+/**
+ * Convenience method to run the input string through the transformation
+ * workflow
+ *
+ * @param {string} source - Source string to be processed by the transformation
+ *  workflow.
+ *
+ * @returns {Promise} That when resolved, the processed text is returned.
+ */
+Bitimports.prototype.transform = function(source) {
+  return this.loader.providers.loader
+    .transform({source: source})
+    .then(function(moduleMeta) {
+      return moduleMeta.source;
+    }, Bitimports.Utils.forwardError);
+};
+
+
+/**
+ * Convenience method to create an AST (Abstract Syntax Tree) from the input
+ * source string. The ast is built with [acorn]{@link http://marijnhaverbeke.nl/acorn/},
+ * so please feel free to check it out for details on how it works and its
+ * options.
+ *
+ * @param {string} source - Source string to create the AST from.
+ * @param {Object} options - Configuration settings passed directly into acorn.
+ *  Please refer to [acorn]{@link http://marijnhaverbeke.nl/acorn/} for all
+ *  valid options.
+ *
+ * @returns {{ast: Object, walk: Function}} Object with built ast and a helper
+ *  function called walk, which is provider by acorn to help in the tree
+ *  traversal process.
+ */
+Bitimports.prototype.AST = function(source, options) {
+  return {
+    ast: acorn.parse(source, options),
+    walk: acornWalker
+  };
+};
+
+
+/*
+ * Copy a few things over to make things a bit more accessible.
+ */
+Bitimports.prototype.Promise = Bitloader.Promise;
+Bitimports.prototype.Module  = Bitloader.Module;
+Bitimports.prototype.Logger  = Bitloader.Logger;
+Bitimports.prototype.Utils   = Bitloader.Utils;
+
+Bitimports.Promise = Bitloader.Promise;
+Bitimports.Module  = Bitloader.Module;
+Bitimports.Logger  = Bitloader.Logger;
+Bitimports.Utils   = Bitloader.Utils;
+
+
+/*
+ * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
+ */
+function fetchFactory(importer) {
+  return function fetch(loader) {
+    return new Fetcher(loader, importer);
+  };
+}
+
+module.exports = new Bitimports();
 
 },{"./define":16,"./fetchxhr":17,"./require":18,"./transforms/dependencies":19,"acorn":1,"acorn/util/walk":2,"bit-loader":4}],15:[function(require,module,exports){
-(function() {
-  'user strict';
+/**
+ * @class
+ *
+ * Factory to create `compile` method to be used by module meta objects to
+ * compile themselves into module instances.
+ *
+ * @param {Fetcher} fetcher - Instance of fetcher that gives us access to the
+ *  importer/loader environment.
+ * @param {Object} moduleMeta - Module meta object to be compiled whe the
+ *  compile method is called.
+ * @param {Object} parentMeta - Parent module meta object to establish a
+ *  hierarchy of modules requesting other modules.
+ *
+ * @returns {Function} Method that compiles the module meta object passed in.
+ */
+function Compile(fetcher, moduleMeta, parentMeta) {
+  var importer = fetcher.importer;
 
-  function compileModuleMeta(fetcher, moduleMeta, parentMeta) {
-    var importer = fetcher.importer;
+  /**
+   * Method that evaluates the module meta source
+   *
+   * @private
+   */
+  function evaluate() {
+    var url     = moduleMeta.url.href;
+    var source  = moduleMeta.source + getSourceUrl(url);
+    var _module = {exports: {}, url: url, meta: moduleMeta, parent: parentMeta};
 
-    function evaluate() {
-      var url     = moduleMeta.url.href;
-      var source  = moduleMeta.source + getSourceUrl(url);
-      var _module = {exports: {}, url: url, meta: moduleMeta, parent: parentMeta};
+    /* jshint -W061, -W054 */
+    var execute = new Function("System", "define", "require", "module", "exports", source);
+    /* jshint +W061, +W054 */
 
-      /* jshint -W061, -W054 */
-      var execute = new Function("System", "define", "require", "module", "exports", source);
-      /* jshint +W061, +W054 */
+    var result = execute(importer, importer.define, importer.require, _module, _module.exports);
 
-      var result = execute(importer, importer.define, importer.require, _module, _module.exports);
-
-      return {
-        result: result,
-        module: _module
-      };
-    }
-
-    function compile() {
-      var logger = importer.Logger.factory("Bitimporter/Compile");
-      logger.log(moduleMeta.name, moduleMeta);
-
-      // Evaluation will execute the module meta source, which might call `define`.
-      // When that happens, `getDefinitions` will get us the proper module definitions.
-      var evaluated   = evaluate();
-      var definitions = importer._define.getDefinitions(moduleMeta.name);
-
-      if (definitions) {
-        definitions.type = importer.Module.Type.AMD;
-        return new importer.Module(definitions);
-      }
-
-      // If `define` was not called, the we will try to assign the result of the function
-      // call to support IEFF, or exports.
-      moduleMeta.type = evaluated.result ? importer.Module.Type.IEFF : importer.Module.Type.CJS;
-      moduleMeta.code = evaluated.result || evaluated.module.exports;
-      return new importer.Module(moduleMeta);
-    }
-
-    return compile;
+    return {
+      result: result,
+      module: _module
+    };
   }
 
   /**
-   * Builds a `//# sourceURL` string from the provided URL.
+   * Method that executes a module meta object in order to generate a final Module product.
+   * It does it by first evaluating the module meta source, then collecting any `AMD` define
+   * calls, then figuring out what type of Module is created.
+   *
+   * @returns {Module}
    */
-  function getSourceUrl(url) {
-    return "\n//# sourceURL=" + url;
+  function compile() {
+    var logger = importer.Logger.factory("Bitimporter/Compile");
+    logger.log(moduleMeta.name, moduleMeta);
+
+    // Evaluation will execute the module meta source, which might call `define`.
+    // When that happens, `getDefinitions` will get us the proper module definitions.
+    var evaluated   = evaluate();
+    var definitions = importer._define.getDefinitions(moduleMeta.name);
+
+    if (definitions) {
+      definitions.type = importer.Module.Type.AMD;
+      return new importer.Module(definitions);
+    }
+
+    // If `define` was not called, the we will try to assign the result of the function
+    // call to support IEFF, or exports.
+    moduleMeta.type = evaluated.result ? importer.Module.Type.IEFF : importer.Module.Type.CJS;
+    moduleMeta.code = evaluated.result || evaluated.module.exports;
+    return new importer.Module(moduleMeta);
   }
 
+  return compile;
+}
 
-  module.exports = compileModuleMeta;
-})();
+/*
+ * Builds a `# sourceURL` string from the URL.
+ *
+ * @private
+ */
+function getSourceUrl(url) {
+  return "\n//# sourceURL=" + url;
+}
+
+
+module.exports = Compile;
 
 },{}],16:[function(require,module,exports){
-(function() {
-  "use strict";
+/**
+ * @class
+ * Interface for AMD modules `define`. It handles anonymous and named module definitions
+ * with a variatery of `define` signatures.
+ */
+function Define(importer) {
+  this.importer = importer;
+}
 
-  function Define(importer) {
-    this.importer = importer;
+
+/**
+ * Defines a module to be loaded and consumed by other modules.  Two types of
+ * modules come through here, named and anonymous.
+ */
+Define.prototype.define = function () {
+  var mod     = Define.adapters.apply(this, arguments),
+      context = this._getContext();
+
+  if (mod.name) {
+    // Do no allow modules to override other modules...
+    if (context.modules.hasOwnProperty(mod.name)) {
+      throw new Error("Module " + mod.name + " is already defined");
+    }
+    else {
+      context.modules[mod.name] = mod;
+    }
+  }
+  else {
+    context.anonymous.push(mod);
+  }
+};
+
+
+/**
+ * Processes the current context making sure that any anonymous module definitions
+ * are properly converted to named defintions when applicable.
+ */
+Define.prototype.getDefinitions = function(name) {
+  var context = this._clearContext();
+
+  // define was never called...
+  if (!context) {
+    return;
   }
 
+  var anonymous = context.anonymous,
+      modules   = context.modules,
+      mod       = modules[name];
 
-  /**
-   * Defines a module to be loaded and consumed by other modules.  Two types of
-   * modules come through here, named and anonymous.
-   */
-  Define.prototype.define = function () {
-    var mod     = Define.adapters.apply(this, arguments),
-        context = this._getContext();
+  if (!mod && anonymous.length) {
+    mod      = anonymous.shift();
+    mod.name = name;
+    modules[mod.name] = mod;
+  }
 
-    if (mod.name) {
-      // Do no allow modules to override other modules...
-      if (context.modules.hasOwnProperty(mod.name)) {
-        throw new Error("Module " + mod.name + " is already defined");
-      }
-      else {
-        context.modules[mod.name] = mod;
-      }
-    }
-    else {
-      context.anonymous.push(mod);
-    }
+  if (mod) {
+    mod.modules = modules;
+  }
+
+  return mod;
+};
+
+
+/**
+ * Gets the current context.  If it does not exist, one is created.
+ *
+ * @private
+ */
+Define.prototype._getContext = function() {
+  return this.context || (this.context = {
+    modules: {},
+    anonymous: []
+  });
+};
+
+
+/**
+ * Deletes and returns the current context.
+ *
+ * @private
+ */
+Define.prototype._clearContext = function() {
+  var context = this.context;
+  delete this.context;
+  return context;
+};
+
+
+/**
+ * Adapter interfaces to define modules
+ *
+ * @private
+ */
+Define.adapters = function (name, deps, factory) {
+  var signature = ["", typeof name, typeof deps, typeof factory].join("/");
+  var adapter   = Define.adapters[signature];
+
+  if (!adapter) {
+    throw new TypeError("Module define signature isn't valid: " + signature);
+  }
+
+  return adapter.apply(this, arguments);
+};
+
+
+/*
+ * Creates an object with relevant information from a `define` call
+ */
+Define.adapters.create = function (name, deps, factory) {
+  var moduleMeta = {
+    name: name,
+    deps: deps
   };
 
+  if (typeof(factory) === "function") {
+    moduleMeta.factory = factory;
+  }
+  else {
+    moduleMeta.code = factory;
+  }
 
-  /**
-   * Processes the current context making sure that any anonymous module definitions
-   * are properly converted to named defintions when applicable.
-   */
-  Define.prototype.getDefinitions = function(name) {
-    var context = this._clearContext();
-
-    // define was never called...
-    if (!context) {
-      return;
-    }
-
-    var anonymous = context.anonymous,
-        modules   = context.modules,
-        mod       = modules[name];
-
-    if (!mod && anonymous.length) {
-      mod      = anonymous.shift();
-      mod.name = name;
-      modules[mod.name] = mod;
-    }
-
-    if (mod) {
-      mod.modules = modules;
-    }
-
-    return mod;
-  };
+  return moduleMeta;
+};
 
 
-  /**
-   * @private
-   * Gets the current context.  If it does not exist, one is created.
-   */
-  Define.prototype._getContext = function() {
-    return this.context || (this.context = {
-      modules: {},
-      anonymous: []
-    });
-  };
+/*
+ * This is a table for quickly detecting the signature that `define` was called
+ * with.  This is just a much more direct execution path than building blocks
+ * of if statements.
+ */
+Define.adapters["/string/object/function"]        = function (name, deps, factory) { return Define.adapters.create.call(this, name, deps, factory); };
+Define.adapters["/string/function/undefined"]     = function (name, factory)       { return Define.adapters.create.call(this, name, [], factory); };
+Define.adapters["/object/function/undefined"]     = function (deps, factory)       { return Define.adapters.create.call(this, undefined, deps, factory); };
+Define.adapters["/object/undefined/undefined"]    = function (data)                { return Define.adapters.create.call(this, undefined, [], data); };
+Define.adapters["/string/object/undefined"]       = Define.adapters["/string/function/undefined"];
+Define.adapters["/function/undefined/undefined"]  = Define.adapters["/object/undefined/undefined"];
+Define.adapters["/string/undefined/undefined"]    = Define.adapters["/object/undefined/undefined"];
+Define.adapters["/number/undefined/undefined"]    = Define.adapters["/object/undefined/undefined"];
+Define.adapters["/undefined/undefined/undefined"] = Define.adapters["/object/undefined/undefined"];
 
-
-  /**
-   * @private
-   * Deletes and returns the current context.
-   */
-  Define.prototype._clearContext = function() {
-    var context = this.context;
-    delete this.context;
-    return context;
-  };
-
-
-  /**
-   * Adapter interfaces to define modules
-   */
-  Define.adapters = function (name, deps, factory) {
-    var signature = ["", typeof name, typeof deps, typeof factory].join("/");
-    var adapter   = Define.adapters[signature];
-
-    if (!adapter) {
-      throw new TypeError("Module define signature isn't valid: " + signature);
-    }
-
-    return adapter.apply(this, arguments);
-  };
-
-
-  Define.adapters.create = function (name, deps, factory) {
-    var moduleMeta = {
-      name: name,
-      deps: deps
-    };
-
-    if (typeof(factory) === "function") {
-      moduleMeta.factory = factory;
-    }
-    else {
-      moduleMeta.code = factory;
-    }
-
-    return moduleMeta;
-  };
-
-
-  /**
-   * This is a table for quickly detecting the signature that `define` was called
-   * with.  This is just a much more direct execution path than building blocks
-   * of if statements.
-   */
-  Define.adapters["/string/object/function"]        = function (name, deps, factory) { return Define.adapters.create.call(this, name, deps, factory); };
-  Define.adapters["/string/function/undefined"]     = function (name, factory)       { return Define.adapters.create.call(this, name, [], factory); };
-  Define.adapters["/object/function/undefined"]     = function (deps, factory)       { return Define.adapters.create.call(this, undefined, deps, factory); };
-  Define.adapters["/object/undefined/undefined"]    = function (data)                { return Define.adapters.create.call(this, undefined, [], data); };
-  Define.adapters["/string/object/undefined"]       = Define.adapters["/string/function/undefined"];
-  Define.adapters["/function/undefined/undefined"]  = Define.adapters["/object/undefined/undefined"];
-  Define.adapters["/string/undefined/undefined"]    = Define.adapters["/object/undefined/undefined"];
-  Define.adapters["/number/undefined/undefined"]    = Define.adapters["/object/undefined/undefined"];
-  Define.adapters["/undefined/undefined/undefined"] = Define.adapters["/object/undefined/undefined"];
-
-  module.exports = Define;
-})();
+module.exports = Define;
 
 },{}],17:[function(require,module,exports){
-(function() {
-  "use strict";
+var Ajax           = require('promjax'),
+    Resolver       = require('amd-resolver'),
+    compileFactory = require('./compile');
 
-  var Ajax           = require('promjax'),
-      Resolver       = require('amd-resolver'),
-      compileFactory = require('./compile');
+/**
+ * @class
+ * XHR fetch provider to load source files from storage
+ */
+function Fetcher(loader, importer) {
+  var settings     = importer.Utils.merge({}, importer.settings);
+  settings.baseUrl = getBaseUrl(settings.baseUrl);
 
-  function Fetcher(loader, importer) {
-    var settings     = importer.Utils.merge({}, importer.settings);
-    settings.baseUrl = getBaseUrl(settings.baseUrl);
-
-    this.importer = importer;
-    this.loader   = loader;
-    this.resolver = new Resolver(settings);
-  }
-
-
-  Fetcher.prototype.fetch = function(name, parentMeta) {
-    var fetcher    = this,
-        moduleMeta = this.resolver.resolve(name, getWorkingDirectory(parentMeta)),
-        url        = moduleMeta.url.href;
-
-    var logger = this.importer.Logger.factory("Bitimporter/Fetch");
-    logger.log(moduleMeta.name, moduleMeta, url);
-    
-    moduleMeta.loader   = this.loader;
-    moduleMeta.importer = this.importer;
-
-    return (new Ajax(url)).then(function(source) {
-      moduleMeta.source  = source;
-      moduleMeta.compile = compileFactory(fetcher, moduleMeta, parentMeta);
-      return moduleMeta;
-    });
-  };
+  this.importer = importer;
+  this.loader   = loader;
+  this.resolver = new Resolver(settings);
+}
 
 
-  /**
-   * This will adjust the baseUrl in the settings so that requests get the absolute
-   * url so that browsers can better handle `# sourceURL`.  In chrome for example,
-   * the files are added to the developer tools' source tree, which let's you put
-   * break points directly from the developer tools.
-   */
-  function getBaseUrl(url) {
-    return Resolver.URL.parser.resolve(window.location.href, url || "");
-  }
+/**
+ * Reads file via XHR from storage
+ */
+Fetcher.prototype.fetch = function(name, parentMeta) {
+  var fetcher    = this,
+      moduleMeta = this.resolver.resolve(name, getWorkingDirectory(parentMeta)),
+      url        = moduleMeta.url.href;
 
-  /**
-   * Gets the url form the module data if it exists.
-   */
-  function getWorkingDirectory(moduleMeta) {
-    return moduleMeta && moduleMeta.url ? moduleMeta.url.href : "";
-  }
+  var logger = this.importer.Logger.factory("Bitimporter/Fetch");
+  logger.log(moduleMeta.name, moduleMeta, url);
+
+  moduleMeta.loader   = this.loader;
+  moduleMeta.importer = this.importer;
+
+  return (new Ajax(url)).then(function(source) {
+    moduleMeta.source  = source;
+    moduleMeta.compile = compileFactory(fetcher, moduleMeta, parentMeta);
+    return moduleMeta;
+  });
+};
 
 
-  module.exports = Fetcher;
-})();
+/*
+ * This will adjust the baseUrl in the settings so that requests get the absolute
+ * url so that browsers can better handle `# sourceURL`.  In chrome for example,
+ * the files are added to the developer tools' source tree, which let's you put
+ * break points directly from the developer tools.
+ */
+function getBaseUrl(url) {
+  return Resolver.URL.parser.resolve(window.location.href, url || "");
+}
+
+/*
+ * Gets the url form the module data if it exists.
+ */
+function getWorkingDirectory(moduleMeta) {
+  return moduleMeta && moduleMeta.url ? moduleMeta.url.href : "";
+}
+
+
+module.exports = Fetcher;
 
 },{"./compile":15,"amd-resolver":3,"promjax":11}],18:[function(require,module,exports){
-(function() {
-  "use script";
+/**
+ * @class
+ * Interface for `require` functionality
+ */
+function Require(importer) {
+  this.importer = importer;
+  this.loader   = importer.loader;
+  this.context  = importer.loader.context;
+}
 
-  function Require(importer) {
-    this.importer = importer;
-    this.loader   = importer.loader;
-    this.context  = importer.loader.context;
+
+/**
+ * Method that imports a module.
+ *
+ * @param {string|string[]} name - Name or collection of module names to be loaded
+ * @param {Function} [ready] - Function called when module(s) are loaded
+ * @param {Object} [options] - Options used by the import interface.
+ *
+ * @returns {Promise|Module}
+ */
+Require.prototype.require = function(name, ready, options) {
+  var loader = this.loader,
+      logger = loader.Logger.factory("Bitimporter/require");
+
+  logger.log(name, loader.context._id);
+
+  if (loader.hasModule(name)) {
+    return loader.getModuleCode(name);
   }
+  else {
+    return loader.import(name, options).done(ready || loader.Utils.noop);
+  }
+};
 
-  Require.prototype.require = function(name, ready, options) {
-    var loader = this.loader,
-        logger = loader.Logger.factory("Bitimporter/require");
-
-    logger.log(name, loader.context._id);
-
-    if (loader.hasModule(name)) {
-      return loader.getModuleCode(name);
-    }
-    else {
-      return loader.import(name, options).done(ready || loader.Utils.noop);
-    }
-  };
-
-  module.exports = Require;
-})();
+module.exports = Require;
 
 },{}],19:[function(require,module,exports){
 var pullDeps = require('pulling-deps/src/index');
