@@ -1,6 +1,6 @@
 var require;
 require = (function() {
-  var importer = Bitimports.config({
+  var importer = bitimports.config({
     "baseUrl": "../",
     "paths": {
       "mocha": "../node_modules/mocha/mocha",
@@ -26,6 +26,6 @@ require = (function() {
     return !(ignoreList && ignoreList.length && ignoreList.indexOf(moduleMeta.name) !== -1);
   }
 
-  Bitimports.Logger.enableAll();
+  bitimports.Logger.enableAll();
   return importer.require;
 })();

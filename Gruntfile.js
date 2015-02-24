@@ -19,12 +19,20 @@ module.exports = function(grunt) {
           open: "http://localhost:8015/example/index.html"
         }
       },
-      testkeepalive: {
+      dev: {
         options: {
           port: 8010,
           host: "localhost",
           keepalive: true,
           open: "http://localhost:8010/test/SpecRunner.html"
+        }
+      },
+      doc: {
+        options: {
+          port: 8017,
+          host: "localhost",
+          keepalive: true,
+          open: "http://localhost:8017/doc/index.html"
         }
       }
     },
@@ -41,7 +49,14 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      test: {
+      doc: {
+        files: ['src/**/*.js'],
+        tasks: ['lint', 'jsdoc:build'],
+        options: {
+          livereload: true
+        }
+      },
+      build: {
         files: ['src/**/*.js', 'test/**/*.js', '*.js'],
         tasks: ['build'],
         options: {
@@ -59,15 +74,21 @@ module.exports = function(grunt) {
       }
     },
     concurrent: {
-      test: {
-        tasks: ['connect:testkeepalive', 'watch:test'],
+      build: {
+        tasks: ['connect:dev', 'watch:build'],
+        options: {
+          logConcurrentOutput: true
+        }
+      },
+      doc: {
+        tasks: ['connect:doc', 'watch:doc'],
         options: {
           logConcurrentOutput: true
         }
       }
     },
     browserify: {
-      "build": {
+      build: {
         files: {
           "dist/bit-imports.js": ["src/bit-imports.js"]
         },
@@ -75,13 +96,13 @@ module.exports = function(grunt) {
           browserifyOptions: {
             "detectGlobals": true,
             "ignoreMissing": true,
-            "standalone": "Bitimports"
+            "standalone": "bitimports"
           }
         }
       }
     },
     uglify: {
-      "build": {
+      build: {
         options: {
           sourceMap: true
         },
@@ -91,7 +112,7 @@ module.exports = function(grunt) {
       }
     },
     jsdoc : {
-      "build": {
+      build: {
         src: ['src/**/*.js', 'README.md'],
         options: {
           destination: 'doc',
@@ -111,8 +132,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-browserify");
 
   grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build", "jsdoc:build"]);
+  grunt.registerTask("lint", ["jshint:all"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
   grunt.registerTask("example", ["connect:example"]);
-  grunt.registerTask("docs", ["jsdoc:build"]);
-  grunt.registerTask("livereload", ["concurrent:test"]);
+  grunt.registerTask("doc", ["concurrent:doc"]);
+  grunt.registerTask("dev", ["concurrent:build"]);
 };
