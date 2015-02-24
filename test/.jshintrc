@@ -5,11 +5,11 @@
   "indent":2,
   "devel":true,
   "globals":{
+    "System": true,
     "module": true,
     "require": true,
     "define": true,
-    "System": true,
-    "Bitimports": true,
+    "bitimports": true,
     "window": true,
     "describe": true,
     "it": true,

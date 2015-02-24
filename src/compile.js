@@ -24,7 +24,7 @@ function Compile(fetcher, moduleMeta, parentMeta) {
   function evaluate() {
     var url     = moduleMeta.url.href;
     var source  = moduleMeta.source + getSourceUrl(url);
-    var _module = {exports: {}, url: url, meta: moduleMeta, parent: parentMeta};
+    var _module = {exports: {}, id: moduleMeta.name, url: url, meta: moduleMeta, parent: parentMeta};
 
     /* jshint -W061, -W054 */
     var execute = new Function("System", "define", "require", "module", "exports", source);
