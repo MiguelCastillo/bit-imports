@@ -1,5 +1,6 @@
 /**
  * @class
+ *
  * Interface for AMD modules `define`. It handles anonymous and named module definitions
  * with a variatery of `define` signatures.
  */

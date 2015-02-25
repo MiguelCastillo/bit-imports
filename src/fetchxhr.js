@@ -4,6 +4,7 @@ var Ajax           = require('promjax'),
 
 /**
  * @class
+ *
  * XHR fetch provider to load source files from storage
  */
 function Fetcher(loader, importer) {
