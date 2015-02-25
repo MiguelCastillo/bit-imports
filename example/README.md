@@ -1,3 +1,5 @@
+> This is a small sample page.  If you would like to see something with a little more flare, take a look at the [bit tranforms sandbox](https://github.com/MiguelCastillo/bit-transforms-sandbox).  Also, all unit tests in [bit loader](https://github.com/MiguelCastillo/bit-loader) and bit imports run bit imports itself.
+
 ## [index.html](index.html)
 
 First, we load bit imports via a traditional script tag. When bit imports is loaded that way, `Bitimports` is available in the global object. Then we load `config.js` to configure bit imports with relevant information to run the example page.  And finally we load `main.js` by calling `require('main');`.

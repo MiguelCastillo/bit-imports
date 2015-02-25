@@ -8188,8 +8188,8 @@ var defaultTransform = [{
  * @property {string} baseUrl - Url modules are relative to
  * @property {Object} paths - Map of module names to module locations
  * @property {Object} shim - Definition of modules that are loaded into the global space that need to be used a modules
- * @property {string[]} deps - List of dependencies to be loaded before the first module is loaded.
- * @property {Object[]} packages - List of package definition to map module names to directory structures
+ * @property {Array.<string>} deps - List of dependencies to be loaded before the first module is loaded.
+ * @property {Array.<Object>} packages - List of package definition to map module names to directory structures
  * @property {Array.<string|Function|Object>} transforms - List of transformations that process module source files.
  */
 var defaults = {
@@ -8353,7 +8353,6 @@ Bitimports.prototype.define = function(){};
  * @see [imports settings]{@link Bitimports} options for more details.
  *
  * @returns {Bitimports} Instance of bit imports
- *
  */
 Bitimports.prototype.config = function(options) {
   Bitimports.Utils.merge(this.settings, options);
@@ -8422,6 +8421,7 @@ Bitimports.prototype.AST = function(source, options) {
  * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
  *
  * @ignore
+ * @private
  *
  * @param {Bitimports} importer - Instance of Bitimports
  *
@@ -8436,24 +8436,28 @@ function fetchFactory(importer) {
 
 
 /**
- * `bitimports` is the default Bitimports instance available and ready for use.
- * All you need to do if configure it with the `config` method to define how
- * your application is structured. The goal of the configuration step is to
- * help you make your code simple and readable when importing and exporting
- * modules.
+ * `bitimports` is the default Bitimports instance available. All you need to
+ * do if configure it with the [config]{@link Bitimports#config} method to
+ * define how your application is structured. The goal of the configuration
+ * step is to help you make your code simple and readable when importing and
+ * exporting modules.
  *
  * When the bit-imports module is loaded via script tag, which is the more
- * common use case in the browser, `bitimports` is automatically available in
- * the global object.  But since bit-imports is a UMD module, feel free to load
- * it as an `AMD` or `CJS` module.
+ * common use case in the browser, `bitimports` is automatically added to the
+ * global object.  But since bit-imports is a [UMD]{@link https://github.com/umdjs/umd}
+ * module, feel free to load it as an [AMD]{@link https://github.com/amdjs/amdjs-api/wiki/AMD}
+ * or [CJS]{@link http://wiki.commonjs.org/wiki/Modules/1.1.1} module.
  *
- * `bitimports` exposes methods such as `require`, `define`, `import`, and
- * `register` to provide a comprehensive system for loading modules
- * synchronously and asynchronously in `AMD` and `CJS` module formats.
+ * `bitimports` exposes methods such as [require]{@link Bitimports#require},
+ * [define]{@link Bitimports#define}, [import]{@link Bitimports#import}, and
+ * [register]{@link Bitimports#register} to provide a comprehensive system for
+ * loading modules synchronously and asynchronously in `AMD` and `CJS` module
+ * formats.
  *
  * @global
  * @name bitimports
  * @type Bitimports
+ * @see {@link Bitimports}
  */
 module.exports = new Bitimports();
 
@@ -8484,7 +8488,7 @@ function Compile(fetcher, moduleMeta, parentMeta) {
   function evaluate() {
     var url     = moduleMeta.url.href;
     var source  = moduleMeta.source + getSourceUrl(url);
-    var _module = {exports: {}, url: url, meta: moduleMeta, parent: parentMeta};
+    var _module = {exports: {}, id: moduleMeta.name, url: url, meta: moduleMeta, parent: parentMeta};
 
     /* jshint -W061, -W054 */
     var execute = new Function("System", "define", "require", "module", "exports", source);
@@ -8544,6 +8548,7 @@ module.exports = Compile;
 },{}],16:[function(require,module,exports){
 /**
  * @class
+ *
  * Interface for AMD modules `define`. It handles anonymous and named module definitions
  * with a variatery of `define` signatures.
  */
@@ -8691,6 +8696,7 @@ var Ajax           = require('promjax'),
 
 /**
  * @class
+ *
  * XHR fetch provider to load source files from storage
  */
 function Fetcher(loader, importer) {
@@ -8748,6 +8754,7 @@ module.exports = Fetcher;
 },{"./compile":15,"amd-resolver":3,"promjax":11}],18:[function(require,module,exports){
 /**
  * @class
+ *
  * Interface for `require` functionality
  */
 function Require(importer) {

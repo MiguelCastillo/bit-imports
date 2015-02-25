@@ -1,5 +1,6 @@
 /**
  * @class
+ *
  * Interface for `require` functionality
  */
 function Require(importer) {
