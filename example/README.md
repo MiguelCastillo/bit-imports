@@ -11,7 +11,7 @@ In the code below we are configuring bit imports in a self executing function to
 ``` javascript
 var require;
 require = (function() {
-  var importer = Bitimports.config({
+  var importer = bitimports.config({
     "baseUrl": ".",
     "paths": {
       "addStrict": "transform/addStrict"
