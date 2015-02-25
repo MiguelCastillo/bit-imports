@@ -5167,7 +5167,7 @@ function isNullOrUndefined(arg) {
 
     var loading = loader
       ._fetchModuleMeta(name, parentMeta)
-      .then(moduleMetaReady, handleError);
+      .then(moduleMetaReady, Utils.printError);
 
     return loader.setLoading(name, loading);
 
@@ -5552,11 +5552,6 @@ function isNullOrUndefined(arg) {
     return this.context.deleteModule(name);
   };
 
-
-  function handleError(error) {
-    Utils.printError(error);
-    return error;
-  }
 
   module.exports = Loader;
 })();
@@ -8201,7 +8196,7 @@ var defaultTransform = [{
  * @property {Array.<string|Function|Object>} transforms - List of transformations that process module source files.
  */
 var defaults = {
-  baseUrl    : "",
+  baseUrl    : ".",
   paths      : {},
   shim       : {},
   deps       : [],
