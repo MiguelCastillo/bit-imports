@@ -60,8 +60,8 @@ function Compile(fetcher, moduleMeta, parentMeta) {
     }
 
     // If `define` was not called, the we will try to assign the result of the function
-    // call to support IEFF, or exports.
-    moduleMeta.type = evaluated.result ? importer.Module.Type.IEFF : importer.Module.Type.CJS;
+    // call to support IIFE, or exports.
+    moduleMeta.type = evaluated.result ? importer.Module.Type.IIFE : importer.Module.Type.CJS;
     moduleMeta.code = evaluated.result || evaluated.module.exports;
     return new importer.Module(moduleMeta);
   }
