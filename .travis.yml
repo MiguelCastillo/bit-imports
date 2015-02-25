@@ -10,6 +10,7 @@ deploy:
   file:
     - "dist/bit-imports.js"
     - "dist/bit-imports.min.js"
+    - "dist/bit-imports.min.js.map"
   skip_cleanup: true
   on:
     repo: MiguelCastillo/bit-imports
