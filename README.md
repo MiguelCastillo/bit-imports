@@ -14,5 +14,11 @@ So why does bit imports even exist? Bottom line - to provide you with a flexible
 
 >  A workflow that works really well is one in which your web application simply does not have a *build* step during development, and all external dependencies (toolkits and frameworks) consumed by the application itself are generally prebundled with browserify (or similar tool).  The key is in the separation of what is application code and external dependencies. Your code vs someone else's code. All your application needs is a way to load dependencies without needing a build step for each and every change made to the code. Only when the application is ready for deployment are you encouraged to bundle everything up with tools such as *browserify*.
 
+
+#### Install
+```
+$ npm install bit-imports
+```
+
 #### [API](https://github.com/MiguelCastillo/bit-imports/tree/master/api)
 #### [Examples](https://github.com/MiguelCastillo/bit-imports/tree/master/example)
