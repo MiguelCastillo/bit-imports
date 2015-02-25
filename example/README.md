@@ -42,9 +42,10 @@ The example loads a combination of `AMD` and `CJS` modules simply to illustrate 
 
 ## Running the example
 
-In order to run the example, you need to
+In order to run the example in MacOS, you need to
 
 ```
+git clone https://github.com/MiguelCastillo/bit-imports/ && cd bit-imports
 npm install
 grunt example
 ```
