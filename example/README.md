@@ -2,7 +2,7 @@
 
 ## [index.html](index.html)
 
-First, we load bit imports via a traditional script tag. When bit imports is loaded that way, `Bitimports` is available in the global object. Then we load `config.js` to configure bit imports with relevant information to run the example page.  And finally we load `main.js` by calling `require('main');`.
+First, we load bit imports via a traditional script tag. When bit imports is loaded that way, `bitimports` is available in the global object. Then we load `config.js` to configure bit imports with relevant information to run the example page.  And finally we load `main.js` by calling `require('main');`.
 
 ## [config.js](config.js)
 
