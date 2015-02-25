@@ -25,7 +25,7 @@ var defaultTransform = [{
  * @property {Array.<string|Function|Object>} transforms - List of transformations that process module source files.
  */
 var defaults = {
-  baseUrl    : "",
+  baseUrl    : ".",
   paths      : {},
   shim       : {},
   deps       : [],
