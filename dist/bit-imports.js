@@ -3008,7 +3008,7 @@
 
 },{}],3:[function(require,module,exports){
 (function (global){
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.amdResolver=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.amdresolver=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function() {
   "use strict";
 
@@ -3024,7 +3024,7 @@
    */
   function Resolver(options) {
     this.settings = options || {};
-    var baseUrl = this.settings.baseUrl || (this.settings.baseUrl = "");
+    var baseUrl = this.settings.baseUrl || (this.settings.baseUrl = ".");
 
     // Make sure that if a baseUrl is provided, it ends in a slash.  This is to ensure
     // proper creation of URLs.
@@ -3118,8 +3118,8 @@
   };
 
 
-  Resolver.File = File;
-  Resolver.URL  = URL;
+  Resolver.File = Resolver.prototype.File = File;
+  Resolver.URL  = Resolver.prototype.URL  = URL;
   module.exports = Resolver;
 })();
 
@@ -4628,8 +4628,6 @@ function isNullOrUndefined(arg) {
 
 },{"url":6}]},{},[1])(1)
 });
-
-
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 },{"./decode":undefined,"./encode":undefined,"./file":undefined,"./url":undefined,"punycode":7,"querystring":10,"url":11}],4:[function(require,module,exports){
 (function (process,global){
@@ -8489,15 +8487,16 @@ function Compile(fetcher, moduleMeta, parentMeta) {
    * @private
    */
   function evaluate() {
-    var url     = moduleMeta.url.href;
-    var source  = moduleMeta.source + getSourceUrl(url);
-    var _module = {exports: {}, id: moduleMeta.name, url: url, meta: moduleMeta, parent: parentMeta};
+    var url      = moduleMeta.url.href;
+    var source   = moduleMeta.source + getSourceUrl(url);
+    var pathInfo = getPathInfo(url, fetcher);
+    var _module  = {exports: {}, id: moduleMeta.name, url: url, meta: moduleMeta, parent: parentMeta};
 
     /* jshint -W061, -W054 */
-    var execute = new Function("System", "define", "require", "module", "exports", source);
+    var execute = new Function("__dirname", "__filename", "System", "define", "require", "module", "exports", source);
     /* jshint +W061, +W054 */
 
-    var result = execute(importer, importer.define, importer.require, _module, _module.exports);
+    var result = execute(pathInfo.__dirname, pathInfo.__filename, importer, importer.define, importer.require, _module, _module.exports);
 
     return {
       result: result,
@@ -8543,6 +8542,21 @@ function Compile(fetcher, moduleMeta, parentMeta) {
  */
 function getSourceUrl(url) {
   return "\n//# sourceURL=" + url;
+}
+
+
+/**
+ * Function that extracts the __dirname and __filename
+ *
+ * @private
+ * @returns {{__dirname: string, __filename: string}}
+ */
+function getPathInfo(url, fetcher) {
+  var pathInfo = fetcher.resolver.File.parseParts(url);
+  return {
+    __dirname: pathInfo.directory,
+    __filename: pathInfo.path
+  };
 }
 
 

@@ -22,15 +22,16 @@ function Compile(fetcher, moduleMeta, parentMeta) {
    * @private
    */
   function evaluate() {
-    var url     = moduleMeta.url.href;
-    var source  = moduleMeta.source + getSourceUrl(url);
-    var _module = {exports: {}, id: moduleMeta.name, url: url, meta: moduleMeta, parent: parentMeta};
+    var url      = moduleMeta.url.href;
+    var source   = moduleMeta.source + getSourceUrl(url);
+    var pathInfo = getPathInfo(url, fetcher);
+    var _module  = {exports: {}, id: moduleMeta.name, url: url, meta: moduleMeta, parent: parentMeta};
 
     /* jshint -W061, -W054 */
-    var execute = new Function("System", "define", "require", "module", "exports", source);
+    var execute = new Function("__dirname", "__filename", "System", "define", "require", "module", "exports", source);
     /* jshint +W061, +W054 */
 
-    var result = execute(importer, importer.define, importer.require, _module, _module.exports);
+    var result = execute(pathInfo.__dirname, pathInfo.__filename, importer, importer.define, importer.require, _module, _module.exports);
 
     return {
       result: result,
@@ -76,6 +77,21 @@ function Compile(fetcher, moduleMeta, parentMeta) {
  */
 function getSourceUrl(url) {
   return "\n//# sourceURL=" + url;
+}
+
+
+/**
+ * Function that extracts the __dirname and __filename
+ *
+ * @private
+ * @returns {{__dirname: string, __filename: string}}
+ */
+function getPathInfo(url, fetcher) {
+  var pathInfo = fetcher.resolver.File.parseParts(url);
+  return {
+    __dirname: pathInfo.directory,
+    __filename: pathInfo.path
+  };
 }
 
 
