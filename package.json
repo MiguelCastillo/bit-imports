@@ -5,7 +5,7 @@
   "directories": {
     "test": "tests"
   },
-  "main": "dist/bit-imports.js",
+  "main": "src/bit-imports.js",
   "scripts": {
     "docs": "docdown src/bit-imports.js api/README.md url='https://github.com/MiguelCastillo/bit-imports/tree/master/src/bit-imports.js' toc='categories' title='API documentation'",
     "prepublish": "grunt build",
@@ -39,7 +39,7 @@
   "dependencies": {
     "acorn": "~0.11.0",
     "spromise": "~0.9.1",
-    "promjax": "0.0.3",
+    "promjax": "~0.0.3",
     "amd-resolver": "~1.0.3",
     "pulling-deps": "0.0.3",
     "bit-loader": "~0.1.3"
