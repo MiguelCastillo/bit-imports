@@ -39,9 +39,9 @@
   "dependencies": {
     "acorn": "~0.11.0",
     "spromise": "~0.9.1",
-    "promjax": "~0.0.3",
+    "promjax": "~0.0.6",
     "amd-resolver": "~1.0.3",
-    "pulling-deps": "0.0.3",
+    "pulling-deps": "~0.0.6",
     "bit-loader": "~0.1.3"
   }
 }

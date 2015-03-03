@@ -1,4 +1,4 @@
-var pullDeps = require('pulling-deps/src/index');
+var pullDeps = require('pulling-deps');
 
 function dependencies(moduleMeta) {
   if (!ignoreModule(moduleMeta, this.ignore)) {
