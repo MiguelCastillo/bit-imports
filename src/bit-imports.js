@@ -1,7 +1,7 @@
 var Fetcher      = require("./fetchxhr"),
     Define       = require('./define'),
     Require      = require('./require'),
-    dependencies = require('./transforms/dependencies'),
+    dependencies = require('deps-bits'),
     acorn        = require('acorn'),
     acornWalker  = require('acorn/util/walk'),
     Bitloader    = require('bit-loader');
