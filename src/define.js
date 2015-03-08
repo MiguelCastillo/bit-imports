@@ -54,6 +54,10 @@ Define.prototype.getDefinitions = function(name) {
     modules[mod.name] = mod;
   }
 
+  if (modules[name]) {
+    delete modules[name];
+  }
+
   if (mod) {
     mod.modules = modules;
   }

@@ -14,6 +14,7 @@ function Fetcher(loader, importer) {
   this.importer = importer;
   this.loader   = loader;
   this.resolver = new Resolver(settings);
+  this.logger   = importer.Logger.factory("Bitimporter/Fetch");
 }
 
 
@@ -22,20 +23,21 @@ function Fetcher(loader, importer) {
  */
 Fetcher.prototype.fetch = function(name, parentMeta) {
   var fetcher    = this,
+      importer   = this.importer,
+      loader     = this.loader,
       moduleMeta = this.resolver.resolve(name, getWorkingDirectory(parentMeta)),
       url        = moduleMeta.url.href;
 
-  var logger = this.importer.Logger.factory("Bitimporter/Fetch");
-  logger.log(moduleMeta.name, moduleMeta, url);
+  this.logger.log(moduleMeta.name, moduleMeta, url);
 
-  moduleMeta.loader   = this.loader;
-  moduleMeta.importer = this.importer;
+  moduleMeta.loader   = loader;
+  moduleMeta.importer = importer;
 
   return (new Ajax(url)).then(function(source) {
     moduleMeta.source  = source;
     moduleMeta.compile = compileFactory(fetcher, moduleMeta, parentMeta);
     return moduleMeta;
-  });
+  }, importer.Utils.forwardError);
 };
 
 
