@@ -53,9 +53,9 @@ describe("Packages Test Suite", function() {
     var emptyobject, emptystring;
     beforeEach(function () {
       return importer.import(["js/emptyobject", "js/emptystring"])
-        .then(function (_emptyobject, _emptystring) {
-          emptyobject = _emptyobject;
-          emptystring = _emptystring;
+        .then(function (modules) {
+          emptyobject = modules[0];
+          emptystring = modules[1];
         });
     });
 

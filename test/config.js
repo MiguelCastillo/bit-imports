@@ -12,18 +12,27 @@ require = (function() {
       }
     },
     "transforms": [{
-      name: "ignore",
-      handler: ignore,
+      name: "cantransform",
+      handler: cantransform,
       ignore:["chai", "dist/bit-imports"]
     }]
   });
 
+
   /**
    * Simple filter for excluding particular modules from being processed by the transformation pipeline.
    */
-  function ignore(moduleMeta) {
+  function cantransform(moduleMeta) {
     var ignoreList = this.ignore;
-    return !(ignoreList && ignoreList.length && ignoreList.indexOf(moduleMeta.name) !== -1);
+    var i, length;
+
+    if (ignoreList && ignoreList.length) {
+      for (i = 0, length = ignoreList.length; i < length; i++) {
+        if (ignoreList[i].indexOf(moduleMeta.name) !== -1) {
+          return false;
+        }
+      }
+    }
   }
 
   bitimports.Logger.enableAll();
