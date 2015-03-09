@@ -51,7 +51,7 @@ module.exports = function(grunt) {
     watch: {
       doc: {
         files: ['src/**/*.js'],
-        tasks: ['lint', 'jsdoc:build'],
+        tasks: ['jshint:all', 'jsdoc:build'],
         options: {
           livereload: true
         }
@@ -140,7 +140,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-browserify");
 
   grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build"]);
-  grunt.registerTask("lint", ["jshint:all"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
   grunt.registerTask("example", ["connect:example"]);
   grunt.registerTask("doc", ["concurrent:doc"]);
