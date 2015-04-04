@@ -1,6 +1,5 @@
-var Ajax           = require('promjax'),
-    Resolver       = require('amd-resolver'),
-    compileFactory = require('./compile');
+var Ajax     = require('promjax'),
+    Resolver = require('amd-resolver');
 
 /**
  * @class
@@ -26,7 +25,8 @@ Fetcher.prototype.fetch = function(name, parentMeta) {
       importer   = this.importer,
       loader     = this.loader,
       moduleMeta = this.resolver.resolve(name, getWorkingDirectory(parentMeta)),
-      url        = moduleMeta.url.href;
+      url        = moduleMeta.url.href,
+      pathInfo   = getPathInfo(url, fetcher);
 
   this.logger.log(moduleMeta.name, moduleMeta, url);
 
@@ -34,8 +34,9 @@ Fetcher.prototype.fetch = function(name, parentMeta) {
   moduleMeta.importer = importer;
 
   return (new Ajax(url)).then(function(source) {
-    moduleMeta.source  = source;
-    moduleMeta.compile = compileFactory(fetcher, moduleMeta, parentMeta);
+    moduleMeta.source     = source;
+    moduleMeta.__dirname  = pathInfo.__dirname;
+    moduleMeta.__filename = pathInfo.__filename;
     return moduleMeta;
   }, importer.Utils.forwardError);
 };
@@ -58,5 +59,18 @@ function getWorkingDirectory(moduleMeta) {
   return moduleMeta && moduleMeta.url ? moduleMeta.url.href : "";
 }
 
+/**
+ * Function that extracts the __dirname and __filename
+ *
+ * @private
+ * @returns {{__dirname: string, __filename: string}}
+ */
+function getPathInfo(url) {
+  var pathInfo = Resolver.File.parseParts(url);
+  return {
+    __dirname : pathInfo.directory,
+    __filename: pathInfo.path
+  };
+}
 
 module.exports = Fetcher;
