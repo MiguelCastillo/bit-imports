@@ -7,6 +7,7 @@ function Require(importer) {
   this.importer = importer;
   this.loader   = importer.loader;
   this.context  = importer.loader.context;
+  this.logger   = this.loader.Logger.factory("Bitimporter/require");
 }
 
 
@@ -20,10 +21,9 @@ function Require(importer) {
  * @returns {Promise|Module}
  */
 Require.prototype.require = function(name, ready, options) {
-  var loader = this.loader,
-      logger = loader.Logger.factory("Bitimporter/require");
+  var loader = this.loader;
 
-  logger.log(name, loader.context._id);
+  this.logger.log(name, loader.context._id);
 
   if (loader.hasModule(name)) {
     return loader.getModuleCode(name);

@@ -1,4 +1,5 @@
-var Fetcher      = require("./fetchxhr"),
+var Fetcher      = require('./fetchxhr'),
+    Compiler     = require('./compiler'),
     Define       = require('./define'),
     Require      = require('./require'),
     dependencies = require('deps-bits'),
@@ -70,7 +71,7 @@ function Bitimports(options) {
   options.transforms = (options.transforms || []).concat(defaultTransform);
 
   this.settings = Bitimports.Utils.merge({}, defaults, options);
-  this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this)});
+  this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this), compiler: compilerFactory(this)});
 
   this.import   = this.loader.import;
   this.register = this.loader.register;
@@ -263,6 +264,23 @@ Bitimports.prototype.AST = function(source, options) {
 function fetchFactory(importer) {
   return function fetch(loader) {
     return new Fetcher(loader, importer);
+  };
+}
+
+
+/**
+ * compilerFactory creates a Compiler instance to propery handle the convertion
+ * from module meta to module instance.
+ *
+ * @ignore
+ * @private
+ *
+ * @param   {Bitimports} importer - Instance of bitimports
+ * @returns {Compiler} Instance of the compiler
+ */
+function compilerFactory(importer) {
+  return function compiler(loader) {
+    return new Compiler(loader, importer);
   };
 }
 
