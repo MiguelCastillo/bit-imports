@@ -1,9 +1,9 @@
 var bitimports;
 var fs         = require('fs');
-var FileStream = require('./src/fileStream');
+var fileReader = require('./src/fileReader');
 
 // Register method to load file content from storage
-FileStream.register(function read(path) {
+fileReader.register(function read(path) {
   return new bitimports.Promise(function(resolve, reject) {
     var filecontent = '';
     var stream      = fs.createReadStream(path);

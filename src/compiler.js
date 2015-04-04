@@ -60,7 +60,7 @@ function evaluate(moduleMeta, parentMeta) {
   var execute = new Function("System", "define", "require", "module", "exports", "__dirname", "__filename", source);
   /* jshint +W061, +W054 */
 
-  var result = execute(importer, importer.define, importer.require, _module, _module.exports, moduleMeta.__dirname, moduleMeta.__filename);
+  var result = execute(importer, importer.define, importer.require, _module, _module.exports, moduleMeta.directory, moduleMeta.path);
 
   return {
     _result: result,

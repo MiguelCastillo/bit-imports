@@ -1,8 +1,8 @@
 var streamProvider = require('promjax');
-var FileStream     = require('./src/fileStream');
+var fileReader     = require('./src/fileReader');
 
 // Register method to load file content from storage
-FileStream.register(streamProvider);
+fileReader.register(streamProvider);
 
 // Export bit imports!
 module.exports = require('./src/bit-imports');
