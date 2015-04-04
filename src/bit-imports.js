@@ -1,4 +1,4 @@
-var Fetcher      = require('./fetchxhr'),
+var Reader       = require('./fileReader'),
     Compiler     = require('./compiler'),
     Define       = require('./define'),
     Require      = require('./require'),
@@ -263,7 +263,7 @@ Bitimports.prototype.AST = function(source, options) {
  */
 function fetchFactory(importer) {
   return function fetch(loader) {
-    return new Fetcher(loader, importer);
+    return new Reader(loader, importer);
   };
 }
 

@@ -1,12 +1,13 @@
-var Ajax     = require('promjax'),
-    Resolver = require('amd-resolver');
+var fileStream = require('./fileStream'),
+    Resolver   = require('amd-resolver');
+
 
 /**
  * @class
  *
- * XHR fetch provider to load source files from storage
+ * FileReader that loads files from storage
  */
-function Fetcher(loader, importer) {
+function FileReader(loader, importer) {
   var settings     = importer.Utils.merge({}, importer.settings);
   settings.baseUrl = getBaseUrl(settings.baseUrl);
 
@@ -18,25 +19,24 @@ function Fetcher(loader, importer) {
 
 
 /**
- * Reads file via XHR from storage
+ * Reads file content from storage
  */
-Fetcher.prototype.fetch = function(name, parentMeta) {
-  var fetcher    = this,
-      importer   = this.importer,
+FileReader.prototype.fetch = function(name, parentMeta) {
+  var importer   = this.importer,
       loader     = this.loader,
       moduleMeta = this.resolver.resolve(name, getWorkingDirectory(parentMeta)),
       url        = moduleMeta.url.href,
-      pathInfo   = getPathInfo(url, fetcher);
+      pathInfo   = getPathInfo(url);
 
   this.logger.log(moduleMeta.name, moduleMeta, url);
 
-  moduleMeta.loader   = loader;
-  moduleMeta.importer = importer;
+  moduleMeta.loader     = loader;
+  moduleMeta.importer   = importer;
+  moduleMeta.__dirname  = pathInfo.__dirname;
+  moduleMeta.__filename = pathInfo.__filename;
 
-  return (new Ajax(url)).then(function(source) {
-    moduleMeta.source     = source;
-    moduleMeta.__dirname  = pathInfo.__dirname;
-    moduleMeta.__filename = pathInfo.__filename;
+  return fileStream(url).then(function(source) {
+    moduleMeta.source = source;
     return moduleMeta;
   }, importer.Utils.forwardError);
 };
@@ -49,7 +49,8 @@ Fetcher.prototype.fetch = function(name, parentMeta) {
  * break points directly from the developer tools.
  */
 function getBaseUrl(url) {
-  return Resolver.URL.parser.resolve(window.location.href, url || "");
+  var base = typeof(window) !== 'undefined' ? window.location.href : '';
+  return Resolver.URL.parser.resolve(base, url || "");
 }
 
 /*
@@ -73,4 +74,4 @@ function getPathInfo(url) {
   };
 }
 
-module.exports = Fetcher;
+module.exports = FileReader;
