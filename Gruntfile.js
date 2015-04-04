@@ -90,7 +90,7 @@ module.exports = function(grunt) {
     browserify: {
       build: {
         files: {
-          "dist/bit-imports.js": ["src/bit-imports.js"]
+          "dist/bit-imports.js": ["browser.js"]
         },
         options: {
           browserifyOptions: {

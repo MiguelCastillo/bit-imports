@@ -5,7 +5,7 @@
   "directories": {
     "test": "tests"
   },
-  "main": "src/bit-imports.js",
+  "main": "index.js",
   "scripts": {
     "docs": "docdown src/bit-imports.js api/README.md url='https://github.com/MiguelCastillo/bit-imports/tree/master/src/bit-imports.js' toc='categories' title='API documentation'",
     "prepublish": "grunt build",
