@@ -1,17 +1,11 @@
-var Meta         = require('./meta'),
-    Compiler     = require('./compiler'),
-    Define       = require('./define'),
-    Require      = require('./require'),
-    dependencies = require('deps-bits'),
-    acorn        = require('acorn'),
-    acornWalker  = require('acorn/util/walk'),
-    Bitloader    = require('bit-loader');
-
-
-var defaultTransform = [{
-    name: "deps",
-    handler: dependencies
-  }];
+var Meta        = require('./meta'),
+    Compiler    = require('./compiler'),
+    Define      = require('./define'),
+    Require     = require('./require'),
+    dependency  = require('deps-bits'),
+    acorn       = require('acorn'),
+    acornWalker = require('acorn/util/walk'),
+    Bitloader   = require('bit-loader');
 
 
 /**
@@ -68,19 +62,24 @@ var defaults = {
  */
 function Bitimports(options) {
   options = options || {};
-  options.transforms = (options.transforms || []).concat(defaultTransform);
 
   this.settings = Bitimports.Utils.merge({}, defaults, options);
-  this.loader   = new Bitloader(this.settings, {fetch: fetchFactory(this), compiler: compilerFactory(this)});
+  var loader    = new Bitloader(this.settings, {fetch: fetchFactory(this), compiler: compilerFactory(this)});
 
-  this.import   = this.loader.import;
-  this.register = this.loader.register;
+  this.loader   = loader;
+  this.import   = loader.import;
+  this.register = loader.register;
 
   this._require = new Require(this);
   this.require  = this._require.require.bind(this._require);
-
   this._define  = new Define(this);
   this.define   = this._define.define.bind(this._define);
+
+  // Register dependency processor
+  loader.pipelines.dependency.use({
+    name: "deps",
+    handler: dependency
+  });
 
   // Add `amd` for compliance
   this.define.amd = {};
