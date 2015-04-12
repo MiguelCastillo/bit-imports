@@ -6,21 +6,20 @@ var MetaFactory = require('./metaFactory'),
  *
  * FileReader that loads files from storage
  */
-function Meta(loader, importer) {
-  var settings  = importer.Utils.merge({}, importer.settings);
-  this.importer = importer;
-  this.loader   = loader;
-  this.factory  = new MetaFactory(settings);
-  this.logger   = importer.Logger.factory("Bitimporter/Fetch");
+function Fetch(loader, settings) {
+  settings         = loader.Utils.merge({}, settings);
+  this.loader      = loader;
+  this.metaFactory = new MetaFactory(settings);
+  this.logger      = loader.Logger.factory("Bitimporter/Fetch");
 }
 
 
 /**
  * Reads file content from storage
  */
-Meta.prototype.fetch = function(name, parentMeta) {
-  var importer   = this.importer,
-      moduleMeta = this.factory.create(name, getWorkingDirectory(parentMeta)),
+Fetch.prototype.fetch = function(name, parentMeta) {
+  var loader     = this.loader,
+      moduleMeta = this.metaFactory.create(name, getWorkingDirectory(parentMeta)),
       url        = moduleMeta.url.href;
 
   this.logger.log(moduleMeta.name, moduleMeta, url);
@@ -28,7 +27,7 @@ Meta.prototype.fetch = function(name, parentMeta) {
   return fileReader(url).then(function(source) {
     moduleMeta.source = source;
     return moduleMeta;
-  }, importer.Utils.forwardError);
+  }, loader.Utils.forwardError);
 };
 
 
@@ -39,4 +38,4 @@ function getWorkingDirectory(moduleMeta) {
   return (moduleMeta && moduleMeta.url) ? moduleMeta.url.href : '';
 }
 
-module.exports = Meta;
+module.exports = Fetch;

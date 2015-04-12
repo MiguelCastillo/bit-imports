@@ -4,8 +4,7 @@
  * Interface for AMD modules `define`. It handles anonymous and named module definitions
  * with a variatery of `define` signatures.
  */
-function Define(importer) {
-  this.importer = importer;
+function Define() {
 }
 
 
