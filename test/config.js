@@ -1,6 +1,5 @@
 var require;
 require = (function() {
-
   var importer = bitimports.config({
     "baseUrl": "../",
     "paths": {
@@ -11,27 +10,12 @@ require = (function() {
       "mocha": {
         "exports": "mocha"
       }
-    },
-    "transforms": [{
-      name: "cantransform",
-      handler: cantransform,
-      ignore: ["chai", "dist/bit-imports"]
-    }]
+    }
   });
 
-
-  function cantransform(moduleMeta) {
-    var ignoreList = this.ignore;
-    var i, length;
-
-    if (ignoreList && ignoreList.length) {
-      for (i = 0, length = ignoreList.length; i < length; i++) {
-        if (ignoreList[i].indexOf(moduleMeta.name) !== -1) {
-          return false;
-        }
-      }
-    }
-  }
+  importer.loader.ignore({
+    match: ["chai", "dist/bit-imports"]
+  });
 
   bitimports.Logger.enableAll();
   return importer.require;
