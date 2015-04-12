@@ -1,5 +1,6 @@
 var require;
 require = (function() {
+
   var importer = bitimports.config({
     "baseUrl": "../",
     "paths": {
@@ -14,14 +15,11 @@ require = (function() {
     "transforms": [{
       name: "cantransform",
       handler: cantransform,
-      ignore:["chai", "dist/bit-imports"]
+      ignore: ["chai", "dist/bit-imports"]
     }]
   });
 
 
-  /**
-   * Simple filter for excluding particular modules from being processed by the transformation pipeline.
-   */
   function cantransform(moduleMeta) {
     var ignoreList = this.ignore;
     var i, length;
