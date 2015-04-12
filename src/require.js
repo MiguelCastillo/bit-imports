@@ -3,11 +3,10 @@
  *
  * Interface for `require` functionality
  */
-function Require(importer) {
-  this.importer = importer;
-  this.loader   = importer.loader;
-  this.context  = importer.loader.context;
-  this.logger   = this.loader.Logger.factory("Bitimporter/require");
+function Require(loader) {
+  this.loader  = loader;
+  this.context = loader.context;
+  this.logger  = loader.Logger.factory("Bitimporter/require");
 }
 
 
@@ -22,7 +21,6 @@ function Require(importer) {
  */
 Require.prototype.require = function(name, ready, options) {
   var loader = this.loader;
-
   this.logger.log(name, loader.context._id);
 
   if (loader.hasModule(name)) {

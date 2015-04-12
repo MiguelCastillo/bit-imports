@@ -1,4 +1,4 @@
-var Meta        = require('./meta'),
+var Fetch       = require('./fetch'),
     Compiler    = require('./compiler'),
     Define      = require('./define'),
     Require     = require('./require'),
@@ -9,9 +9,11 @@ var Meta        = require('./meta'),
 
 
 /**
- * Default options for bit imports instances
+ * Default options for Bitimports instances
+ *
  * @private
  * @memberof Bitimports
+ *
  * @property {string} baseUrl - Url modules are relative to
  * @property {Object} paths - Map of module names to module locations
  * @property {Object} shim - Definition of modules that are loaded into the global space that need to be used a modules
@@ -30,12 +32,14 @@ var defaults = {
 
 
 /**
- * Bitimports is a facade that exposes an interface for module management.
+ * Bitimports extends Bitloader's functionality to provide support for AMD and
+ * CJS. It implements a fetch provider to load files from storage. It also adds
+ * the `define` and `require` methods to facilitte defining and loading modules
  *
  * @class
  * @private
  *
- * @param {Object} options - Configuration settings to create bit imports
+ * @param {Object} options - Configuration settings to create Bitimports
  *  instance.
  *  Please take a look over at [amd resolver]{@link https://github.com/MiguelCastillo/amd-resolver}
  *  for details on the options.
@@ -53,7 +57,7 @@ var defaults = {
  * @param {Object} options.transforms[] - More specific transform configuration
  *  where either a name or handler function must be provided.
  * @param {string} options.transforms[].name - If item.handler isn't present,
- *  then bit imports will load the transform as a module. Otherwise, it is
+ *  then Bitimports will load the transform as a module. Otherwise, it is
  *  pretty much only used for logging purposes.
  * @param {Function} options.transforms[].handler - If item.name isn't present,
  *  then the handler is considered an anonymous transform, otherwise it is
@@ -61,22 +65,19 @@ var defaults = {
  *  debugging because transforms' names are logged
  */
 function Bitimports(options) {
-  options = options || {};
+  var settings = Bitloader.Utils.merge({}, defaults, options);
+  Bitloader.call(this, settings, {fetch: fetchFactory(settings), compiler: compilerFactory(settings)});
 
-  this.settings = Bitimports.Utils.merge({}, defaults, options);
-  var loader    = new Bitloader(this.settings, {fetch: fetchFactory(this), compiler: compilerFactory(this)});
+  this.settings = settings;
 
-  this.loader   = loader;
-  this.import   = loader.import;
-  this.register = loader.register;
+  this.providers.require = new Require(this);
+  this.providers.define  = new Define();
 
-  this._require = new Require(this);
-  this.require  = this._require.require.bind(this._require);
-  this._define  = new Define(this);
-  this.define   = this._define.define.bind(this._define);
+  this.require = this.providers.require.require.bind(this.providers.require);
+  this.define  = this.providers.define.define.bind(this.providers.define);
 
   // Register dependency processor
-  loader.pipelines.dependency.use({
+  this.pipelines.dependency.use({
     name: "deps",
     handler: dependency
   });
@@ -86,45 +87,19 @@ function Bitimports(options) {
 }
 
 
-/** Promise constructor */
-Bitimports.Promise = Bitimports.prototype.Promise = Bitloader.Promise;
-
-/** Module constructor */
-Bitimports.Module = Bitimports.prototype.Module = Bitloader.Module;
-
-/** Logger singleton and factory */
-Bitimports.Logger = Bitimports.prototype.Logger = Bitloader.Logger;
-
-/** Helper Utilities */
-Bitimports.Utils = Bitimports.prototype.Utils = Bitloader.Utils;
+// Setup prototypal inheritance.
+Bitimports.prototype = Object.create(Bitloader.prototype);
+Bitimports.prototype.constructor = Bitimports;
 
 
 /**
- * Method to asynchronously load modules
+ * Bitimports factory
  *
- * @function
- *
- * @param {string|Array.<string>} names - Module or list of modules names to
- *  load. These names map back to the paths settings Bitimports was created
- *  with.
- *
- * @returns {Promise} That when resolved, all the imported modules are passed
- *  back as arguments.
+ * @returns {Bitimports} Instance of Bitimports
  */
-Bitimports.prototype.import = function(){};
-
-
-/**
- * Method to define a module to be asynchronously loaded via the
- * [import]{@link Bitimports#import} method
- *
- * @param {string} name - Name of the module to register
- * @param {Array.<string>} deps - Collection of dependencies to be loaded and
- *  passed into the factory callback method.
- * @param {Function} factory - Function to be called in order to instantiate
- *  (realize) the module
- */
-Bitimports.prototype.register = function(){};
+Bitimports.prototype.create = function(options) {
+  return new Bitimports(options);
+};
 
 
 /**
@@ -137,7 +112,7 @@ Bitimports.prototype.register = function(){};
  *  module(s) are loaded and ready for the application to consume.
  * @param {Object} options - Configuration settings specific to the
  *  [require]{@link Bitimports#require} call. For example, you can specify a
- *  `modules` map to tell bit imports to use those modules before loading
+ *  `modules` map to tell Bitimports to use those modules before loading
  *  them from storage or cache.
  *  This is particularly useful for unit tests where dependency injection of
  *  mocked modules is needed.
@@ -172,57 +147,39 @@ Bitimports.prototype.define = function(){};
 
 
 /**
- * Method to configure an instance of bit imports.
+ * Method to configure an instance of Bitimports.
  *
- * config applies configuration settings to the particular instance of bit
- * imports. It will also create and return a new instance of bit imports with
- * the configuration settings passed in. The config method is generally your
- * primary way of configuring bit imports.
+ * config applies the configuration settings to `this` instance of Bitimports.
+ * It will also create and return a new instance of Bitimports with the
+ * configuration settings passed in. The config method is generally your
+ * primary way of configuring and creating instances of Bitimports.
  *
  * @param {Object} [options] - Configuration settings used for creating the
- *  instance of bit imports.
+ *  instance of Bitimports.
  *
- * @see [imports settings]{@link Bitimports} options for more details.
- *
- * @returns {Bitimports} Instance of bit imports
+ * @returns {Bitimports} Instance of Bitimports
  */
 Bitimports.prototype.config = function(options) {
-  Bitimports.Utils.merge(this.settings, options);
-  return this.factory(options);
-};
-
-
-/**
- * Method that creates bit import instances. Options is the same as
- * [config]{@link Bitimports#config}, so please refer to that for details.
- *
- * @param {Object} options - Configuration settings used for creating the
- *  instance of bit imports.
- *
- * @see [imports settings]{@link Bitimports} options for more details.
- *
- * @returns {Bitimports} Instance of bit imports
- */
-Bitimports.prototype.factory = function(options) {
-  return new Bitimports(options);
+  Bitloader.Utils.merge(this.settings, options);
+  return this.create(options);
 };
 
 
 /**
  * Convenience method to run the input string through the transformation
- * workflow
+ * pipeline
  *
  * @param {string} source - Source string to be processed by the transformation
- *  workflow.
+ *  pipeline.
  *
  * @returns {Promise} That when resolved, the processed text is returned.
  */
 Bitimports.prototype.transform = function(source) {
-  return this.loader.providers.loader
+  return this.providers.loader
     .transform({source: source})
     .then(function(moduleMeta) {
       return moduleMeta.source;
-    }, Bitimports.Utils.forwardError);
+    }, Bitloader.Utils.forwardError);
 };
 
 
@@ -250,19 +207,19 @@ Bitimports.prototype.AST = function(source, options) {
 
 
 /**
- * fetchFactory is the hook for Bitloader to get a hold of a fetch provider
+ * fetchFactory is the hook for Bitimports to define a fetch provider
  *
  * @ignore
  * @private
  *
- * @param {Bitimports} importer - Instance of Bitimports
+ * @param {object} settings - Bitimports settings
  *
  * @returns {Function} Factory function that creates instances of Fetcher; the
  *  fetch provider
  */
-function fetchFactory(importer) {
-  return function fetch(loader) {
-    return new Meta(loader, importer);
+function fetchFactory(settings) {
+  return function createFecth(loader) {
+    return new Fetch(loader, settings);
   };
 }
 
@@ -274,12 +231,12 @@ function fetchFactory(importer) {
  * @ignore
  * @private
  *
- * @param   {Bitimports} importer - Instance of bitimports
+ * @param   {object} settings - Bitimports settings
  * @returns {Compiler} Instance of the compiler
  */
-function compilerFactory(importer) {
-  return function compiler(loader) {
-    return new Compiler(loader, importer);
+function compilerFactory(settings) {
+  return function createCompiler(loader) {
+    return new Compiler(loader, settings);
   };
 }
 

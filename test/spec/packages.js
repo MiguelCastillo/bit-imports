@@ -3,7 +3,7 @@ var Importer = require("dist/bit-imports");
 describe("Packages Test Suite", function() {
   var importer;
   beforeEach(function() {
-    importer = Importer.factory({
+    importer = Importer.create({
       baseUrl: "../",
       packages: [
         {
