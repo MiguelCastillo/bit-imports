@@ -1,7 +1,8 @@
-var Fetch       = require('./fetch'),
+var Fetcher     = require('./fetcher'),
     Compiler    = require('./compiler'),
     Define      = require('./define'),
     Require     = require('./require'),
+    Resolver    = require('./resolver'),
     dependency  = require('deps-bits'),
     acorn       = require('acorn'),
     acornWalker = require('acorn/util/walk'),
@@ -38,6 +39,7 @@ var defaults = {
  *
  * @class
  * @private
+ * @lends Bitloader.prototype
  *
  * @param {Object} options - Configuration settings to create Bitimports
  *  instance.
@@ -66,9 +68,12 @@ var defaults = {
  */
 function Bitimports(options) {
   var settings = Bitloader.Utils.merge({}, defaults, options);
-  Bitloader.call(this, settings, {fetch: fetchFactory(settings), compiler: compilerFactory(settings)});
 
-  this.settings = settings;
+  Bitloader.call(this, settings, {
+    fetcher  : fetcherFactory(settings),
+    compiler : compilerFactory(settings),
+    resolver : resolverFactory(settings)
+  });
 
   this.providers.require = new Require(this);
   this.providers.define  = new Define();
@@ -77,9 +82,8 @@ function Bitimports(options) {
   this.define  = this.providers.define.define.bind(this.providers.define);
 
   // Register dependency processor
-  this.pipelines.dependency.use({
-    name: "deps",
-    handler: dependency
+  this.plugin("deps", {
+    "dependency": dependency
   });
 
   // Add `amd` for compliance
@@ -142,6 +146,9 @@ Bitimports.prototype.require = function(){};
  *  When dependencies are defined, those are passed to factory as arguments.
  *  If factory is not a function, then that is the actual module code that is
  *  returned when the module is imported.
+ *
+ * @returns {Promise} That when resolved, it returns all the imported modules
+ *  defined as dependencies.
  */
 Bitimports.prototype.define = function(){};
 
@@ -194,7 +201,7 @@ Bitimports.prototype.transform = function(source) {
  *  Please refer to [acorn]{@link http://marijnhaverbeke.nl/acorn/} for all
  *  valid options.
  *
- * @returns {{ast: Object, walk: Function}} Object with built ast and a helper
+ * @returns {{ast: object, walk: function}} Object with built ast and a helper
  *  function called walk, which is provider by acorn to help in the tree
  *  traversal process.
  */
@@ -217,26 +224,45 @@ Bitimports.prototype.AST = function(source, options) {
  * @returns {Function} Factory function that creates instances of Fetcher; the
  *  fetch provider
  */
-function fetchFactory(settings) {
-  return function createFecth(loader) {
-    return new Fetch(loader, settings);
+function fetcherFactory(settings) {
+  return function createFecther(loader) {
+    return new Fetcher(loader, settings);
   };
 }
 
 
 /**
- * compilerFactory creates a Compiler instance to propery handle the convertion
+ * compilerFactory creates a Compiler instance to propery handle the conversion
  * from module meta to module instance.
  *
  * @ignore
  * @private
  *
  * @param   {object} settings - Bitimports settings
- * @returns {Compiler} Instance of the compiler
+ * @returns {Compiler} Instance of the Compiler
  */
 function compilerFactory(settings) {
   return function createCompiler(loader) {
     return new Compiler(loader, settings);
+  };
+}
+
+
+/**
+ * resolverFactory creates a Resolver instance to handle the conversion from module
+ * id/name to a path where the module file resides. The output from the resolution
+ * is primarily used for fetching the module and running filters to determine whether
+ * or not the module should be processed by the different pipeline.
+ *
+ * @ignore
+ * @private
+ *
+ * @param {object} settings - Bitimports settings
+ * @returns {Resolver} Instance of Resolver
+ */
+function resolverFactory(settings) {
+  return function createResolver() {
+    return new Resolver(settings);
   };
 }
 
