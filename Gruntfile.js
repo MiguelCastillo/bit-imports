@@ -53,14 +53,14 @@ module.exports = function(grunt) {
         files: ['src/**/*.js'],
         tasks: ['jshint:all', 'jsdoc:build'],
         options: {
-          livereload: true
+          livereload: 32010
         }
       },
       build: {
         files: ['src/**/*.js', 'test/**/*.js', '*.js'],
         tasks: ['build'],
         options: {
-          livereload: true
+          livereload: 32011
         }
       }
     },
