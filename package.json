@@ -1,7 +1,7 @@
 {
   "name": "bit-imports",
   "description": "Module imports built on top of bit-loader",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "directories": {
     "test": "tests"
   },
