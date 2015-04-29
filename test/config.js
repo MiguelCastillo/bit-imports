@@ -13,7 +13,7 @@ require = (function() {
     }
   });
 
-  importer.loader.ignore({
+  importer.ignore({
     match: ["chai", "dist/bit-imports"]
   });
 
