@@ -13,7 +13,7 @@ Resolver.prototype.resolve = function(moduleMeta, moduleParent) {
   var pathInfo   = ResolverProvider.File.parseParts(meta.url.href);
   meta.directory = pathInfo.directory;
   meta.path      = pathInfo.path;
-  return moduleMeta.configure(meta);
+  return meta;
 };
 
 

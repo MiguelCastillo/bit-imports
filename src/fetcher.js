@@ -20,7 +20,7 @@ Fetcher.prototype.fetch = function(moduleMeta) {
   this.logger.log(moduleMeta.name, moduleMeta, location);
 
   function fileRead(source) {
-    return moduleMeta.configure({source: source});
+    return {source: source};
   }
 
   return fileReader(moduleMeta.path).then(fileRead, loader.Utils.forwardError);
