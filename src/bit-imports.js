@@ -70,9 +70,9 @@ function Bitimports(options) {
   var settings = Bitloader.Utils.merge({}, defaults, options);
 
   Bitloader.call(this, settings, {
-    fetcher  : fetcherFactory(settings),
-    compiler : compilerFactory(settings),
-    resolver : resolverFactory(settings)
+    fetcher  : fetcherFactory(this, settings),
+    compiler : compilerFactory(this, settings),
+    resolver : resolverFactory(this, settings)
   });
 
   this.providers.require = new Require(this);
@@ -82,7 +82,7 @@ function Bitimports(options) {
   this.define  = this.providers.define.define.bind(this.providers.define);
 
   // Register dependency processor
-  this.plugin("deps", {
+  this.plugin("js", {
     "dependency": dependency
   });
 
@@ -224,8 +224,8 @@ Bitimports.prototype.AST = function(source, options) {
  * @returns {Function} Factory function that creates instances of Fetcher; the
  *  fetch provider
  */
-function fetcherFactory(settings) {
-  return function createFecther(loader) {
+function fetcherFactory(loader, settings) {
+  return function createFecther() {
     return new Fetcher(loader, settings);
   };
 }
@@ -241,8 +241,8 @@ function fetcherFactory(settings) {
  * @param   {object} settings - Bitimports settings
  * @returns {Compiler} Instance of the Compiler
  */
-function compilerFactory(settings) {
-  return function createCompiler(loader) {
+function compilerFactory(loader, settings) {
+  return function createCompiler() {
     return new Compiler(loader, settings);
   };
 }
@@ -260,7 +260,7 @@ function compilerFactory(settings) {
  * @param {object} settings - Bitimports settings
  * @returns {Resolver} Instance of Resolver
  */
-function resolverFactory(settings) {
+function resolverFactory(loader, settings) {
   return function createResolver() {
     return new Resolver(settings);
   };
