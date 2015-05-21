@@ -68,25 +68,30 @@ var defaults = {
  */
 function Bitimports(options) {
   var settings = Bitloader.Utils.merge({}, defaults, options);
+  var resolver = new Resolver(settings);
+  var fetcher  = new Fetcher(this, settings);
+  var compiler = new Compiler(this, settings);
 
-  Bitloader.call(this, settings, {
-    fetcher  : fetcherFactory(this, settings),
-    compiler : compilerFactory(this, settings),
-    resolver : resolverFactory(this, settings)
-  });
+  settings.resolve = settings.resolve || resolver.resolve.bind(resolver);
+  settings.fetch   = settings.fetch   || fetcher.fetch.bind(fetcher);
+  settings.compile = settings.compile || compiler.compile.bind(compiler);
 
-  this.providers.require = new Require(this);
-  this.providers.define  = new Define();
-
-  this.require = this.providers.require.require.bind(this.providers.require);
-  this.define  = this.providers.define.define.bind(this.providers.define);
+  // Setup bit-loader
+  Bitloader.call(this, settings);
 
   // Register dependency processor
   this.plugin("js", {
     "dependency": dependency
   });
 
-  // Add `amd` for compliance
+
+  var require = new Require(this);
+  var define  = new Define();
+  this.providers.require = require;
+  this.providers.define  = define;
+
+  this.require = require.require.bind(require);
+  this.define  = define.define.bind(define);
   this.define.amd = {};
 }
 
@@ -211,60 +216,6 @@ Bitimports.prototype.AST = function(source, options) {
     walk: acornWalker
   };
 };
-
-
-/**
- * fetchFactory is the hook for Bitimports to define a fetch provider
- *
- * @ignore
- * @private
- *
- * @param {object} settings - Bitimports settings
- *
- * @returns {Function} Factory function that creates instances of Fetcher; the
- *  fetch provider
- */
-function fetcherFactory(loader, settings) {
-  return function createFecther() {
-    return new Fetcher(loader, settings);
-  };
-}
-
-
-/**
- * compilerFactory creates a Compiler instance to propery handle the conversion
- * from module meta to module instance.
- *
- * @ignore
- * @private
- *
- * @param   {object} settings - Bitimports settings
- * @returns {Compiler} Instance of the Compiler
- */
-function compilerFactory(loader, settings) {
-  return function createCompiler() {
-    return new Compiler(loader, settings);
-  };
-}
-
-
-/**
- * resolverFactory creates a Resolver instance to handle the conversion from module
- * id/name to a path where the module file resides. The output from the resolution
- * is primarily used for fetching the module and running filters to determine whether
- * or not the module should be processed by the different pipeline.
- *
- * @ignore
- * @private
- *
- * @param {object} settings - Bitimports settings
- * @returns {Resolver} Instance of Resolver
- */
-function resolverFactory(loader, settings) {
-  return function createResolver() {
-    return new Resolver(settings);
-  };
-}
 
 
 /**
