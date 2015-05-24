@@ -8,8 +8,8 @@ function Resolver(settings) {
 }
 
 
-Resolver.prototype.resolve = function(moduleMeta, moduleParent) {
-  var meta       = this._resolver.resolve(moduleMeta.name, getWorkingDirectory(moduleParent));
+Resolver.prototype.resolve = function(moduleMeta) {
+  var meta       = this._resolver.resolve(moduleMeta.name, getWorkingDirectory(moduleMeta.parent));
   var pathInfo   = ResolverProvider.File.parseParts(meta.url.href);
   meta.directory = pathInfo.directory;
   meta.path      = pathInfo.path;
