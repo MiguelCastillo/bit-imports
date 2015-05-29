@@ -191,7 +191,7 @@ Bitimports.prototype.transform = function(source) {
     .transform({source: source})
     .then(function(moduleMeta) {
       return moduleMeta.source;
-    }, Bitloader.Utils.forwardError);
+    }, Bitloader.Utils.reportError);
 };
 
 
