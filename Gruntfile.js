@@ -8,13 +8,13 @@ module.exports = function(grunt) {
       test: {
         options: {
           port: 8012,
-          hostname: 'localhost'
+          hostname: "localhost"
         }
       },
       example: {
         options: {
           port: 8015,
-          hostname: 'localhost',
+          hostname: "localhost",
           keepalive: true,
           open: "http://localhost:8015/example/index.html"
         }
@@ -50,15 +50,15 @@ module.exports = function(grunt) {
     },
     watch: {
       doc: {
-        files: ['src/**/*.js'],
-        tasks: ['jshint:all', 'jsdoc:build'],
+        files: ["src/**/*.js"],
+        tasks: ["jshint:all", "jsdoc:build"],
         options: {
           livereload: 32010
         }
       },
       build: {
-        files: ['src/**/*.js', 'test/**/*.js', '*.js'],
-        tasks: ['build'],
+        files: ["src/**/*.js", "test/**/*.js", "*.js"],
+        tasks: ["build"],
         options: {
           livereload: 32011
         }
@@ -68,30 +68,30 @@ module.exports = function(grunt) {
       all: {
         options: {
           jshintrc: true,
-          reporter: require('jshint-stylish')
+          reporter: require("jshint-stylish")
         },
-        src: ['src/**/*.js', 'test/**/*.js', '*.js']
+        src: ["src/**/*.js", "test/**/*.js", "*.js"]
       }
     },
     concurrent: {
       build: {
-        tasks: ['connect:dev', 'watch:build'],
+        tasks: ["connect:dev", "watch:build"],
         options: {
           logConcurrentOutput: true
         }
       },
       doc: {
-        tasks: ['connect:doc', 'watch:doc'],
+        tasks: ["connect:doc", "watch:doc"],
         options: {
           logConcurrentOutput: true
         }
       }
     },
-    jsdoc : {
+    jsdoc: {
       build: {
-        src: ['src/**/*.js', 'README.md'],
+        src: ["src/**/*.js", "README.md"],
         options: {
-          destination: 'doc',
+          destination: "doc",
           verbose: true
         }
       }
@@ -112,7 +112,7 @@ module.exports = function(grunt) {
     uglify: {
       build: {
         options: {
-          preserveComments: 'some',
+          preserveComments: "some",
           sourceMap: true
         },
         files: {
@@ -122,21 +122,21 @@ module.exports = function(grunt) {
     },
     release: {
       options: {
-        tagName: 'v<%= version %>',
-        tagMessage: 'Version <%= version %>',
-        commitMessage: 'Release v<%= version %>',
-        afterBump: ['build']
+        tagName: "v<%= version %>",
+        tagMessage: "Version <%= version %>",
+        commitMessage: "Release v<%= version %>",
+        afterBump: ["build"]
       }
     },
     usebanner: {
       "build": {
         options: {
-          position: 'top',
+          position: "top",
           banner: "/*! <%= pkg.name %> v<%= pkg.version %> - <%= grunt.template.today('yyyy-mm-dd') %>. (c) <%= grunt.template.today('yyyy') %> Miguel Castillo. Licensed under MIT */",
           linebreak: true
         },
         files: {
-          src: ['dist/**.js']
+          src: ["dist/**.js"]
         }
       }
     }
@@ -147,7 +147,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-release");
   grunt.loadNpmTasks("grunt-banner");
   grunt.loadNpmTasks("grunt-concurrent");
-  grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-connect");
   grunt.loadNpmTasks("grunt-contrib-watch");
   grunt.loadNpmTasks("grunt-contrib-jshint");
