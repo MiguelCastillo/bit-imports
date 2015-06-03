@@ -22,8 +22,10 @@
   },
   "homepage": "https://github.com/MiguelCastillo/bit-imports",
   "devDependencies": {
+    "babel-bits": "^0.1.2",
     "bit-imports": "~0.1.11",
     "bluebird": "^2.9.25",
+    "bootstrap": "^3.3.4",
     "chai": "~2.3.0",
     "grunt": "~0.4.5",
     "grunt-banner": "^0.4.0",

@@ -1,0 +1,13 @@
+{
+  "undef":true,
+  "unused":true,
+  "curly":true,
+  "indent":2,
+  "devel":true,
+  "browser": true,
+  "esnext":true,
+  "globals":{
+    "module": true,
+    "require": true
+  }
+}
