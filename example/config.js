@@ -1,25 +1,22 @@
-var require;
-require = (function() {
+/* jshint unused: false, undef: false */
+var System = (function() {
   var importer = bitimports.config({
     "baseUrl": ".",
     "paths": {
-      "addStrict": "transform/addStrict"
-    },
-    "transforms": [{
-      name: "ignore",
-      handler: ignore,
-      ignore:["addStrict"]
-    },
-    "addStrict"]
+      "babel": "../node_modules/babel-bits/dist/index.min.js",
+    }
   });
 
-  /**
-   * Simple filter for excluding particular modules from being processed by the transformation pipeline.
-   */
-  function ignore(moduleMeta) {
-    var ignoreList = this.ignore;
-    return !(ignoreList && ignoreList.length && ignoreList.indexOf(moduleMeta.name) !== -1);
-  }
+  importer.plugin("js", {
+    transform: {
+      handler: "babel",
+      options: {
+        sourceMap: "inline"
+      }
+    }
+  });
 
-  return importer.require;
+  return importer;
 })();
+
+var require = System.require;
