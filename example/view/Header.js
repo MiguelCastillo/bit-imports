@@ -13,7 +13,7 @@ class Header extends Component {
           <a class="navbar-brand"><img src="img/bit-imports_grey.png" class="logo"/></a>
 
           <ul class="nav navbar-nav">
-            <li><a href="https://github.com/MiguelCastillo/bit-imports/tree/master/example" target="_blank">Examples</a></li>
+            <li><a href="https://github.com/MiguelCastillo/bit-imports/tree/master/example" target="_blank">Example</a></li>
           </ul>
 
           <ul class="nav navbar-nav navbar-right">

@@ -35,11 +35,22 @@ body {
   color: yellowgreen;
 }
 
-
+/*
 .jumbotron:nth-child(even) {
   background-color: #eee;
 }
 
 .jumbotron:nth-child(odd) {
   background-color: #fff;
+}
+*/
+
+.jumbotron {
+  background-color: #fff;
+}
+
+.jumbotron:nth-child(2),
+.jumbotron:nth-child(2) * {
+  background-color: #00B37C;
+  color: white;
 }
