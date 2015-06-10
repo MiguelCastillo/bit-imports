@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/MiguelCastillo/bit-imports.svg)](https://travis-ci.org/MiguelCastillo/bit-imports)
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MiguelCastillo/bit-imports?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-> Module loader and dependency management with support for CJS and AMD.
+> module loader for the browser
 
 bit imports supports loading module with CJS and AMD format in the browser. And because it is built on top of [bit loader](https://github.com/MiguelCastillo/bit-loader), you get a full transformation workflow. Bit imports also uses [amd resolver](https://github.com/MiguelCastillo/amd-resolver) as the configuration provider, which is modeled after [requirejs](http://requirejs.org/docs/api.html#config) configuration format to give you a familar environment for setting things up.
 
