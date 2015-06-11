@@ -25,9 +25,10 @@ Compiler.prototype.compile = function(moduleMeta) {
   var evaluated   = evaluate(this.loader, moduleMeta);
   var definitions = loader.providers.define.getDefinitions(moduleMeta.name);
 
+  // Dynamic module deifnitions are handled right here... This happens when `define` is
+  // usde for defining modules
   if (definitions) {
-    definitions.type = loader.Module.Type.AMD;
-    moduleMeta.configure(definitions);
+    setupFactory(loader, moduleMeta, definitions);
   }
   else {
     // If `define` was not called, the we will try to assign the result of the function
@@ -41,15 +42,52 @@ Compiler.prototype.compile = function(moduleMeta) {
 
 
 /**
+ * Function that monkey patches the factory method for the module so that we can
+ * call it with the correct dependencies whenever the module is being built.
+ *
+ * @private
+ */
+function setupFactory(loader, moduleMeta, definitions) {
+  var factory = definitions.factory;
+
+  if (typeof(factory) === "function") {
+    definitions.factory = function factoryDelegate() {
+      var result  = factory.apply(undefined, arguments);
+      var _module = moduleMeta.builtins.module;
+
+      if (result !== undefined) {
+        return result;
+      }
+      else if (_module.hasOwnProperty("exports")) {
+        return _module.exports;
+      }
+      else {
+        return _module;
+      }
+    };
+  }
+
+  definitions.type = loader.Module.Type.AMD;
+  moduleMeta.configure(definitions);
+}
+
+
+/**
  * Method that evaluates the module meta source
  *
  * @private
  */
 function evaluate(loader, moduleMeta) {
-  var sourceUrl = canUseSourceURL(moduleMeta) ? moduleMeta.path : moduleMeta.id;
-  var source    = moduleMeta.source + getSourceUrl(sourceUrl); // We must add a sourceURL to be able to add breakpoints in Chrome.
-  var _module   = {exports: {}, id: moduleMeta.name, meta: moduleMeta};
-  var result    = runEval(loader, loader.define, loader.require, _module, _module.exports, moduleMeta.directory, moduleMeta.path, source);
+  var source  = moduleMeta.source + getSourceUrl(moduleMeta); // We must add a sourceURL to be able to add breakpoints in Chrome.
+  var _module = {exports: {}, id: moduleMeta.name, meta: moduleMeta};
+  var result  = runEval(loader, loader.define, loader.require, _module, _module.exports, moduleMeta.directory, moduleMeta.path, source);
+
+  // Setup support for AMD built-ins
+  moduleMeta.builtins = {
+    module: _module,
+    exports: _module.exports,
+    require: loader.require
+  };
 
   return {
     _result: result,
@@ -62,8 +100,12 @@ function evaluate(loader, moduleMeta) {
  * Builds a `# sourceURL` string from the URL.
  *
  * @private
+ *
+ * @param {Module.Meta} moduleMeta - Module meta object this function is processing
+ * @returns {string} The proper source url to be inserted in the module source
  */
-function getSourceUrl(url) {
+function getSourceUrl(moduleMeta) {
+  var url = canUseSourceURL(moduleMeta) ? moduleMeta.path : moduleMeta.id;
   return "\n//# sourceURL=" + url;
 }
 
@@ -75,6 +117,9 @@ function getSourceUrl(url) {
  * very well.
  *
  * @private
+ *
+ * @param {Module.Meta} moduleMeta - Module meta object this function is processing
+ * @returns {boolean}
  */
 function canUseSourceURL(moduleMeta) {
   if (!moduleMeta.source) {
