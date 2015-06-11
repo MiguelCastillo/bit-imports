@@ -157,5 +157,5 @@ module.exports = function(grunt) {
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
   grunt.registerTask("example", ["connect:example"]);
   grunt.registerTask("doc", ["concurrent:doc"]);
-  grunt.registerTask("dev", ["concurrent:build"]);
+  grunt.registerTask("serve", ["concurrent:build"]);
 };
