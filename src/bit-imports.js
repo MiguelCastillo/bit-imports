@@ -84,6 +84,12 @@ function Bitimports(options) {
     "dependency": dependency
   });
 
+  // Make sure we don't process these AMD built-ins.
+  this.ignore({
+    name: "*",
+    match: ["module", "exports", "require"]
+  });
+
 
   var require = new Require(this);
   var define  = new Define();
