@@ -175,6 +175,12 @@ module.exports = function(grunt) {
         src: ".site-gitignore",
         dest: "site/.gitignore"
       }
+    },
+
+    clean: {
+      site: {
+        src: ["site"]
+      }
     }
   });
 
@@ -190,11 +196,12 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-contrib-copy");
   grunt.loadNpmTasks("grunt-browserify");
   grunt.loadNpmTasks("grunt-build-control");
+  grunt.loadNpmTasks("grunt-contrib-clean");
 
   grunt.registerTask("build", ["jshint:all", "browserify:build", "usebanner:build", "uglify:build"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
   grunt.registerTask("example", ["connect:example"]);
   grunt.registerTask("doc", ["concurrent:doc"]);
   grunt.registerTask("serve", ["concurrent:build"]);
-  grunt.registerTask("site", ["build", "copy:siteignore", "copy:site", "buildcontrol:local"]);
+  grunt.registerTask("site", ["clean:site", "build", "copy:siteignore", "copy:site", "buildcontrol:local"]);
 };
