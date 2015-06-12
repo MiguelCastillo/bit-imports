@@ -168,7 +168,7 @@ module.exports = function(grunt) {
     copy: {
       site: {
         expand: true,
-        src: ["example/**", "dist/**", "node_modules/babel-bits/**"],
+        src: ["example/**", "dist/**", "node_modules/babel-bits/dist/**", "node_modules/spromise/dist/**"],
         dest: "site/"
       },
       siteignore: {
