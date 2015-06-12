@@ -18,7 +18,8 @@ class Header extends Component {
 
           <ul class="nav navbar-nav navbar-right">
             <li><a href="https://twitter.com/bitsjs" target="twitter" class="navbar-icon" title="twitter"><i class="fa fa-twitter"></i></a></li>
-            <li><a href="https://github.com/MiguelCastillo/bit-imports" target="bitimports" class="navbar-icon" title="github"><i class="fa fa-github"></i></a></li>
+            <li><a href="https://github.com/MiguelCastillo/bit-imports" target="github" class="navbar-icon" title="github"><i class="fa fa-github"></i></a></li>
+            <li><a href="https://gitter.im/MiguelCastillo/bit-imports" target="gitter" class="navbar-icon" title="gitter"><i class="fa fa-weixin"></i></a></li>
           </ul>
         </div>
       </div>
