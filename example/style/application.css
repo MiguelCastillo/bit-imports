@@ -31,8 +31,10 @@ body {
   height: 50px;
 }
 
-.navbar-icon {
-  color: yellowgreen;
+.navbar .navbar-icon {
+  font-size: 2em;
+  padding: 0 8px;
+  padding-top: 12px;
 }
 
 /*
