@@ -11,5 +11,8 @@
 /node_modules/babel-bits/*
 !/node_modules/babel-bits/dist
 
+/node_modules/bit-imports/*
+!/node_modules/bit-imports/dist
+
 /node_modules/spromise/*
 !/node_modules/spromise/dist
