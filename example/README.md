@@ -1,6 +1,6 @@
 > This is a sample page to illustrate how to use bit imports as yor module loader.
 
-The full sample page is written using ES6 features by leveraging [babeljs](https://babeljs.io/).
+A running version of this sample page is available [here](https://miguelcastillo.github.io/bit-imports/example/). It is entirely written leveraing ES2015 features and transpiled with [babeljs](https://babeljs.io/) in the browser.
 
 ## [index.html](index.html)
 
