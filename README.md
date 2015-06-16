@@ -1,3 +1,4 @@
+[![Stories in Ready](https://badge.waffle.io/MiguelCastillo/bit-imports.png?label=ready&title=Ready)](https://waffle.io/MiguelCastillo/bit-imports)
 <img src="img/bit-imports_white.png" width="100%"></img>
 
 [![Build Status](https://travis-ci.org/MiguelCastillo/bit-imports.svg)](https://travis-ci.org/MiguelCastillo/bit-imports)
