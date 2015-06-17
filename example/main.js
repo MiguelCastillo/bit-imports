@@ -5,6 +5,7 @@ import Renderer   from "./js/DOMRenderer";
 import Header     from "./view/Header";
 import Footer     from "./view/Footer";
 import Home       from "./view/Home";
+import "!./style/application.scss";
 
 
 class AppMain extends Component {

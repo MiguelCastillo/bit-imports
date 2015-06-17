@@ -4,10 +4,16 @@ var System = (function() {
     "baseUrl": ".",
     "paths": {
       "babel": "../node_modules/babel-bits/dist/index.min.js",
+      "sass": "../node_modules/sassy-bits/dist/index.js",
     }
   });
 
+
+  // Setup js pipeline
   importer.plugin("js", {
+    match: {
+      path: '**/*.js'
+    },
     transform: {
       handler: "babel",
       options: {
@@ -15,6 +21,16 @@ var System = (function() {
       }
     }
   });
+
+
+  // Setup sass pipeline
+  importer.plugin("sass", {
+    match: {
+      path: ['**/*.css', '**/*.scss']
+    },
+    transform: "sass"
+  });
+
 
   return importer;
 })();
