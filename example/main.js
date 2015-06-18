@@ -1,3 +1,7 @@
+// Import main style
+import "!./style/application.scss";
+
+// Import JavaScript
 import $el        from "./js/DOMElement";
 import Component  from "./js/Component";
 import Ready      from "./js/DOMReady";
@@ -5,7 +9,6 @@ import Renderer   from "./js/DOMRenderer";
 import Header     from "./view/Header";
 import Footer     from "./view/Footer";
 import Home       from "./view/Home";
-import "!./style/application.scss";
 
 
 class AppMain extends Component {
@@ -29,10 +32,7 @@ class AppMain extends Component {
 }
 
 
-var instance = new AppMain();
-export default instance;
-
-instance.ready(function(app) {
+(new AppMain()).ready(function(app) {
   // Render the application
   Renderer.render(new $el(document.body), app);
 });
