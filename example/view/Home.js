@@ -1,6 +1,6 @@
-import Component  from "../js/Component";
-import Jumbotron  from "./Jumbotron";
-import Highlights from "./Highlights";
+import Component  from "js/Component";
+import Jumbotron  from "view/Jumbotron";
+import Highlights from "view/Highlights";
 
 var co = Component.cojones;
 

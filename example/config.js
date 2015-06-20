@@ -36,3 +36,6 @@ var System = (function() {
 })();
 
 var require = System.require;
+
+// Load application
+System.import("main");

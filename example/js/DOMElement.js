@@ -1,4 +1,4 @@
-import "./DOMEvents";
+import "js/DOMEvents";
 
 class DOMElement {
   constructor(options = {}) {
