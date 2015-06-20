@@ -13,9 +13,8 @@ require = (function() {
     }
   });
 
-  importer.ignore({
-    match: ["chai", "dist/bit-imports"]
-  });
+  // Add modules to exclude from pipeline processing
+  importer.ignore(["chai", "dist/bit-imports"]);
 
   bitimports.Logger.enableAll();
   return importer.require;
