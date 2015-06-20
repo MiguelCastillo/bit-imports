@@ -1,4 +1,4 @@
-import "./DOMEvents"; // Load this to make sure our event polyfills are installed
+import "js/DOMEvents"; // Load this to make sure our event polyfills are installed
 
 var deferred = new Promise(function(resolve) {
   if (document.readyState === "complete") {

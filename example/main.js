@@ -1,14 +1,14 @@
 // Import main style
-import "!./style/application.scss";
+import "!style/application.scss";
 
 // Import JavaScript
-import $el        from "./js/DOMElement";
-import Component  from "./js/Component";
-import Ready      from "./js/DOMReady";
-import Renderer   from "./js/DOMRenderer";
-import Header     from "./view/Header";
-import Footer     from "./view/Footer";
-import Home       from "./view/Home";
+import $el        from "js/DOMElement";
+import Component  from "js/Component";
+import Ready      from "js/DOMReady";
+import Renderer   from "js/DOMRenderer";
+import Header     from "view/Header";
+import Footer     from "view/Footer";
+import Home       from "view/Home";
 
 
 class AppMain extends Component {

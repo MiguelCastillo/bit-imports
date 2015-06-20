@@ -1,5 +1,5 @@
-import Component from "../js/Component";
-import Jumbotron  from "./Jumbotron";
+import Component from "js/Component";
+import Jumbotron  from "view/Jumbotron";
 
 
 class Highlights extends Component {
