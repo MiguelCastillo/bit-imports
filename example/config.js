@@ -1,7 +1,11 @@
 /* jshint unused: false, undef: false */
 var System = (function() {
+
+  // Get the extension rule matches
+  var extension = bitimports.Rule.matcher.extension;
+
+  // Create instance of bitimports
   var importer = bitimports.config({
-    "baseUrl": ".",
     "paths": {
       "babel": "../node_modules/babel-bits/dist/index.min.js",
       "sass": "../node_modules/sassy-bits/dist/index.js",
@@ -12,7 +16,7 @@ var System = (function() {
   // Setup js pipeline
   importer.plugin("js", {
     match: {
-      path: '**/*.js'
+      path: extension('js')
     },
     transform: {
       handler: "babel",
@@ -26,7 +30,7 @@ var System = (function() {
   // Setup sass pipeline
   importer.plugin("sass", {
     match: {
-      path: ['**/*.css', '**/*.scss']
+      path: extension('css|scss')
     },
     transform: "sass"
   });

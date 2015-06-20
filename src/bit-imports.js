@@ -1,12 +1,12 @@
-var Fetcher     = require('./fetcher'),
-    Compiler    = require('./compiler'),
-    Define      = require('./define'),
-    Require     = require('./require'),
-    Resolver    = require('./resolver'),
-    dependency  = require('deps-bits'),
-    acorn       = require('acorn'),
-    acornWalker = require('acorn/util/walk'),
-    Bitloader   = require('bit-loader');
+var Fetcher     = require('./fetcher');
+var Compiler    = require('./compiler');
+var Define      = require('./define');
+var Require     = require('./require');
+var Resolver    = require('./resolver');
+var dependency  = require('deps-bits');
+var acorn       = require('acorn');
+var acornWalker = require('acorn/util/walk');
+var Bitloader   = require('bit-loader');
 
 
 /**
@@ -105,6 +105,13 @@ function Bitimports(options) {
 // Setup prototypal inheritance.
 Bitimports.prototype = Object.create(Bitloader.prototype);
 Bitimports.prototype.constructor = Bitimports;
+
+// Add these contructs to the prototype so that bit import instances can have
+// access to them.
+Bitimports.prototype.Logger = Bitloader.Logger;
+Bitimports.prototype.Module = Bitloader.Module;
+Bitimports.prototype.Rule   = Bitloader.Rule;
+Bitimports.prototype.Utils  = Bitloader.Utils;
 
 
 /**
