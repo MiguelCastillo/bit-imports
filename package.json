@@ -51,7 +51,7 @@
     "bluebird": "^2.9.27",
     "spromise": "~0.9.3",
     "promjax": "~1.0.2",
-    "amd-resolver": "~1.0.5",
+    "amd-resolver": "~1.1.0",
     "pulling-deps": "~0.0.6",
     "bit-loader": "~0.2.2",
     "deps-bits": "~0.0.3"
