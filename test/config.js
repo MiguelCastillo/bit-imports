@@ -1,5 +1,5 @@
-var require;
-require = (function() {
+/* jshint unused: false, undef: false */
+var require = (function() {
   var importer = bitimports.config({
     "baseUrl": "../",
     "paths": {
@@ -10,7 +10,8 @@ require = (function() {
       "mocha": {
         "exports": "mocha"
       }
-    }
+    },
+    "urlArgs": 'bust=' + (new Date()).getTime()
   });
 
   // Add modules to exclude from pipeline processing

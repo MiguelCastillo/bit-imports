@@ -25,7 +25,7 @@ Resolver.prototype.resolve = function(moduleMeta) {
  */
 function getBaseUrl(url) {
   var base = typeof(window) !== 'undefined' ? window.location.href : '';
-  return ResolverProvider.URL.parser.resolve(base, url || "");
+  return ResolverProvider.Url.parser.resolve(base, url || "");
 }
 
 
