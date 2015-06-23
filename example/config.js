@@ -8,7 +8,7 @@ var System = (function() {
   var importer = bitimports.config({
     "paths": {
       "babel": "../node_modules/babel-bits/dist/index.min.js",
-      "sass": "../node_modules/sassy-bits/dist/index.js",
+      "sass": "../node_modules/sassy-bits/dist/index.min.js",
     }
   });
 

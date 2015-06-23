@@ -23,7 +23,7 @@
   "homepage": "https://github.com/MiguelCastillo/bit-imports",
   "devDependencies": {
     "babel-bits": "^0.1.2",
-    "bit-imports": "~0.2.1",
+    "bit-imports": "~0.3.0",
     "bootstrap": "^3.3.4",
     "chai": "~3.0.0",
     "grunt": "~0.4.5",
