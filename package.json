@@ -27,7 +27,6 @@
     "bootstrap": "^3.3.5",
     "chai": "~3.0.0",
     "grunt": "~0.4.5",
-    "grunt-banner": "^0.4.0",
     "grunt-browserify": "~3.8.0",
     "grunt-build-control": "^0.5.0",
     "grunt-concurrent": "~2.0.0",
@@ -47,16 +46,11 @@
     "sinon": "~1.14.1"
   },
   "dependencies": {
-    "acorn": "~2.0.4",
     "spromise": "~0.9.3",
     "promjax": "~1.0.2",
     "amd-resolver": "~1.1.0",
     "pulling-deps": "~0.1.0",
     "bit-loader": "~0.2.4",
     "deps-bits": "~0.0.3"
-  },
-  "browser": {
-    "acorn": "./node_modules/acorn/dist/acorn.js",
-    "acorn-walk": "./node_modules/acorn/dist/walk.js"
   }
 }
