@@ -48,12 +48,15 @@
   },
   "dependencies": {
     "acorn": "~2.0.4",
-    "bluebird": "^2.9.30",
     "spromise": "~0.9.3",
     "promjax": "~1.0.2",
     "amd-resolver": "~1.1.0",
     "pulling-deps": "~0.1.0",
     "bit-loader": "~0.2.4",
     "deps-bits": "~0.0.3"
+  },
+  "browser": {
+    "acorn": "./node_modules/acorn/dist/acorn.js",
+    "acorn-walk": "./node_modules/acorn/dist/walk.js"
   }
 }

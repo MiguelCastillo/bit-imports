@@ -1,12 +1,10 @@
-var Fetcher     = require('./fetcher');
-var Compiler    = require('./compiler');
-var Define      = require('./define');
-var Require     = require('./require');
-var Resolver    = require('./resolver');
-var dependency  = require('deps-bits');
-var acorn       = require('acorn');
-var acornWalker = require('acorn/util/walk');
-var Bitloader   = require('bit-loader');
+var Fetcher    = require('./fetcher');
+var Compiler   = require('./compiler');
+var Define     = require('./define');
+var Require    = require('./require');
+var Resolver   = require('./resolver');
+var dependency = require('deps-bits');
+var Bitloader  = require('bit-loader');
 
 
 /**
@@ -89,7 +87,6 @@ function Bitimports(options) {
     name: "*",
     match: ["module", "exports", "require"]
   });
-
 
   var require = new Require(this);
   var define  = new Define();
@@ -205,29 +202,6 @@ Bitimports.prototype.transform = function(source) {
     .then(function(moduleMeta) {
       return moduleMeta.source;
     }, Bitloader.Utils.reportError);
-};
-
-
-/**
- * Convenience method to create an AST (Abstract Syntax Tree) from the input
- * source string. The ast is built with [acorn]{@link http://marijnhaverbeke.nl/acorn/},
- * so please feel free to check it out for details on how it works and its
- * options.
- *
- * @param {string} source - Source string to create the AST from.
- * @param {Object} options - Configuration settings passed directly into acorn.
- *  Please refer to [acorn]{@link http://marijnhaverbeke.nl/acorn/} for all
- *  valid options.
- *
- * @returns {{ast: object, walk: function}} Object with built ast and a helper
- *  function called walk, which is provider by acorn to help in the tree
- *  traversal process.
- */
-Bitimports.prototype.AST = function(source, options) {
-  return {
-    ast: acorn.parse(source, options),
-    walk: acornWalker
-  };
 };
 
 
