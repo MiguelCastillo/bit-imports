@@ -104,6 +104,7 @@ module.exports = function(grunt) {
         src: ["browser.js"],
         dest: "dist/<%= pkg.name %>.js",
         options: {
+          banner: "/*! <%= pkg.name %> v<%= pkg.version %> - <%= grunt.template.today('yyyy-mm-dd') %>. (c) <%= grunt.template.today('yyyy') %> Miguel Castillo. Licensed under MIT */",
           browserifyOptions: {
             "detectGlobals": true,
             "ignoreMissing": true,
@@ -131,19 +132,6 @@ module.exports = function(grunt) {
         afterBump: ["build"]
       }
     },
-    usebanner: {
-      "build": {
-        options: {
-          position: "top",
-          banner: "/*! <%= pkg.name %> v<%= pkg.version %> - <%= grunt.template.today('yyyy-mm-dd') %>. (c) <%= grunt.template.today('yyyy') %> Miguel Castillo. Licensed under MIT */",
-          linebreak: true
-        },
-        files: {
-          src: ["dist/**.js"]
-        }
-      }
-    },
-
     buildcontrol: {
       options: {
         dir: 'site',
@@ -164,7 +152,6 @@ module.exports = function(grunt) {
         }
       }
     },
-
     copy: {
       site: {
         expand: true,
@@ -176,7 +163,6 @@ module.exports = function(grunt) {
         dest: "site/.gitignore"
       }
     },
-
     clean: {
       site: {
         src: ["site"]
@@ -187,7 +173,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-mocha");
   grunt.loadNpmTasks("grunt-jsdoc");
   grunt.loadNpmTasks("grunt-release");
-  grunt.loadNpmTasks("grunt-banner");
   grunt.loadNpmTasks("grunt-concurrent");
   grunt.loadNpmTasks("grunt-contrib-uglify");
   grunt.loadNpmTasks("grunt-contrib-connect");
@@ -198,7 +183,7 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks("grunt-build-control");
   grunt.loadNpmTasks("grunt-contrib-clean");
 
-  grunt.registerTask("build", ["jshint:all", "browserify:build", "usebanner:build", "uglify:build"]);
+  grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
   grunt.registerTask("example", ["connect:example"]);
   grunt.registerTask("doc", ["concurrent:doc"]);
