@@ -1,5 +1,5 @@
 // Import main style
-import "!style/application.scss";
+import "style/application.scss";
 
 // Import JavaScript
 import $el        from "js/DOMElement";
@@ -9,6 +9,8 @@ import Renderer   from "js/DOMRenderer";
 import Header     from "view/Header";
 import Footer     from "view/Footer";
 import Home       from "view/Home";
+
+import SpecialEffect from "effects/SpecialEffect";
 
 
 class AppMain extends Component {
@@ -35,4 +37,5 @@ class AppMain extends Component {
 (new AppMain()).ready(function(app) {
   // Render the application
   Renderer.render(new $el(document.body), app);
+  SpecialEffect.create();
 });

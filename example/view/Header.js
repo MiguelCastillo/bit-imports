@@ -8,21 +8,32 @@ class Header extends Component {
 
   render() {
     return Component.cojones `
-      <div class="navbar navbar-inverse navbar-fixed-top">
-        <div class="container">
-          <a class="navbar-brand"><img src="img/bit-imports_grey.png" class="logo"/></a>
-
-          <ul class="nav navbar-nav">
-            <li><a href="https://github.com/MiguelCastillo/bit-imports/tree/master/example" target="exmples">Example</a></li>
+      <header>
+        <nav id="nav">
+          <ul>
+            <li>
+              <a href="https://github.com/MiguelCastillo/bit-imports/tree/master/example">
+                <img id="bit-imports-mini" src="img/bit-imports.svg" alt="bit imports" class="mini-logo">
+              </a>
+            </li>
+            <li>
+              <a href="https://twitter.com/bitsjs" target="_blank">
+                <img src="./img/twitter.svg" alt="Twitter @bitsjs">
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/MiguelCastillo/bit-imports" target="_blank">
+                <img src="./img/github.svg" alt="GitHub bit imports">
+              </a>
+            </li>
+            <li>
+              <a href="https://gitter.im/MiguelCastillo/bit-imports" target="_blank">
+                <img src="./img/gitter.svg" alt="Gitter bit imports">
+              </a>
+            </li>
           </ul>
-
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="https://twitter.com/bitsjs" target="twitter" class="navbar-icon" title="twitter"><i class="fa fa-twitter"></i></a></li>
-            <li><a href="https://github.com/MiguelCastillo/bit-imports" target="github" class="navbar-icon" title="github"><i class="fa fa-github"></i></a></li>
-            <li><a href="https://gitter.im/MiguelCastillo/bit-imports" target="gitter" class="navbar-icon" title="gitter"><i class="fa fa-weixin"></i></a></li>
-          </ul>
-        </div>
-      </div>
+        </nav>
+      </header>
     `;
   }
 }

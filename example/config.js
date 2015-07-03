@@ -7,11 +7,19 @@ var System = (function() {
   // Create instance of bitimports
   var importer = bitimports.config({
     "paths": {
-      "babel": "../node_modules/babel-bits/dist/index.min.js",
-      "sass": "../node_modules/sassy-bits/dist/index.min.js",
-      "plugin1": "./js/plugin1.js"
-    }
+      "babel": "/node_modules/babel-bits/dist/index.min.js",
+      "sass": "/node_modules/sassy-bits/dist/index.min.js",
+      "threejs": "effects/three.min.js"
+    },
+    "extensions": ["css", "scss"]
   });
+
+  // Make sure we don't process three js
+  importer.ignore([
+    "threejs",
+    "effects/Projector",
+    "effects/CanvasRenderer"
+  ]);
 
   // Setup js pipeline
   importer.plugin("js", {
@@ -21,6 +29,7 @@ var System = (function() {
     transform: {
       handler: "babel",
       options: {
+        blacklist: ["react"],
         sourceMap: "inline"
       }
     }

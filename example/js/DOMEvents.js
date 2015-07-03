@@ -72,3 +72,76 @@
     }
   }
 })();
+
+
+class DOMEvents {
+  constructor(target, events = {}) {
+    this._el = target;
+    this._events = {};
+
+    for (var event in events) {
+      this.on(event, events[event]);
+    }
+  }
+
+  on(evts) {
+    var fn, evtName, handlers;
+
+    // Handle passing in an event name and function handler as arguments instead
+    // of an object literal
+    if (typeof(evts) === "string") {
+      evtName = arguments[0];
+      fn = arguments[1];
+
+      evts = {
+        [evtName]: fn
+      };
+    }
+
+    for (var evt in evts) {
+      evtName = evt;
+      fn = evts[evtName];
+
+      if (!this._events[evtName]) {
+        this._events[evtName] = [];
+      }
+
+      handlers = this._events[evtName];
+      if (!(~handlers.indexOf(fn))) {
+        handlers.push(fn);
+        this._el.addEventListener(evtName, fn);
+      }
+    }
+
+    return this;
+  }
+
+  off(evts) {
+    var fn, evtName, handlers;
+
+    // Handle passing in an event name and function handler as arguments instead
+    // of an object literal
+    if (typeof(evts) === "string") {
+      evtName = arguments[0];
+      fn = arguments[1];
+
+      evts = {
+        [evtName]: fn
+      };
+    }
+
+    for (var evt in evts) {
+      evtName = evt;
+
+      handlers = this._events[evtName];
+      if (handlers && ~handlers.indexOf(fn)) {
+        handlers.splice(handlers.indexOf(fn), 1);
+        this._el.removeEventListener(evtName, fn);
+      }
+    }
+
+    return this;
+  }
+}
+
+export default DOMEvents;
