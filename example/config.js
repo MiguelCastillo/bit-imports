@@ -8,10 +8,10 @@ var System = (function() {
   var importer = bitimports.config({
     "paths": {
       "babel": "/node_modules/babel-bits/dist/index.min.js",
-      "sass": "/node_modules/sassy-bits/dist/index.min.js",
+      "loadstyle": "/node_modules/loadstyle-bits/dist/index.min.js",
       "threejs": "effects/three.min.js"
     },
-    "extensions": ["css", "scss"]
+    "extensions": ["css"]
   });
 
   // Make sure we don't process three js
@@ -36,11 +36,11 @@ var System = (function() {
   });
 
   // Setup sass pipeline
-  importer.plugin("sass", {
+  importer.plugin("style", {
     match: {
-      path: extension("css|scss")
+      path: extension("css")
     },
-    transform: "sass"
+    transform: "loadstyle"
   });
 
   return importer;

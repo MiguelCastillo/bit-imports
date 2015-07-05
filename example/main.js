@@ -1,5 +1,5 @@
 // Import main style
-import "style/application.scss";
+import "style/application.css";
 
 // Import JavaScript
 import $el        from "js/DOMElement";
