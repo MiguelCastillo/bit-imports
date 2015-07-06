@@ -1,0 +1,276 @@
+@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Open Sans', sans-serif;
+
+    margin: 0 0 20px 0;
+
+    color: #353535;
+    background-color: #fff;
+}
+
+nav {
+    position: fixed;
+    z-index: 3000;
+    top: 0;
+
+    overflow: hidden;
+
+    width: 100%;
+    height: 50px;
+
+    border-bottom: 1px solid #fff;
+    background-color: #3b3b3b;
+}
+
+nav ul {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 10px;
+
+    align-items: center;
+    justify-content: flex-end;
+}
+
+nav li {
+    height: 50px;
+    margin-right: 5px;
+
+    list-style: none;
+
+    -webkit-box-flex: 0;
+    -webkit-flex: 0 0 auto;
+        -ms-flex: 0 0 auto;
+            flex: 0 0 auto;
+}
+
+nav li:first-child {
+    align-self: flex-start;
+    -webkit-box-flex: 1;
+    -webkit-flex: 1 0 auto;
+        -ms-flex: 1 0 auto;
+            flex: 1 0 auto;
+}
+
+nav li:not(:first-child) a {
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+
+    width: 30px;
+    height: 100%;
+
+    transition: opacity .25s;
+
+    opacity: .6;
+
+    align-items: center;
+    justify-content: center;
+}
+
+nav li:not(:first-child) a:hover {
+    opacity: 1;
+}
+
+nav img {
+    height: 100%;
+}
+
+.mini-logo {
+    width: 200px;
+
+    transform: translate3d(0, 100%, 0);
+}
+
+.canvas-wrap {
+    position: relative;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    overflow: hidden;
+
+    height: 300px;
+    margin-top: 50px;
+
+    align-items: center;
+    justify-content: center;
+}
+
+.canvas-content {
+    position: relative;
+    z-index: 2000;
+
+    color: #fff;
+}
+.canvas-content img {
+    width: 300px;
+
+    animation-name: fade-in-up;
+    animation-duration: .5s;
+}
+
+
+.canvas-content h1 {
+    font-size: 22px;
+    font-weight: 300;
+
+    margin: 0;
+
+    animation-name: fade-in-up;
+    animation-duration: .8s;
+
+    color: rgba(255,255,255,.7);
+}
+
+@media screen and (min-width: 600px) {
+    .canvas-content h1 {
+        font-size: 32px;
+    }
+}
+
+.canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    overflow: hidden;
+
+    width: 100%;
+    height: 300px;
+
+    border-bottom: 10px solid rgba(255, 255, 255, .4);
+    background-color: #38b27e;
+}
+
+.wrapper {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+section {
+    padding: 20px;
+}
+
+p {
+    font-size: .85em;
+
+    color: #888;
+}
+
+
+
+section img {
+    display: block;
+
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+section h2 {
+    text-align: center;
+}
+
+.babel {
+    border-top: 1px solid rgba(0, 0, 0, .2);
+}
+
+.babel a {
+    text-decoration: none;
+
+    color: #8ec6ff;
+}
+
+.babel a:hover {
+    text-decoration: underline;
+}
+
+.babel img {
+    max-width: 100%;
+}
+
+footer {
+    font-size: .7em;
+
+    position: fixed;
+    bottom: 0;
+
+    width: 100%;
+    padding: 5px 10px;
+
+    text-align: right;
+
+    color: #fff;
+    border-top: 1px solid #fff;
+    background-color: #3b3b3b;
+}
+
+@media screen and (min-width: 400px) {
+    section {
+        padding: 40px;
+    }
+    nav li {
+        margin-right: 10px;
+    }
+    nav li:not(:first-child) a {
+        width: 40px;
+    }
+}
+
+@media screen and (min-width: 600px) {
+    .wrapper {
+        display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    }
+
+    section {
+        -webkit-box-flex: 1;
+        -webkit-flex: 1 0 33.333333%;
+            -ms-flex: 1 0 33.333333%;
+                flex: 1 0 33.333333%;
+    }
+
+    p {
+        font-size: 1em;
+    }
+
+    .babel {
+        display: -webkit-box;
+        display: -webkit-flex;
+        display: -ms-flexbox;
+        display: flex;
+    }
+
+    .canvas-content img {
+        width: 440px;
+    }
+}
+
+@keyframes fade-in-up {
+    from {
+        transform: translateY(50px);
+
+        opacity: 0;
+    }
+}
+
+@-webkit-keyframes fade-in-up {
+    from {
+        -webkit-transform: translateY(50px);
+
+        opacity: 0;
+    }
+}

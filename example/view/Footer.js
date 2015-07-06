@@ -8,7 +8,9 @@ class Footer extends Component {
 
   render() {
     return Component.cojones `
-      <small class="footer navbar-inverse">© Miguel Castillo 2015</small>
+      <footer>
+        © Miguel Castillo 2015
+      </footer>
     `;
   }
 }
