@@ -7,8 +7,8 @@ var System = (function() {
   // Create instance of bitimports
   var importer = bitimports.config({
     "paths": {
-      "babel": "/node_modules/babel-bits/dist/index.min.js",
-      "loadstyle": "/node_modules/loadstyle-bits/dist/index.min.js",
+      "babel": "../node_modules/babel-bits/dist/index.min.js",
+      "loadstyle": "../node_modules/loadstyle-bits/dist/index.min.js",
       "threejs": "effects/three.min.js"
     },
     "extensions": ["css"]
