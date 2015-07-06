@@ -84,6 +84,7 @@ nav li:not(:first-child) a:hover {
 
 nav img {
     height: 100%;
+    width: 100%;
 }
 
 .mini-logo {
