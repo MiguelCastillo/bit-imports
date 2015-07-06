@@ -1,7 +1,9 @@
-import "./DOMEvents";
+import DOMEvents from "js/DOMEvents";
 
-class DOMElement {
+class DOMElement extends DOMEvents {
   constructor(options = {}) {
+    super();
+
     if (DOMElement.isElement(options)) {
       options = {
         el: options
@@ -11,7 +13,6 @@ class DOMElement {
     var settings = {};
     this.options = settings;
     this._el = options.el || DOMElement.create("div");
-    this._events = {};
 
     for (var option in options) {
       if (!options.hasOwnProperty(option)) {
@@ -25,67 +26,8 @@ class DOMElement {
         settings[option] = options[option];
       }
     }
-  }
 
-
-  on(evts) {
-    var fn, evtName, handlers;
-
-    // Handle passing in an event name and function handler as arguments instead
-    // of an object literal
-    if (typeof(evts) === "string") {
-      evtName = arguments[0];
-      fn = arguments[1];
-
-      evts = {
-        [evtName]: fn
-      };
-    }
-
-    for (var evt in evts) {
-      evtName = evt;
-      fn = evts[evtName];
-
-      if (!this._events[evtName]) {
-        this._events[evtName] = [];
-      }
-
-      handlers = this._events[evtName];
-      if (!(~handlers.indexOf(fn))) {
-        handlers.push(fn);
-        this._el.addEventListener(evtName, fn);
-      }
-    }
-
-    return this;
-  }
-
-
-  off(evts) {
-    var fn, evtName, handlers;
-
-    // Handle passing in an event name and function handler as arguments instead
-    // of an object literal
-    if (typeof(evts) === "string") {
-      evtName = arguments[0];
-      fn = arguments[1];
-
-      evts = {
-        [evtName]: fn
-      };
-    }
-
-    for (var evt in evts) {
-      evtName = evt;
-
-      handlers = this._events[evtName];
-      if (handlers && ~handlers.indexOf(fn)) {
-        handlers.splice(handlers.indexOf(fn), 1);
-        this._el.removeEventListener(evtName, fn);
-      }
-    }
-
-    return this;
+    this.on(settings.events);
   }
 
 
