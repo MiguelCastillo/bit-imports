@@ -1,3 +1,6 @@
+# Skip dist
+/dist
+
 # Unignore everything
 !**/*
 
@@ -16,3 +19,6 @@
 
 /node_modules/spromise/*
 !/node_modules/spromise/dist
+
+/node_modules/loadstyle-bits/*
+!/node_modules/loadstyle-bits/dist/
