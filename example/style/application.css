@@ -1,6 +1,8 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
 
-* {
+*,
+*::before,
+*::after {
     box-sizing: border-box;
 }
 
@@ -11,6 +13,8 @@ body {
 
     color: #353535;
     background-color: #fff;
+
+    font-weight: 100;
 }
 
 nav {
