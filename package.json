@@ -23,7 +23,7 @@
   "homepage": "https://github.com/MiguelCastillo/bit-imports",
   "devDependencies": {
     "babel-bits": "^0.3.0",
-    "bit-imports": "~0.3.3",
+    "bit-imports": "~0.3.4",
     "bootstrap": "^3.3.5",
     "chai": "~3.0.0",
     "grunt": "~0.4.5",
@@ -48,8 +48,8 @@
   },
   "dependencies": {
     "spromise": "~0.9.3",
-    "promjax": "~1.0.2",
-    "amd-resolver": "~1.2.1",
+    "promjax": "~3.0.0",
+    "amd-resolver": "~1.2.2",
     "pulling-deps": "~0.1.0",
     "bit-loader": "~0.3.0",
     "deps-bits": "~0.0.3"
