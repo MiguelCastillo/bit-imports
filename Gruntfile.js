@@ -2,6 +2,8 @@
 // http://24ways.org/2013/grunt-is-not-weird-and-hard/
 //
 module.exports = function(grunt) {
+  require('load-grunt-tasks')(grunt);
+
   var pkg = grunt.file.readJSON("package.json");
 
 
@@ -169,19 +171,6 @@ module.exports = function(grunt) {
       }
     }
   });
-
-  grunt.loadNpmTasks("grunt-mocha");
-  grunt.loadNpmTasks("grunt-jsdoc");
-  grunt.loadNpmTasks("grunt-release");
-  grunt.loadNpmTasks("grunt-concurrent");
-  grunt.loadNpmTasks("grunt-contrib-uglify");
-  grunt.loadNpmTasks("grunt-contrib-connect");
-  grunt.loadNpmTasks("grunt-contrib-watch");
-  grunt.loadNpmTasks("grunt-contrib-jshint");
-  grunt.loadNpmTasks("grunt-contrib-copy");
-  grunt.loadNpmTasks("grunt-browserify");
-  grunt.loadNpmTasks("grunt-build-control");
-  grunt.loadNpmTasks("grunt-contrib-clean");
 
   grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
