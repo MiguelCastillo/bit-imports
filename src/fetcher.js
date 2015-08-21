@@ -1,4 +1,5 @@
-var fileReader = require('./fileReader');
+var fileReader  = require('./fileReader');
+var log2console = require('log2console');
 
 /**
  * @class
@@ -15,15 +16,13 @@ function Fetcher(loader) {
  * Reads file content from storage
  */
 Fetcher.prototype.fetch = function(moduleMeta) {
-  var loader = this.loader;
-
   this.logger.log(moduleMeta.name, moduleMeta, location);
 
   function fileRead(source) {
     return {source: source};
   }
 
-  return fileReader(moduleMeta.path).then(fileRead, loader.Utils.reportError);
+  return fileReader(moduleMeta.path).then(fileRead, log2console);
 };
 
 

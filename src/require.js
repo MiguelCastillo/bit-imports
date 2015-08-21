@@ -1,3 +1,6 @@
+var utils       = require('belty');
+var log2console = require('log2console');
+
 /**
  * @class
  *
@@ -27,7 +30,7 @@ Require.prototype.require = function(name, ready, options) {
     return loader.getModuleCode(name);
   }
   else {
-    return loader.import(name, options).then(ready || loader.Utils.noop, loader.Utils.reportError);
+    return loader.import(name, options).then(ready || utils.noop, log2console);
   }
 };
 
