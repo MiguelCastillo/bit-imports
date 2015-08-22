@@ -1,11 +1,12 @@
-var Fetcher    = require('./fetcher');
-var Compiler   = require('./compiler');
-var Define     = require('./define');
-var Require    = require('./require');
-var Resolver   = require('./resolver');
-var dependency = require('deps-bits');
-var Bitloader  = require('bit-loader');
-
+var Fetcher     = require('./fetcher');
+var Compiler    = require('./compiler');
+var Define      = require('./define');
+var Require     = require('./require');
+var Resolver    = require('./resolver');
+var dependency  = require('deps-bits');
+var Bitloader   = require('bit-loader');
+var utils       = require('belty');
+var log2console = require('log2console');
 
 /**
  * Default options for Bitimports instances
@@ -65,7 +66,7 @@ var defaults = {
  *  debugging because transforms' names are logged
  */
 function Bitimports(options) {
-  var settings = Bitloader.Utils.merge({}, defaults, options);
+  var settings = utils.merge({}, defaults, options);
   var resolver = new Resolver(settings);
   var fetcher  = new Fetcher(this, settings);
   var compiler = new Compiler(this, settings);
@@ -108,7 +109,6 @@ Bitimports.prototype.constructor = Bitimports;
 Bitimports.prototype.Logger = Bitloader.Logger;
 Bitimports.prototype.Module = Bitloader.Module;
 Bitimports.prototype.Rule   = Bitloader.Rule;
-Bitimports.prototype.Utils  = Bitloader.Utils;
 
 
 /**
@@ -182,7 +182,7 @@ Bitimports.prototype.define = function(){};
  * @returns {Bitimports} Instance of Bitimports
  */
 Bitimports.prototype.config = function(options) {
-  Bitloader.Utils.merge(this.settings, options);
+  utils.merge(this.settings, options);
   return this.create(options);
 };
 
@@ -201,7 +201,7 @@ Bitimports.prototype.transform = function(source) {
     .transform({source: source})
     .then(function(moduleMeta) {
       return moduleMeta.source;
-    }, Bitloader.Utils.reportError);
+    }, log2console);
 };
 
 
