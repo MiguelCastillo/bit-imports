@@ -1,8 +1,8 @@
 var runEval = require("./evaluate");
+var logger = require("./logger").create("Bitimporter/Compiler");
 
 function Compiler(loader) {
   this.loader = loader;
-  this.logger = loader.Logger.factory("Bitimporter/Compiler");
 
   // Compiler interface
   this.compile = this.compile.bind(this);
@@ -18,7 +18,7 @@ function Compiler(loader) {
  */
 Compiler.prototype.compile = function(moduleMeta) {
   var loader = this.loader;
-  this.logger.log(moduleMeta.name, moduleMeta);
+  logger.log(moduleMeta.name, moduleMeta);
 
   // Evaluation will execute the module meta source, which might call `define`.
   // When that happens, `getDefinitions` will get us the proper module definitions.

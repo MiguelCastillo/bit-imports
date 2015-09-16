@@ -1,14 +1,12 @@
-var fileReader  = require('./fileReader');
-var log2console = require('log2console');
+var fileReader = require('./fileReader');
+var logger     = require('./logger').create("Bitimporter/Fetch");
 
 /**
  * @class
  *
  * FileReader that loads files from storage
  */
-function Fetcher(loader) {
-  this.loader = loader;
-  this.logger = loader.Logger.factory("Bitimporter/Fetch");
+function Fetcher() {
 }
 
 
@@ -16,13 +14,13 @@ function Fetcher(loader) {
  * Reads file content from storage
  */
 Fetcher.prototype.fetch = function(moduleMeta) {
-  this.logger.log(moduleMeta.name, moduleMeta, location);
+  logger.log(moduleMeta.name, moduleMeta, location);
 
   function fileRead(source) {
     return {source: source};
   }
 
-  return fileReader(moduleMeta.path).then(fileRead, log2console);
+  return fileReader(moduleMeta.path).then(fileRead, logger.error);
 };
 
 
