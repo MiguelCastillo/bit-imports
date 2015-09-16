@@ -3,10 +3,12 @@ var Compiler    = require('./compiler');
 var Define      = require('./define');
 var Require     = require('./require');
 var Resolver    = require('./resolver');
+var logger      = require('./logger');
 var dependency  = require('deps-bits');
 var Bitloader   = require('bit-loader');
 var utils       = require('belty');
-var log2console = require('log2console');
+
+var bitimportsLogger = logger.create("bit-imports");
 
 /**
  * Default options for Bitimports instances
@@ -106,7 +108,7 @@ Bitimports.prototype.constructor = Bitimports;
 
 // Add these contructs to the prototype so that bit import instances can have
 // access to them.
-Bitimports.prototype.Logger = Bitloader.Logger;
+Bitimports.prototype.logger = logger;
 Bitimports.prototype.Module = Bitloader.Module;
 Bitimports.prototype.Rule   = Bitloader.Rule;
 
@@ -201,7 +203,7 @@ Bitimports.prototype.transform = function(source) {
     .transform({source: source})
     .then(function(moduleMeta) {
       return moduleMeta.source;
-    }, log2console);
+    }, bitimportsLogger.error);
 };
 
 

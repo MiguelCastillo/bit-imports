@@ -1,5 +1,5 @@
-var utils       = require('belty');
-var log2console = require('log2console');
+var utils  = require('belty');
+var logger = require('./logger').create("Bitimporter/require");
 
 /**
  * @class
@@ -9,7 +9,6 @@ var log2console = require('log2console');
 function Require(loader) {
   this.loader  = loader;
   this.context = loader.context;
-  this.logger  = loader.Logger.factory("Bitimporter/require");
 }
 
 
@@ -24,13 +23,13 @@ function Require(loader) {
  */
 Require.prototype.require = function(name, ready, options) {
   var loader = this.loader;
-  this.logger.log(name, loader.context._id);
+  logger.log(name, loader.context._id);
 
   if (loader.hasModule(name)) {
     return loader.getModuleCode(name);
   }
   else {
-    return loader.import(name, options).then(ready || utils.noop, log2console);
+    return loader.import(name, options).then(ready || utils.noop, logger.error);
   }
 };
 
