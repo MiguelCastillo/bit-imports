@@ -1,7 +1,9 @@
-define(["1", "2", "3"], function(deep1, deep2, deep3) {
-  return {
-    "one": deep1,
-    "two": deep2,
-    "three": deep3
-  };
-});
+var deep1 = require("1");
+var deep2 = require("2");
+var deep3 = require("3");
+
+module.exports = {
+  "one": deep1,
+  "two": deep2,
+  "three": deep3
+};

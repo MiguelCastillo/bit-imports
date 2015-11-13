@@ -1,1 +1,1 @@
-define(undefined);
+module.exports = undefined;

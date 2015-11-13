@@ -1,1 +1,1 @@
-define(3.14);
+module.exports = 3.14;

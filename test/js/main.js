@@ -1,3 +1,2 @@
-define(["js/deep3"], function(deep3) {
-  return deep3;
-});
+var deep3 = require("js/deep3");
+module.exports = deep3;

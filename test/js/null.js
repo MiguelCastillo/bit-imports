@@ -1,1 +1,1 @@
-define(null);
+module.exports = null;

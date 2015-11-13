@@ -1,5 +1,5 @@
 /* jshint unused: false, undef: false */
-var require = (function() {
+var System = (function() {
   var importer = bitimports.config({
     "baseUrl": "../",
     "paths": {
@@ -17,6 +17,8 @@ var require = (function() {
   // Add modules to exclude from pipeline processing
   importer.ignore(["chai", "dist/bit-imports"]);
 
-  bitimports.Logger.enableAll();
-  return importer.require;
+  importer.logger.enable();
+  return importer;
 })();
+
+var require = System.import;

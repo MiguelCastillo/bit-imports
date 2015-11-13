@@ -1,8 +1,6 @@
-define(function() {
-  return {
-    "init": function() {
-      return "initialized!";
-    },
-    "hello": "world"
-  };
-});
+module.exports = {
+  "init": function() {
+    return "initialized!";
+  },
+  "hello": "world"
+};

@@ -1,6 +1,7 @@
-define(["js/simple", "js/number"], function(simple, number) {
-  return {
-    "one": simple,
-    "two": number
-  };
-});
+var simple = require("js/simple");
+var number = require("js/number");
+
+module.exports = {
+  "one": simple,
+  "two": number
+};
