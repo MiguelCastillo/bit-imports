@@ -1,14 +1,9 @@
-var Fetcher     = require('./fetcher');
-var Compiler    = require('./compiler');
-var Define      = require('./define');
-var Require     = require('./require');
-var Resolver    = require('./resolver');
-var logger      = require('./logger');
-var dependency  = require('deps-bits');
-var Bitloader   = require('bit-loader');
-var utils       = require('belty');
-
-var bitimportsLogger = logger.create("bit-imports");
+var Fetcher     = require("./fetcher");
+var Resolver    = require("./resolver");
+var logger      = require("./logger");
+var dependency  = require("deps-bits");
+var Bitloader   = require("bit-loader");
+var utils       = require("belty");
 
 /**
  * Default options for Bitimports instances
@@ -71,34 +66,22 @@ function Bitimports(options) {
   var settings = utils.merge({}, defaults, options);
   var resolver = new Resolver(settings);
   var fetcher  = new Fetcher(this, settings);
-  var compiler = new Compiler(this, settings);
 
   settings.resolve = settings.resolve || resolver.resolve.bind(resolver);
   settings.fetch   = settings.fetch   || fetcher.fetch.bind(fetcher);
-  settings.compile = settings.compile || compiler.compile.bind(compiler);
 
-  // Setup bit-loader
   Bitloader.call(this, settings);
 
-  // Register dependency processor
   this.plugin("js", {
     "dependency": dependency
   });
 
-  // Make sure we don't process these AMD built-ins.
-  this.ignore({
-    name: "*",
-    match: ["module", "exports", "require"]
-  });
-
-  var require = new Require(this);
-  var define  = new Define();
-  this.providers.require = require;
-  this.providers.define  = define;
-
-  this.require = require.require.bind(require);
-  this.define  = define.define.bind(define);
-  this.define.amd = {};
+  // Make this option a bit obtuse - I wanna make it a lil difficult for people to
+  // enable processing of node_modules since it can be rather difficult to tweak
+  // configurations to properly excluce modules to be processed.
+  if (settings.doNotIgnoreNodeModules !== true) {
+    this.services.dependency.ignore("path", /node_modules\//);
+  }
 }
 
 
@@ -124,53 +107,6 @@ Bitimports.prototype.create = function(options) {
 
 
 /**
- * Method to get modules.
- *
- * @param {string | Array.<string>} names - module name(s) to be loaded. When
- *  array is provided, the ready callback is always called to get the
- *  resulting modules.
- * @param {Function} ready - Callback function, which is called when the
- *  module(s) are loaded and ready for the application to consume.
- * @param {Object} options - Configuration settings specific to the
- *  [require]{@link Bitimports#require} call. For example, you can specify a
- *  `modules` map to tell Bitimports to use those modules before loading
- *  them from storage or cache.
- *  This is particularly useful for unit tests where dependency injection of
- *  mocked modules is needed.
- *
- * @returns {Promise|Module} When `require` is called with a single string and
- *  the module has already been loaded, then the actual module is returned.
- *  This is to follow `CJS` module format. If more than one module is
- *  `require`d, then a Promise is returned that when resolved, all the
- *  `require`d modules are passed in.
- */
-Bitimports.prototype.require = function(){};
-
-
-/**
- * Method to define a Module using AMD format, which can be dynamically
- * imported.
- *
- * @param {string} [name] - is the name of the module to define. If no name
- *  is present, then the last anonymous `define` is coerced to be the named
- *  module definition. An anonymous module is one with no name.
- * @param {Array.<string>} [dependencies] - list of module names to be loaded
- *  before the module definition is processed and executed (evaluated).
- * @param {*} factory - When factory is a function, it is called when the
- *  module is executed (evaluated) to define the module code. Whatever is
- *  returned from calling factory becomes the actual module code that's
- *  returned when the module is imported.
- *  When dependencies are defined, those are passed to factory as arguments.
- *  If factory is not a function, then that is the actual module code that is
- *  returned when the module is imported.
- *
- * @returns {Promise} That when resolved, it returns all the imported modules
- *  defined as dependencies.
- */
-Bitimports.prototype.define = function(){};
-
-
-/**
  * Method to configure an instance of Bitimports.
  *
  * config applies the configuration settings to `this` instance of Bitimports.
@@ -186,24 +122,6 @@ Bitimports.prototype.define = function(){};
 Bitimports.prototype.config = function(options) {
   utils.merge(this.settings, options);
   return this.create(options);
-};
-
-
-/**
- * Convenience method to run the input string through the transformation
- * pipeline
- *
- * @param {string} source - Source string to be processed by the transformation
- *  pipeline.
- *
- * @returns {Promise} That when resolved, the processed text is returned.
- */
-Bitimports.prototype.transform = function(source) {
-  return this.providers.loader
-    .transform({source: source})
-    .then(function(moduleMeta) {
-      return moduleMeta.source;
-    }, bitimportsLogger.error);
 };
 
 

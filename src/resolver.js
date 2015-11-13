@@ -1,4 +1,4 @@
-var ResolverProvider = require('amd-resolver');
+var ResolverProvider = require("amd-resolver");
 
 
 function Resolver(settings) {
@@ -9,7 +9,7 @@ function Resolver(settings) {
 
 
 Resolver.prototype.resolve = function(moduleMeta) {
-  var meta       = this._resolver.resolve(moduleMeta.name, getWorkingDirectory(moduleMeta.referer));
+  var meta       = this._resolver.resolve(moduleMeta.name, getWorkingDirectory(moduleMeta.referrer));
   var pathInfo   = ResolverProvider.File.parseParts(meta.url.href);
   meta.directory = pathInfo.directory;
   meta.path      = pathInfo.path;
@@ -24,7 +24,7 @@ Resolver.prototype.resolve = function(moduleMeta) {
  * break points directly from the developer tools.
  */
 function getBaseUrl(url) {
-  var base = typeof(window) !== 'undefined' ? window.location.href : '';
+  var base = typeof(window) !== "undefined" ? window.location.href : "";
   return ResolverProvider.Url.parser.resolve(base, url || "");
 }
 
@@ -33,7 +33,7 @@ function getBaseUrl(url) {
  * Gets the url form the module data if it exists.
  */
 function getWorkingDirectory(moduleMeta) {
-  return (moduleMeta && moduleMeta.path) || '';
+  return (moduleMeta && moduleMeta.path) || "";
 }
 
 

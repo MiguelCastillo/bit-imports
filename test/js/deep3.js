@@ -1,5 +1,5 @@
-define(["./deep2"], function(deep2) {
-  return {
-    "deep2": deep2
-  };
-});
+var deep2 = require("./deep2");
+
+module.exports = {
+  "deep2": deep2
+};

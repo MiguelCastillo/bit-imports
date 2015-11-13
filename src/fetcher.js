@@ -1,5 +1,5 @@
-var fileReader = require('./fileReader');
-var logger     = require('./logger').create("Bitimporter/Fetch");
+var fileReader = require("./fileReader");
+var logger     = require("./logger").create("bitimports/fetch");
 
 /**
  * @class

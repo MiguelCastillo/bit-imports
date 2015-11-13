@@ -1,1 +1,1 @@
-define("Just some string value");
+module.exports = "Just some string value";
