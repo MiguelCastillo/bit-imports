@@ -51,7 +51,7 @@
   "dependencies": {
     "amd-resolver": "~1.2.2",
     "belty": "^0.3.0",
-    "bit-loader": "~1.0.2",
+    "bit-loader": "~1.1.0",
     "deps-bits": "~0.1.0",
     "promjax": "~3.0.1",
     "pulling-deps": "~0.1.0",
