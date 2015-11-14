@@ -22,7 +22,7 @@
   },
   "homepage": "https://github.com/MiguelCastillo/bit-imports",
   "devDependencies": {
-    "babel-bits": "^0.3.0",
+    "babel-bits": "^0.4.1",
     "bit-imports": "~1.0.0",
     "bootstrap": "^3.3.5",
     "chai": "~3.4.1",
@@ -31,7 +31,7 @@
     "grunt-build-control": "^0.6.1",
     "grunt-cli": "^0.1.13",
     "grunt-concurrent": "~2.0.4",
-    "grunt-contrib-clean": "^0.6.0",
+    "grunt-contrib-clean": "^0.7.0",
     "grunt-contrib-connect": "~0.11.2",
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-jshint": "~0.11.3",
@@ -51,8 +51,8 @@
   "dependencies": {
     "amd-resolver": "~1.2.2",
     "belty": "^0.3.0",
-    "bit-loader": "~1.0.1",
-    "deps-bits": "~0.0.3",
+    "bit-loader": "~1.0.2",
+    "deps-bits": "~0.1.0",
     "promjax": "~3.0.1",
     "pulling-deps": "~0.1.0",
     "spromise": "~0.9.3"
