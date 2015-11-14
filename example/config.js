@@ -8,7 +8,7 @@ var System = (function() {
   var importer = bitimports.config({
     "paths": {
       "babel": "../node_modules/babel-bits/dist/index.min.js",
-      "loadstyle": "../node_modules/loadstyle-bits/dist/index.min.js",
+      "loadstyle": "../node_modules/loadstyle-bits/dist/index.js",
       "threejs": "effects/three.min.js"
     },
     "extensions": ["css"]
@@ -40,14 +40,19 @@ var System = (function() {
     match: {
       path: extension("css")
     },
-    transform: "loadstyle"
+    transform: "loadstyle",
+    compile: function(meta) {
+      return {
+        exports: meta.source
+      };
+    }
   });
 
   return importer;
 })();
 
 // Expose `require` globally
-var require = System.require;
+var require = System.import;
 
 // Load application
 System.import("main");
