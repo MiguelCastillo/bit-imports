@@ -5,6 +5,7 @@ var dependency  = require("deps-bits");
 var Bitloader   = require("bit-loader");
 var utils       = require("belty");
 
+
 /**
  * Default options for Bitimports instances
  *
@@ -80,6 +81,7 @@ function Bitimports(options) {
   // enable processing of node_modules since it can be rather difficult to tweak
   // configurations to properly excluce modules to be processed.
   if (settings.doNotIgnoreNodeModules !== true) {
+    this.services.transform.ignore("path", /node_modules\//);
     this.services.dependency.ignore("path", /node_modules\//);
   }
 }
