@@ -1,15 +1,14 @@
 /* jshint unused: false, undef: false */
 var System = (function() {
 
-  // Get the extension rule matches
-  var extension = bitimports.Rule.matcher.extension;
-
   // Create instance of bitimports
   var importer = bitimports.config({
     "paths": {
-      "babel": "../node_modules/babel-bits/dist/index.min.js",
-      "loadstyle": "../node_modules/loadstyle-bits/dist/index.js",
-      "threejs": "effects/three.min.js"
+      "babel": "node_modules/babel-bits/dist/index.min.js",
+      "loadstyle": "node_modules/loadstyle-bits/dist/index.js",
+      "threejs": "node_modules/three/three.min.js",
+      "CanvasRenderer": "node_modules/three/examples/js/renderers/CanvasRenderer.js",
+      "Projector": "node_modules/three/examples/js/renderers/Projector.js"
     },
     "extensions": ["css"]
   });
@@ -23,13 +22,10 @@ var System = (function() {
 
   // Setup js pipeline
   importer.plugin("js", {
-    match: {
-      path: extension("js")
-    },
+    match: { path: /\.(js)$/ },
     transform: {
       handler: "babel",
       options: {
-        blacklist: ["react"],
         sourceMap: "inline"
       }
     }
@@ -37,15 +33,8 @@ var System = (function() {
 
   // Setup sass pipeline
   importer.plugin("style", {
-    match: {
-      path: extension("css")
-    },
-    transform: "loadstyle",
-    compile: function(meta) {
-      return {
-        exports: meta.source
-      };
-    }
+    match: { path: /\.(css)$/ },
+    transform: "loadstyle"
   });
 
   return importer;
