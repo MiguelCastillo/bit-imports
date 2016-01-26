@@ -6,7 +6,9 @@ var System = (function() {
     "paths": {
       "babel": "node_modules/babel-bits/dist/index.min.js",
       "loadstyle": "node_modules/loadstyle-bits/dist/index.js",
-      "threejs": "effects/three.min.js"
+      "threejs": "node_modules/three/three.min.js",
+      "CanvasRenderer": "node_modules/three/examples/js/renderers/CanvasRenderer.js",
+      "Projector": "node_modules/three/examples/js/renderers/Projector.js"
     },
     "extensions": ["css"]
   });

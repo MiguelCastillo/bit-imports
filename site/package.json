@@ -15,6 +15,7 @@
     "babel-bits": "^1.0.0",
     "bit-imports": "^1.0.2",
     "loadstyle-bits": "^1.0.0",
-    "spromise": "^0.9.3"
+    "spromise": "^0.9.3",
+    "three": "^0.73.2"
   }
 }
