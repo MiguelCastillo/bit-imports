@@ -11,14 +11,21 @@
 
 /node_modules/*
 
+!/node_modules/babel-bits
 /node_modules/babel-bits/*
 !/node_modules/babel-bits/dist
 
+!/node_modules/bit-imports
 /node_modules/bit-imports/*
 !/node_modules/bit-imports/dist
 
+!/node_modules/spromise
 /node_modules/spromise/*
 !/node_modules/spromise/dist
 
+!/node_modules/loadstyle-bits
 /node_modules/loadstyle-bits/*
 !/node_modules/loadstyle-bits/dist/
+
+!/node_modules/three
+/node_modules/three/src

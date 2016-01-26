@@ -151,12 +151,12 @@ module.exports = function(grunt) {
       options: {
         dir: '_site',
         commit: true,
-        // push: true,
+        push: true,
         message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
       },
       pages: {
         options: {
-          remote: 'git@github.com:MiguelCastillo/bit-imports.git',
+          remote: 'https://github.com/MiguelCastillo/bit-imports.git',
           branch: 'gh-pages'
         }
       },
@@ -196,6 +196,6 @@ module.exports = function(grunt) {
   grunt.registerTask("doc", ["concurrent:doc"]);
   grunt.registerTask("serve", ["concurrent:build"]);
   grunt.registerTask("build-site", ["clean:site", "build", "copy:siteignore", "copy:site", "copy:sitedeps"]);
-  grunt.registerTask("publish-site", ["build-site", "buildcontrol:local"]);
+  grunt.registerTask("publish-site", ["build-site", "buildcontrol:pages"]);
   grunt.registerTask("serve-site", ["build-site", "concurrent:site"]);
 };
