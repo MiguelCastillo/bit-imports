@@ -4,7 +4,7 @@
 // is pushed to the bottom after the importing CanvasRenderer and Projector,
 // which depend on THREE being in the window object.
 
-var THREE = require('threejs');
+var THREE = require('three');
 
 // Unfortunately, the dependencies below expect THREE to be in the global object. :-/
 window.THREE = THREE;
