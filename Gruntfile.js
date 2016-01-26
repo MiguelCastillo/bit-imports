@@ -16,12 +16,12 @@ module.exports = function(grunt) {
           hostname: "localhost"
         }
       },
-      example: {
+      site: {
         options: {
           port: 8015,
           hostname: "localhost",
           keepalive: true,
-          open: "http://localhost:8015/example/index.html"
+          open: "http://localhost:8015/_site/index.html"
         }
       },
       dev: {
@@ -67,6 +67,13 @@ module.exports = function(grunt) {
         options: {
           livereload: 32011
         }
+      },
+      site: {
+        files: ["src/**/*.js", "site/**/*"],
+        tasks: ["build-site"],
+        options: {
+          livereload: 32012
+        }
       }
     },
     jshint: {
@@ -87,6 +94,12 @@ module.exports = function(grunt) {
       },
       doc: {
         tasks: ["connect:doc", "watch:doc"],
+        options: {
+          logConcurrentOutput: true
+        }
+      },
+      site: {
+        tasks: ["connect:site", "watch:site"],
         options: {
           logConcurrentOutput: true
         }
@@ -136,9 +149,9 @@ module.exports = function(grunt) {
     },
     buildcontrol: {
       options: {
-        dir: 'site',
+        dir: '_site',
         commit: true,
-        push: true,
+        // push: true,
         message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
       },
       pages: {
@@ -156,26 +169,33 @@ module.exports = function(grunt) {
     },
     copy: {
       site: {
+        cwd: "site/",
         expand: true,
-        src: ["example/**", "node_modules/babel-bits/dist/**", "node_modules/bit-imports/dist/**", "node_modules/spromise/dist/**"],
-        dest: "site/"
+        src: ["**"],
+        dest: "_site/"
+      },
+      sitedeps: {
+        expand: true,
+        src: ["site/node_modules/babel-bits/dist/**", "site/node_modules/bit-imports/dist/**", "site/node_modules/spromise/dist/**"],
+        dest: "_site/"
       },
       siteignore: {
         src: ".site-gitignore",
-        dest: "site/.gitignore"
+        dest: "_site/.gitignore"
       }
     },
     clean: {
       site: {
-        src: ["site"]
+        src: ["_site"]
       }
     }
   });
 
   grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
-  grunt.registerTask("example", ["connect:example"]);
   grunt.registerTask("doc", ["concurrent:doc"]);
   grunt.registerTask("serve", ["concurrent:build"]);
-  grunt.registerTask("site", ["clean:site", "build", "copy:siteignore", "copy:site", "buildcontrol:local"]);
+  grunt.registerTask("build-site", ["clean:site", "build", "copy:siteignore", "copy:site", "copy:sitedeps"]);
+  grunt.registerTask("publish-site", ["build-site", "buildcontrol:local"]);
+  grunt.registerTask("serve-site", ["build-site", "concurrent:site"]);
 };
