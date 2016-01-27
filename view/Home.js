@@ -1,12 +1,10 @@
-import Component  from "js/Component";
-import Highlights from "view/Highlights";
-
-var co = Component.cojones;
+import Component, { content } from "../js/Component";
+import Highlights from "./Highlights";
 
 
 class Description extends Component {
   render() {
-    return co `
+    return content `
       <div class="canvas-wrap">
         <div class="canvas-content">
           <img id="bit-imports" src="img/bit-imports.svg" alt="bit imports">
@@ -21,15 +19,15 @@ class Description extends Component {
 
 class Babel extends Component {
   render() {
-    return co `
+    return content `
       <div class="wrapper">
         <section class="babel">
           <div class="text">
             <h4>With the flexibility of bit imports' plugin system, adding <a href="https://babeljs.io/" target="_blank">babeljs</a> support in the browser is very trivial</h4>
-            <p>This means you can start using the newest ES features available, while transparently integrating with external dependencies and legacy code written in different module formats.</p>
+            <p>This means you can start using the newest ES features available, right in the browser.</p>
           </div>
           <div class="media">
-            <img src="img/babel.png" alt="Babel">
+            <img src="img/babel.png" alt="Babel" class="babel-logo">
           </div>
         </section>
       </div>
@@ -40,7 +38,7 @@ class Babel extends Component {
 
 class Home extends Component {
   render() {
-    return co `
+    return content `
       ${new Description()}
       ${new Highlights()}
       ${new Babel()}

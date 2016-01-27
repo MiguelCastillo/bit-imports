@@ -1,5 +1,5 @@
-import DOMEvents from 'js/DOMEvents';
-import THREE from 'effects/three.bootstrap';
+import DOMEvents from '../js/DOMEvents';
+import THREE from './three.bootstrap';
 
 
 class SpecialEffect {

@@ -1,16 +1,16 @@
 // Import main style
-import "style/application.css";
+import "./style/application.css";
 
 // Import JavaScript
-import $el        from "js/DOMElement";
-import Component  from "js/Component";
-import Ready      from "js/DOMReady";
-import Renderer   from "js/DOMRenderer";
-import Header     from "view/Header";
-import Footer     from "view/Footer";
-import Home       from "view/Home";
+import $el        from "./js/DOMElement";
+import Component  from "./js/Component";
+import Ready      from "./js/DOMReady";
+import Renderer   from "./js/DOMRenderer";
+import Header     from "./view/Header";
+import Footer     from "./view/Footer";
+import Home       from "./view/Home";
 
-import SpecialEffect from "effects/SpecialEffect";
+import SpecialEffect from "./effects/SpecialEffect";
 
 
 class AppMain extends Component {
@@ -19,7 +19,7 @@ class AppMain extends Component {
   }
 
   render() {
-    return Component.cojones `
+    return Component.content `
       ${new Header()}
       ${new Home()}
       ${new Footer()}
