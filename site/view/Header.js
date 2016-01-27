@@ -1,4 +1,4 @@
-import Component from "../js/Component";
+import Component, { content } from "../js/Component";
 
 
 class Header extends Component {
@@ -7,7 +7,7 @@ class Header extends Component {
   }
 
   render() {
-    return Component.cojones `
+    return content `
       <header>
         <nav id="nav">
           <ul>

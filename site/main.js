@@ -19,7 +19,7 @@ class AppMain extends Component {
   }
 
   render() {
-    return Component.cojones `
+    return Component.content `
       ${new Header()}
       ${new Home()}
       ${new Footer()}

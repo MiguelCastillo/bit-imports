@@ -1,4 +1,4 @@
-import Component from "../js/Component";
+import Component, { content } from "../js/Component";
 
 
 class Footer extends Component {
@@ -7,7 +7,7 @@ class Footer extends Component {
   }
 
   render() {
-    return Component.cojones `
+    return content `
       <footer>
         © Miguel Castillo 2015
       </footer>

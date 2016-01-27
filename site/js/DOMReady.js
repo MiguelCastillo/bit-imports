@@ -5,9 +5,7 @@ var deferred = new Promise(function(resolve) {
     resolve();
   }
   else {
-    document.addEventListener("DOMContentLoaded", function(/*evt*/) {
-      resolve();
-    });
+    document.addEventListener("DOMContentLoaded", (/*evt*/) => resolve());
   }
 });
 
