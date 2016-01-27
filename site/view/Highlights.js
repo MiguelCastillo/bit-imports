@@ -1,4 +1,4 @@
-import Component from "js/Component";
+import Component from "../js/Component";
 
 
 class Highlights extends Component {

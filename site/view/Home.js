@@ -1,5 +1,5 @@
-import Component  from "js/Component";
-import Highlights from "view/Highlights";
+import Component  from "../js/Component";
+import Highlights from "./Highlights";
 
 var co = Component.cojones;
 
