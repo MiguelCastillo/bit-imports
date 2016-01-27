@@ -1,4 +1,4 @@
-import DOMEvents from "js/DOMEvents";
+import DOMEvents from "./DOMEvents";
 
 class DOMElement extends DOMEvents {
   constructor(options = {}) {

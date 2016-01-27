@@ -1,9 +1,9 @@
-import Component from "js/Component";
+import Component, { content } from "../js/Component";
 
 
 class Highlights extends Component {
   render() {
-    return Component.cojones `
+    return content `
       <div class="wrapper">
         <section>
           <img src="./img/formats.svg" alt="Formats">
