@@ -86,17 +86,7 @@ class DOMEvents {
 
   on(evts) {
     var fn, evtName, handlers;
-
-    // Handle passing in an event name and function handler as arguments instead
-    // of an object literal
-    if (typeof(evts) === "string") {
-      evtName = arguments[0];
-      fn = arguments[1];
-
-      evts = {
-        [evtName]: fn
-      };
-    }
+    evts = evtsObject(...arguments);
 
     for (var evt in evts) {
       evtName = evt;
@@ -118,17 +108,7 @@ class DOMEvents {
 
   off(evts) {
     var fn, evtName, handlers;
-
-    // Handle passing in an event name and function handler as arguments instead
-    // of an object literal
-    if (typeof(evts) === "string") {
-      evtName = arguments[0];
-      fn = arguments[1];
-
-      evts = {
-        [evtName]: fn
-      };
-    }
+    evts = evtsObject(...arguments);
 
     for (var evt in evts) {
       evtName = evt;
@@ -143,5 +123,24 @@ class DOMEvents {
     return this;
   }
 }
+
+
+function evtsObject(evts) {
+  var fn, evtName;
+
+  // Handle passing in an event name and function handler as arguments instead
+  // of an object literal
+  if (typeof(evts) === "string") {
+    evtName = arguments[0];
+    fn = arguments[1];
+
+    evts = {
+      [evtName]: fn
+    };
+  }
+
+  return evts;
+}
+
 
 export default DOMEvents;

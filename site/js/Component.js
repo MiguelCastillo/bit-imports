@@ -26,8 +26,11 @@ function content(items, ...params) {
 
 
 function processPart(part) {
-  if (part && (part instanceof Component || part && typeof(part.render) === "function")) {
+  if (part instanceof Component) {
     return part.render();
+  }
+  else if (typeof(part) === "function") {
+    return part();
   }
   else if (typeof(part) === "string") {
     return part;
