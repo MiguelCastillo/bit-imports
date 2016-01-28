@@ -9,7 +9,7 @@ class Highlights extends Component {
           <section>
             <img src="./img/formats.svg" alt="Formats">
             <h2>Formats</h2>
-            <p>Build applications with System.import and CJS semantics and conventions.</p>
+            <p>Build applications with System.import and CJS dependencies semantics and conventions.</p>
           </section>
           <section>
             <img src="./img/pluggable.svg" alt="Pluggable">
