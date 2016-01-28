@@ -7,19 +7,106 @@
 
 > module loader for the browser
 
-bit imports supports loading module with CJS and AMD format in the browser. And because it is built on top of [bit loader](https://github.com/MiguelCastillo/bit-loader), you get a full transformation workflow. Bit imports also uses [amd resolver](https://github.com/MiguelCastillo/amd-resolver) as the configuration provider, which is modeled after [requirejs](http://requirejs.org/docs/api.html#config) configuration format to give you a familar environment for setting things up.
+System.import and CJS dependencies in the browser. And because it is built on top of [bit-loader](https://github.com/MiguelCastillo/bit-loader), you get a flexible and powerful plugin system that let's you tap into the power of tools like [babel](http://babeljs.io/) - right in the browser - with no bundling tools.
 
-Currently, bit imports implements an XHR fetch provider to load files. It also leverages `# sourceURL` to integrate with debugging capabilities in all major browsers. The plan is to have logic to detect if bit imports is running in the browser or nodejs so that files can be loaded transparently regardless of environment.
+### Motivation
 
-So why does bit imports even exist? Bottom line - to provide you with a flexible module loader that supports `CJS` and `AMD` without a *build* step during the development cycles of your application. Furthermore, to provide you with a module loading system that allows you to leverage tools like [babel](https://github.com/babel/babel) to unlock access to the latest ECMAScript features via transpilation, right in the browser with little configuration. Take a look at [bit sandbox](https://github.com/MiguelCastillo/bit-sandbox) where `ES6`, `AMD`, and `CJS` modules are all *harmoniously* running together in the browser without a build step.
-
->  A workflow that works really well is one in which your web application simply does not have a *build* step during development, and all external dependencies (toolkits and frameworks) consumed by the application itself are generally prebundled with browserify (or similar tool).  The key is in the separation of what is application code and external dependencies. Your code vs someone else's code. All your application needs is a way to load dependencies without needing a build step for each and every change made to the code. Only when the application is ready for deployment are you encouraged to bundle everything up with tools such as *browserify*.
+> A workflow that works really well is one in which your web application does not have an out of band build step during development, and all external dependencies consumed by your application are prebundled with bit-bundler, browserify, or similar tool. The key is in the separation of what is application code vs external dependencies. Your code vs someone else's code. Your application needs to load dependencies without needing an out of band build step for every change. Only when the application is ready for deployment are you encouraged to bundle your application up.
 
 
-#### Install
+### Install
 ```
 $ npm install bit-imports
 ```
 
-#### [API](https://github.com/MiguelCastillo/bit-imports/tree/master/api)
-#### [Examples](https://github.com/MiguelCastillo/bit-imports/tree/master/example)
+### Usage
+
+#### index.html
+
+Include `bit-imports` to load `bitimports` in the globa object. Load `config.js` to setup your `bit-imports` instance.
+
+``` html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script type="text/javascript" src="node_modules/bit-imports/dist/bit-imports.min.js" defer></script>
+    <script type="text/javascript" src="config.js" defer></script>
+  </head>
+</html>
+```
+
+#### config.js
+
+Configure babel via [babel-bits](https://github.com/MiguelCastillo/babel-bits).
+
+``` javascript
+var System = bitimports
+  // Configure bitimports
+  .config({
+    paths: {
+      babel: "node_modules/babel-bits/dist/index.min"
+    }
+  })
+  // Setup js pipeline with babel-bits
+  .plugin("js", {
+    match: { path: /\.(js)$/ },
+    transform: {
+      handler: "babel",
+      options: {
+        sourceMap: "inline",
+        presets: ["es2015"]
+      }
+    }
+  });
+
+// Import "main" module.
+System.import("main");
+```
+
+### API
+
+[Full API documentation](./api)
+
+#### bitimports
+- Global instance of `bit-imports`
+
+#### config( object ) : bit-imports
+- Method to configure `bit-imports`. This method creates and returns a new instance of `bit-imports`.
+
+#### plugin( plugin-name?, options? ) : bit-imports
+- Method to configure plugins. `plugin-name` is optional unless you intend to configure the same plugin multiple times.
+
+#### import( name | url ) : Promise
+- Method to load modules and return module exports.
+
+#### load( name ) : Promise
+- Method to load modules and return module instances.
+
+#### register( name, exports ) : bit-imports
+- Method to register module exports in the internal cache.
+
+#### ignore( names ) : bit-imports
+- Method to exclude modules from the transform and dependency pipelines.
+
+#### trasform( source ) : Promise
+- Method to push source strings through the transform pipeline.
+
+#### resolve( name ) : Promise
+- Method to get the full path for a module.
+
+#### getModule( id ) : Module
+- Method to get a module instance from the internal cachce. If module isn't loaded, an exception is raised.
+
+#### deleteModule( id ) : Module
+- Method to delete a module instance from the internal cache. If module isn't loaded, an exception is raised.
+
+#### hasModule( id ) : boolean
+- Method to check if a module is loaded into the cache.
+
+#### clear() : bit-imports
+- Method to delete all the modules from the internal cache.
+
+
+### License
+
+Licensed under MIT
