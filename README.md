@@ -77,19 +77,19 @@ System.import("main");
 - Method to configure plugins. `plugin-name` is optional unless you intend to configure the same plugin multiple times.
 
 #### import( name | url ) : Promise
-- Method to load modules and return the module exports.
+- Method to load modules and return module exports.
 
 #### load( name ) : Promise
-- Method to load modules and return the module instances.
+- Method to load modules and return module instances.
 
 #### register( name, exports ) : bit-imports
-- Method to register module exports to the internal cache.
+- Method to register module exports in the internal cache.
 
 #### ignore( names ) : bit-imports
 - Method to exclude modules from the transform and dependency pipelines.
 
 #### trasform( source ) : Promise
-- Method to push source code through the transform pipeline.
+- Method to push source strings through the transform pipeline.
 
 #### resolve( name ) : Promise
 - Method to get the full path for a module.
