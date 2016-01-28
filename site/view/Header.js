@@ -2,10 +2,6 @@ import Component, { content } from "../js/Component";
 
 
 class Header extends Component {
-  constructor(options = {}) {
-    super(options);
-  }
-
   render() {
     return content `
       <header>

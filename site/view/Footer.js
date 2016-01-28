@@ -2,10 +2,6 @@ import Component, { content } from "../js/Component";
 
 
 class Footer extends Component {
-  constructor(options = {}) {
-    super(options);
-  }
-
   render() {
     return content `
       <footer>
