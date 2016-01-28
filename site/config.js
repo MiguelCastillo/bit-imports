@@ -19,7 +19,8 @@ var System = (function() {
     transform: {
       handler: "babel-bits",
       options: {
-        sourceMap: "inline"
+        sourceMap: "inline",
+        presets: ["es2015"]
       }
     }
   });
