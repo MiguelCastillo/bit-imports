@@ -27,3 +27,4 @@ class DOMRenderer {
 
 
 export default new DOMRenderer();
+export { DOMRenderer };
