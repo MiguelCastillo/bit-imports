@@ -32,12 +32,12 @@ module.exports = function(grunt) {
           open: "http://localhost:8010/test/SpecRunner.html"
         }
       },
-      doc: {
+      docs: {
         options: {
           port: 8017,
           host: "localhost",
           keepalive: true,
-          open: "http://localhost:8017/doc/index.html"
+          open: "http://localhost:8017/docs/index.html"
         }
       }
     },
@@ -54,7 +54,7 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      doc: {
+      docs: {
         files: ["src/**/*.js"],
         tasks: ["jshint:all", "jsdoc:build"],
         options: {
@@ -92,8 +92,8 @@ module.exports = function(grunt) {
           logConcurrentOutput: true
         }
       },
-      doc: {
-        tasks: ["connect:doc", "watch:doc"],
+      docs: {
+        tasks: ["connect:docs", "watch:docs"],
         options: {
           logConcurrentOutput: true
         }
@@ -107,10 +107,17 @@ module.exports = function(grunt) {
     },
     jsdoc: {
       build: {
-        src: ["src/**/*.js", "README.md"],
+        src: [
+          "src/bit-imports.js",
+          "node_modules/bit-loader/src/bit-loader.js",
+          "node_modules/bit-loader/src/module.js",
+          "README.md"
+        ],
         options: {
-          destination: "doc",
-          verbose: true
+          destination: "docs",
+          verbose: true,
+          private: true,
+          plugins: ["plugins/markdown"]
         }
       }
     },
@@ -193,8 +200,9 @@ module.exports = function(grunt) {
 
   grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
-  grunt.registerTask("doc", ["concurrent:doc"]);
   grunt.registerTask("serve", ["concurrent:build"]);
+  grunt.registerTask("build-docs", ["jsdoc:build"]);
+  grunt.registerTask("serve-docs", ["build-docs", "concurrent:docs"]);
   grunt.registerTask("build-site", ["clean:site", "build", "copy:siteignore", "copy:site", "copy:sitedeps"]);
   grunt.registerTask("publish-site", ["build-site", "buildcontrol:pages"]);
   grunt.registerTask("serve-site", ["build-site", "concurrent:site"]);
