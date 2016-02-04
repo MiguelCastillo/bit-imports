@@ -37,7 +37,7 @@ module.exports = function(grunt) {
           port: 8017,
           host: "localhost",
           keepalive: true,
-          open: "http://localhost:8017/docs/index.html"
+          open: "http://localhost:8017/_docs/global.html"
         }
       }
     },
@@ -114,10 +114,11 @@ module.exports = function(grunt) {
           "README.md"
         ],
         options: {
-          destination: "docs",
+          destination: "_docs",
           verbose: true,
           private: true,
-          plugins: ["plugins/markdown"]
+          plugins: ["plugins/markdown"],
+          template: "./docs/template"
         }
       }
     },
