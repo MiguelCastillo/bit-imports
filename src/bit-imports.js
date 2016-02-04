@@ -26,7 +26,7 @@ var defaults = {
  * modules as well as CJS dependency processing. This combination enables the
  * use of transpilers like [babel]{@link http://babeljs.io/} so that you can
  * write ES6 (and later), write in the browser. [bit-loader]{@link Bitloader}
-
+ *
  * @class
  * @private
  * @augments Bitloader
@@ -135,9 +135,38 @@ Bitimports.prototype.config = function(options) {
  * module, feel free to load it as an [AMD]{@link https://github.com/amdjs/amdjs-api/wiki/AMD}
  * or [CJS]{@link http://wiki.commonjs.org/wiki/Modules/1.1.1} module.
  *
- * `bitimports` exposes methods such as [require]{@link Bitimports#require},
- * [import]{@link Bitimports#import}, and [register]{@link Bitimports#register} to provide
- * a comprehensive system for loading modules.
+ *
+ * @example
+ * <!DOCTYPE html>
+ * <html lang="en">
+ *   <head>
+ *     <script type="text/javascript" src="node_modules/bit-imports/dist/bit-imports.min.js" defer></script>
+ *     <script type="text/javascript" src="config.js" defer></script>
+ *   </head>
+ * </html>
+ *
+ * @example
+ * var System = bitimports
+ *  // Configure bitimports
+ *  .config({
+ *    paths: {
+ *      babel: "node_modules/babel-bits/dist/index.min"
+ *    }
+ *  })
+ *  // Setup js pipeline with babel-bits
+ *  .plugin("js", {
+ *    match: { path: /\.(js)$/ },
+ *    transform: {
+ *      handler: "babel",
+ *      options: {
+ *        sourceMap: "inline",
+ *        presets: ["es2015"]
+ *      }
+ *    }
+ *  });
+ *
+ * // Import "main" module.
+ * System.import("main");
  *
  * @global
  * @name bitimports
