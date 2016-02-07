@@ -170,9 +170,16 @@ class MatchNone extends Match {
   }
 }
 
+class MatchEmpty extends Match {
+  constructor() {
+    super(/^.{0}$/g);
+  }
+}
+
 var match = {
   all: new MatchAll(),
-  none: new MatchNone()
+  none: new MatchNone(),
+  empty: new MatchEmpty()
 }
 
 export default new Routing();
