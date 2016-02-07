@@ -476,7 +476,7 @@ function buildDocletAttributes(/*doclet*/) {
 
 function buildDocletSee(doclet) {
   if (doclet.see) {
-    doclet.see.map(function (seeItem) {
+    return doclet.see.map(function (seeItem) {
       return hashToLink(doclet, seeItem);
     });
   }
@@ -543,18 +543,14 @@ exports.publish = function (data, opts, tutorials) {
   data().each(function(doclet) {
     shortenDocletPaths(doclet, sourceFiles);
     registerDocletLinks(doclet);
+  });
 
+  data().each(function(doclet) {
     doclet.ancestors = helper.getAncestorLinks(data, doclet);
     doclet.attribs = buildDocletAttributes(doclet);
     doclet.examples = buildDocletExamples(doclet);
-    doclet.see = buildDocletSee(doclet);
     doclet.id = buildDocletID(doclet);
-  });
-
-
-  data().each(function (doclet) {
-    // do this after the urls have all been generated
-    doclet.ancestors = helper.getAncestorLinks(data, doclet);
+    doclet.see = buildDocletSee(doclet);
 
     if (needsSignature(doclet)) {
       addSignatureParams(doclet);
