@@ -18,6 +18,7 @@ function registerEvents(router) {
 
       if (!state.isHash && router.hasMatches(state.location)) {
         evt.preventDefault();
+        history.pushState(state, state.href, state.href);
         router.setState(state);
       }
       // else if (!router.state.isHash) {
@@ -111,7 +112,6 @@ class Routing {
         this.pending = true;
 
         setTimeout(() => {
-          history.pushState(this.state, this.state.href, this.state.href);
           this.refresh();
           this.pending = false;
 
@@ -126,12 +126,18 @@ class Routing {
   }
 
   navigate(href) {
-    if (this.hasMatches(href)) {
-      this.setState(buildState(href));
+    var state = buildState(href);
+
+    if (!state.isHash && this.hasMatches(href)) {
+      if (this.state.href !== state.href) {
+        history.pushState(state, state.href, state.href);
+        this.setState(state);
+      }
     }
     else {
       location.assign(href);
     }
+
     return this;
   }
 
