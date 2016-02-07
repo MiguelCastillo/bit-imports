@@ -8,7 +8,7 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    margin: 0 0 20px 0;
+    margin: 0;
     color: #353535;
     background-color: #fff;
     font-weight: 100;
@@ -28,6 +28,7 @@ body {
 #app-body {
     flex: 1;
     overflow: auto;
+    height: 100%;
 }
 
 #app-footer {
