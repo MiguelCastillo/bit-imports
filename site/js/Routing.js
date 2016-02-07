@@ -16,29 +16,27 @@ function registerEvents(router) {
 
       var state = buildState(evt.target.getAttribute("href") || "");
 
-      if ((!router.state || router.state.href !== state.href) && !state.isHash) {
-        if (router.refresh(state.href)) {
-          evt.preventDefault();
-          router.setState(state);
-        }
-      }
-      else if (!router.state.isHash) {
+      if (!state.isHash && router.hasMatches(state.location)) {
         evt.preventDefault();
+        router.setState(state);
       }
+      // else if (!router.state.isHash) {
+      //   evt.preventDefault();
+      // }
     });
 
   Eventing
     .create(window)
-    .on("popstate", () => router.refresh());
+    .on("popstate", (evt) => router.setState(evt.state));
 }
 
 
 class Routing {
   constructor() {
-    this.state = null;
     this._contexts = [];
     this._all = [];
     this._none = [];
+    this.state = buildState(location.pathname);
     registerEvents(this);
   }
 
@@ -80,8 +78,8 @@ class Routing {
     return this;
   }
 
-  refresh(href) {
-    var state = buildState(href || window.location.pathname);
+  refresh() {
+    var state = this.state;
 
     var executed = this
       ._contexts
@@ -105,18 +103,42 @@ class Routing {
     return this.state && match.test(this.state.location);
   }
 
-  setState(state) {
-    if (!this.state || this.state.href !== state.href) {
+  setState(state, fn) {
+    if (this.state.href !== state.href) {
       this.state = state;
-      history.pushState(state, state.href, state.href);
+
+      if (!this.pending) {
+        this.pending = true;
+
+        setTimeout(() => {
+          history.pushState(this.state, this.state.href, this.state.href);
+          this.refresh();
+          this.pending = false;
+
+          if (fn) {
+            fn();
+          }
+        });
+      }
     }
 
     return this;
   }
 
   navigate(href) {
-    this.setState(buildState(href));
+    if (this.hasMatches(href)) {
+      this.setState(buildState(href));
+    }
+    else {
+      location.assign(href);
+    }
     return this;
+  }
+
+  hasMatches(href) {
+    return this
+      ._contexts
+      .some((ctx) => ctx.match.test(href));
   }
 
   get match() {
