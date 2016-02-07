@@ -1,10 +1,10 @@
-import Component, { content } from "../js/Component";
+import Component from "../js/Component";
 import Highlights from "./Highlights";
 
 
 class Description extends Component {
   render() {
-    return content `
+    return this.content `
       <div class="canvas-wrap">
         <div class="canvas-content">
           <img id="bit-imports" src="img/bit-imports.svg" alt="bit imports">
@@ -19,7 +19,7 @@ class Description extends Component {
 
 class Babel extends Component {
   render() {
-    return content `
+    return this.content `
       <div class="wrapper">
         <section class="babel">
           <div class="text">
@@ -40,7 +40,7 @@ class Babel extends Component {
 
 class Home extends Component {
   render() {
-    return content `
+    return this.content `
       ${ new Description() }
       ${ new Highlights() }
       ${ new Babel() }

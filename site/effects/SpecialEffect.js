@@ -1,4 +1,4 @@
-import DOMEvents from '../js/DOMEvents';
+import { Eventing } from '../js/ere';
 import THREE from './three.bootstrap';
 
 
@@ -72,12 +72,12 @@ class SpecialEffect {
     var line = new THREE.Line(geometry, new THREE.LineBasicMaterial({ color: color, opacity: 0.2 }));
     this.scene.add( line );
 
-    (new DOMEvents(document))
+    (new Eventing(document))
       .on('mousemove', onDocumentMouseMove.bind(this))
       .on('touchstart', onDocumentTouchStart.bind(this))
       .on('touchmove', onDocumentTouchMove.bind(this));
 
-    (new DOMEvents(window))
+    (new Eventing(window))
       .on('resize', onWindowResize.bind(this))
       .on('scroll', docScroll.bind(this));
   }

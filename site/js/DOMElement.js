@@ -1,6 +1,6 @@
-import DOMEvents from "./DOMEvents";
+import Eventing from "./Eventing";
 
-class DOMElement extends DOMEvents {
+class DOMElement extends Eventing {
   constructor(options = {}) {
     super();
 

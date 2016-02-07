@@ -1,9 +1,9 @@
-import Component, { content } from "../js/Component";
+import Component from "../js/Component";
 
 
 class Highlights extends Component {
   render() {
-    return content `
+    return this.content `
       <div>
         <div class="wrapper">
           <section>

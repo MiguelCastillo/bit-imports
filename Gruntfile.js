@@ -21,7 +21,8 @@ module.exports = function(grunt) {
           port: 8015,
           hostname: "localhost",
           keepalive: true,
-          open: "http://localhost:8015/_site/index.html"
+          base: "_site/",
+          open: "http://localhost:8015/"
         }
       },
       dev: {
@@ -37,7 +38,8 @@ module.exports = function(grunt) {
           port: 8017,
           host: "localhost",
           keepalive: true,
-          open: "http://localhost:8017/_docs/global.html"
+          base: "_docs/",
+          open: "http://localhost:8017/global.html"
         }
       }
     },
@@ -177,19 +179,25 @@ module.exports = function(grunt) {
     },
     copy: {
       site: {
-        cwd: "site/",
+        cwd: "site",
         expand: true,
-        src: ["**"],
-        dest: "_site/"
+        src: "**",
+        dest: "_site"
       },
       sitedeps: {
         expand: true,
         src: ["site/node_modules/babel-bits/dist/**", "site/node_modules/bit-imports/dist/**", "site/node_modules/spromise/dist/**"],
-        dest: "_site/"
+        dest: "_site"
       },
       siteignore: {
         src: ".site-gitignore",
         dest: "_site/.gitignore"
+      },
+      sitedocs: {
+        cwd: "_docs",
+        expand: true,
+        src: "**",
+        dest: "_site/docs"
       }
     },
     clean: {
@@ -204,7 +212,7 @@ module.exports = function(grunt) {
   grunt.registerTask("serve", ["concurrent:build"]);
   grunt.registerTask("build-docs", ["jsdoc:build"]);
   grunt.registerTask("serve-docs", ["build-docs", "concurrent:docs"]);
-  grunt.registerTask("build-site", ["clean:site", "build", "copy:siteignore", "copy:site", "copy:sitedeps"]);
+  grunt.registerTask("build-site", ["clean:site", "build", "jsdoc", "copy:siteignore", "copy:site", "copy:sitedeps", "copy:sitedocs"]);
   grunt.registerTask("publish-site", ["build-site", "buildcontrol:pages"]);
   grunt.registerTask("serve-site", ["build-site", "concurrent:site"]);
 };
