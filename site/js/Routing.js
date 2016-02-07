@@ -16,7 +16,7 @@ function registerEvents(router) {
 
       var state = buildState(evt.target.getAttribute("href") || "");
 
-      if (!state.isHash && router.hasMatches(state.location)) {
+      if (!state.isHash && router.hasMatches(state.cleanHref)) {
         evt.preventDefault();
         history.pushState(state, state.href, state.href);
         router.setState(state);
@@ -84,28 +84,28 @@ class Routing {
 
     var executed = this
       ._contexts
-      .filter((ctx) => ctx.match.test(state.location))
-      .map((ctx) => ctx.fn(ctx.match.exec(state.location), ctx.data));
+      .filter((ctx) => ctx.match.test(state.cleanHref))
+      .map((ctx) => ctx.fn(ctx.match.exec(state.cleanHref), ctx.data));
 
     if (!executed.length) {
       this
         ._none
-        .forEach((ctx) => ctx.fn(ctx.match.exec(state.location), ctx.data));
+        .forEach((ctx) => ctx.fn(ctx.match.exec(state.cleanHref), ctx.data));
     }
 
     this
       ._all
-      .forEach((ctx) => ctx.fn(ctx.match.exec(state.location), ctx.data));
+      .forEach((ctx) => ctx.fn(ctx.match.exec(state.cleanHref), ctx.data));
 
     return executed.length;
   }
 
   test(match) {
-    return this.state && match.test(this.state.location);
+    return this.state && match.test(this.state.cleanHref);
   }
 
   setState(state, fn) {
-    if (this.state.href !== state.href) {
+    if (state && this.state.href !== state.href) {
       this.state = state;
 
       if (!this.pending) {
@@ -156,7 +156,7 @@ function isHash(href) {
   return /^[\s|\/]*#/.test(href);
 }
 
-function cleanHref(href) {
+function cleanUpHref(href) {
   return href.replace(/^[\s|\/|#]*/, "");
 }
 
@@ -164,7 +164,7 @@ function buildState(href) {
   return {
     isHash: isHash(href),
     href: href,
-    location: cleanHref(href)
+    cleanHref: cleanUpHref(href)
   };
 }
 
