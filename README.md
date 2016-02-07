@@ -65,8 +65,6 @@ System.import("main");
 
 ### API
 
-[Full API documentation](./api)
-
 #### bitimports
 - Global instance of `bit-imports`
 
