@@ -172,7 +172,7 @@ class MatchNone extends Match {
 
 class MatchEmpty extends Match {
   constructor() {
-    super(/^.{0}$/g);
+    super(/^$/g);
   }
 }
 
