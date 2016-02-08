@@ -1,3 +1,5 @@
+var fallback = require('connect-history-api-fallback');
+
 //
 // http://24ways.org/2013/grunt-is-not-weird-and-hard/
 //
@@ -22,7 +24,11 @@ module.exports = function(grunt) {
           hostname: "localhost",
           keepalive: true,
           base: "_site/",
-          open: "http://localhost:8015/"
+          open: "http://localhost:8015/",
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(fallback());
+            return middlewares;
+          }
         }
       },
       dev: {
@@ -194,6 +200,10 @@ module.exports = function(grunt) {
         dest: "_site/.gitignore"
       },
       sitedocs: {
+        src: "_docs/**",
+        dest: "_site/"
+      },
+      sitedocs1: {
         cwd: "_docs",
         expand: true,
         src: "**",

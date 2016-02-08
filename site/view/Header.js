@@ -8,12 +8,12 @@ class Header extends Component {
         <nav id="nav">
           <ul class="nav-left">
             <li>
-              <a href="/">
+              <a href="/home">
                 Home
               </a>
             </li>
             <li>
-              <a href="/docs/">
+              <a href="/docs">
                 Docs
               </a>
             </li>

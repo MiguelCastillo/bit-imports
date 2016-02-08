@@ -52,6 +52,7 @@
     "amd-resolver": "~1.2.3",
     "belty": "^0.3.0",
     "bit-loader": "~2.0.2",
+    "connect-history-api-fallback": "^1.1.0",
     "deps-bits": "~0.1.2",
     "promjax": "~3.0.1",
     "spromise": "~0.9.3"
