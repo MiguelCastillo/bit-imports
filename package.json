@@ -32,7 +32,7 @@
     "grunt-cli": "^0.1.13",
     "grunt-concurrent": "~2.1.0",
     "grunt-contrib-clean": "^0.7.0",
-    "grunt-contrib-connect": "~0.11.2",
+    "grunt-contrib-connect": "git+https://github.com/gruntjs/grunt-contrib-connect.git",
     "grunt-contrib-copy": "^0.8.2",
     "grunt-contrib-jshint": "~0.12.0",
     "grunt-contrib-uglify": "~0.11.1",

@@ -20,11 +20,17 @@ module.exports = function(grunt) {
       },
       site: {
         options: {
+          protocol: 'http2', // or 'https'
+
+          // key: grunt.file.read('server.key').toString(),
+          // cert: grunt.file.read('server.crt').toString(),
+          // ca: grunt.file.read('ca.crt').toString(),
+
           port: 8015,
           hostname: "localhost",
           keepalive: true,
           base: "_site/",
-          open: "http://localhost:8015/",
+          open: "https://localhost:8015/",
           middleware: function(connect, options, middlewares) {
             middlewares.unshift(fallback());
             return middlewares;
