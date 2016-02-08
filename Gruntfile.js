@@ -1,4 +1,5 @@
 var fallback = require('connect-history-api-fallback');
+var livereload = require('connect-livereload');
 
 //
 // http://24ways.org/2013/grunt-is-not-weird-and-hard/
@@ -33,6 +34,7 @@ module.exports = function(grunt) {
           open: "https://localhost:8015/",
           middleware: function(connect, options, middlewares) {
             middlewares.unshift(fallback());
+            middlewares.unshift(livereload({ port: 32012 }));
             return middlewares;
           }
         }
