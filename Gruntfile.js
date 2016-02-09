@@ -134,7 +134,8 @@ module.exports = function(grunt) {
           verbose: true,
           private: true,
           plugins: ["plugins/markdown"],
-          template: "./docs/template"
+          template: "./docs/template",
+          configure: "./docs/site.conf.json"
         }
       }
     },
