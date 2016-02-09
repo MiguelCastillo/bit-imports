@@ -325,6 +325,17 @@ function buildView(data, conf, templatePath, outputSourceFiles) {
 }
 
 
+function createExclude(exclude) {
+  return function exclusionTest(item) {
+    return !exclude.some(function(e) {
+      return Object.keys(e).every(function(m) {
+        return item.hasOwnProperty(m) && item[m] === e[m];
+      });
+    });
+  }
+}
+
+
 /**
  * Create the navigation sidebar.
  * @param {TAFFY} data See <http://taffydb.com/>.
@@ -339,6 +350,9 @@ function buildNav(data) {
   // fs.writeFileSync(path.resolve(outdir, 'dump-doclets.json'), dumper.dump(doclets), 'utf8');
 
   var seen = {};
+  var exclude = (env.conf.exclude || []).map(function(e) {
+    return typeof e === "string" ? { longname: e } : e;
+  });
 
   var memberGroups = data({
       'memberof': {
@@ -346,6 +360,7 @@ function buildNav(data) {
       }
     })
     .get()
+    .filter(createExclude(exclude))
     .reduce(function (container, item) {
       var groupName = item.memberof;
 
@@ -360,6 +375,7 @@ function buildNav(data) {
       'scope': 'global'
     })
     .get()
+    .filter(createExclude(exclude))
     .filter(function (item) {
       return !memberGroups.hasOwnProperty(item.longname);
     });
