@@ -209,10 +209,9 @@ module.exports = function(grunt) {
         dest: "_site/.gitignore"
       },
       sitedocs: {
-        cwd: "_docs",
         expand: true,
-        src: "**",
-        dest: "_site/docs"
+        src: "_docs/**",
+        dest: "_site"
       }
     },
     clean: {
