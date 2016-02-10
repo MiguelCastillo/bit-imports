@@ -1,7 +1,15 @@
 <html>
   <head>
-    <script type="text/javascript">
-      window.location.replace("./");
+    <script language="javascript">
+      (function() {
+        var rewrite = window.location.href.replace("#!", "");
+        if (typeof(window.history.pushState) == 'function') {
+          window.history.pushState(null, "Site Name", rewrite);
+        }
+        else {
+          window.location.hash = rewrite;
+        }
+      })();
     </script>
   </head>
   <body>Redirect to index.html</body>
