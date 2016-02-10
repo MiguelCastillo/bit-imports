@@ -28,7 +28,8 @@ body {
 #app-body {
     flex: 1;
     overflow: auto;
-    height: 100%;
+    display: flex;
+    flex-flow: column nowrap;
 }
 
 #app-footer {
@@ -165,6 +166,7 @@ nav li a {
     overflow: hidden;
 
     height: 300px;
+    min-height: 300px;
 
     align-items: center;
     justify-content: center;
@@ -266,8 +268,9 @@ section h2 {
     section {
         -webkit-box-flex: 1;
         -webkit-flex: 1 0 33.333333%;
-            -ms-flex: 1 0 33.333333%;
-                flex: 1 0 33.333333%;
+        -ms-flex: 1 0 33.333333%;
+        flex: 1 0 33.333333%;
+        margin: auto;
     }
 
     p {

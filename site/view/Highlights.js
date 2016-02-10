@@ -4,7 +4,7 @@ import Component from "../js/Component";
 class Highlights extends Component {
   render() {
     return this.content `
-      <div>
+      <div class="highlights-view">
         <div class="wrapper">
           <section>
             <img src="./img/formats.svg" alt="Formats">
