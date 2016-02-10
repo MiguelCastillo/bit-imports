@@ -196,7 +196,7 @@ module.exports = function(grunt) {
       site: {
         cwd: "site",
         expand: true,
-        src: "**",
+        src: ["**", ".nojekyll"],
         dest: "_site"
       },
       sitedeps: {
