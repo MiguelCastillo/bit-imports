@@ -30,10 +30,10 @@ module.exports = function(grunt) {
           port: 8015,
           hostname: "localhost",
           keepalive: true,
-          base: "_site/",
-          open: "https://localhost:8015/",
+          // base: "_site",
+          open: "https://localhost:8015/_site/index.html",
           middleware: function(connect, options, middlewares) {
-            middlewares.unshift(fallback());
+            middlewares.unshift(fallback({ index: "/_site/index.html" }));
             middlewares.unshift(livereload({ port: 32012 }));
             return middlewares;
           }
