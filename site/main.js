@@ -31,8 +31,8 @@ class AppMain extends Component {
 
 DOMReady(() => {
   router
-    .on(/^docs/, () => Region.register("content", () => new Docs()))
-    .on(/^home/, () => Region.register("content", () => new Home()))
+    .on(/docs/, () => Region.register("content", () => new Docs()))
+    .on(/home/, () => Region.register("content", () => new Home()))
     .on(router.match.none, () => router.navigate("home"))
     .on(router.match.all, () => renderer.render(new DOMElement(document.getElementById("app")), new AppMain()))
     .refresh();
