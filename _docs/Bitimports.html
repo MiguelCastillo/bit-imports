@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>JSDoc: Class: Bitloader</title>
+    <title>JSDoc: Class: Bitimports</title>
 
     <script src="scripts/prettify/prettify.js"> </script>
     <script src="scripts/prettify/lang-css.js"> </script>
@@ -17,7 +17,7 @@
 <body class="api-docs">
 
 <div id="main">
-    <h1 class="page-title">Class: Bitloader</h1>
+    <h1 class="page-title">Class: Bitimports</h1>
     
 
 
@@ -27,7 +27,7 @@
 
 <header>
     
-        <h2>Bitloader</h2>
+        <h2>Bitimports</h2>
         
     
 </header>
@@ -39,17 +39,19 @@
 
     
 
-    <h4 class="name" id="Bitloader"><span class="type-signature"></span>new Bitloader<span class="signature">()</span><span class="type-signature"></span></h4>
+    <h4 class="name" id="Bitimports"><span class="type-signature">(private) </span>new Bitimports<span class="signature">()</span><span class="type-signature"></span></h4>
 
     
 
 
 
 <div class="description">
-    Facade for System module loader and some extras. This provisions you with functionality
-for loading modules and process them via plugins. Some relevant information is
-found [here](https://whatwg.github.io/loader/), but semantics are not quite the same.
-whatwg/loader was more of a model to stay somewhat on track with the spec's affordances.
+    Bitimports is a module loader for the browser. It has flexible and powerful
+processing pipelines that allow you to load your modules the way you want.
+This module loader supports the System module loading interface for loading
+modules as well as CJS dependency processing. This combination enables the
+use of transpilers like <a href="http://babeljs.io/">babel</a> so that you can
+write ES6 (and later), write in the browser. <a href="Bitloader.html">bit-loader</a>
 </div>
 
 
@@ -93,7 +95,7 @@ whatwg/loader was more of a model to stay somewhat on track with the spec's affo
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line33">line 33</a>
+        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line34">line 34</a>
     </li></ul></dd>
     
 
@@ -123,6 +125,17 @@ whatwg/loader was more of a model to stay somewhat on track with the spec's affo
     </div>
 
     
+        <h3 class="subsection-title">Extends</h3>
+
+        
+
+
+    <ul>
+        <li><a href="Bitloader.html">Bitloader</a></li>
+    </ul>
+
+
+    
 
     
 
@@ -132,6 +145,72 @@ whatwg/loader was more of a model to stay somewhat on track with the spec's affo
 
     
 
+    
+        <h3 class="subsection-title">Members</h3>
+
+        
+            
+<h4 class="name" id="logger"><span class="type-signature"></span>logger<span class="type-signature"></span></h4>
+
+
+
+
+<div class="description">
+    Global logger instance.
+</div>
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line68">line 68</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+        
     
 
     
@@ -171,6 +250,11 @@ data will be deleted.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#clear">Bitloader#clear</a>
+    </li></ul></dd>
     
 
     
@@ -229,6 +313,514 @@ data will be deleted.
     <dd>
         
 <span class="param-type"><a href="Bitloader.html">Bitloader</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="config"><span class="type-signature"></span>config<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="Bitimports.html">Bitimports</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Method to configure an instance of Bitimports.
+
+config applies the configuration settings to `this` instance of Bitimports.
+It will also create and return a new instance of Bitimports with the
+configuration settings passed in. The config method is generally your
+primary way of configuring and creating instances of Bitimports.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Configuration settings for Bitimports instance.
+ Please take a look over at <a href="https://github.com/MiguelCastillo/amd-resolver">amd resolver</a>
+ for details on the options.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>baseUrl</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Root URL for resolving modules names.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>paths</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">A map of module names to module paths.
+ The resolution pipeline will use the configured paths when loading modules
+ for the matching names.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>extensions</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">List of known extensions. Files with
+ extensions in this list will not get `.js` appended.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>packages</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">List of module names to be treated as packages.
+ Module names matching items in this list will resolve to URLs `packagename/main.js`.
+ That is to say that loading a module called `machine` will generate the URL `machine/main.js`.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>packages</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Array.&lt;Object></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">List of package configuration settings.
+ Package objects allow you to granuarly configure what URLs are generated when
+ resolving module names.
+                <h6>Properties</h6>
+                
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>location</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Location of the module on disk</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>main</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">File name. Defaults to `main.js`.</td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Package name. This is what the resolution
+ matches module names against.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+            </td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line121">line 121</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Instance of Bitimports
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Bitimports.html">Bitimports</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="create"><span class="type-signature"></span>create<span class="signature">()</span><span class="type-signature"> &rarr; {<a href="Bitimports.html">Bitimports</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Bitimports factory
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line86">line 86</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    Instance of Bitimports
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Bitimports.html">Bitimports</a></span>
 
 
     </dd>
@@ -320,6 +912,11 @@ data will be deleted.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#deleteModule">Bitloader#deleteModule</a>
+    </li></ul></dd>
     
 
     
@@ -474,6 +1071,11 @@ module registry, then a TypeError exception is thrown
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#getModule">Bitloader#getModule</a>
+    </li></ul></dd>
     
 
     
@@ -655,6 +1257,11 @@ module registry, then a TypeError exception is thrown
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#getSource">Bitloader#getSource</a>
+    </li></ul></dd>
+    
 
     
 
@@ -808,6 +1415,11 @@ module registry, then a TypeError exception is thrown
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#hasModule">Bitloader#hasModule</a>
+    </li></ul></dd>
+    
 
     
 
@@ -956,6 +1568,11 @@ module registry, then a TypeError exception is thrown
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#ignore">Bitloader#ignore</a>
+    </li></ul></dd>
     
 
     
@@ -1109,6 +1726,11 @@ exports.
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#import">Bitloader#import</a>
+    </li></ul></dd>
     
 
     
@@ -1292,6 +1914,11 @@ instance(s).
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#load">Bitloader#load</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1448,6 +2075,11 @@ instance(s).
 
     
 
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#plugin">Bitloader#plugin</a>
+    </li></ul></dd>
     
 
     
@@ -1633,6 +2265,11 @@ instance(s).
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#register">Bitloader#register</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1807,6 +2444,11 @@ for loading a module from disk.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#resolve">Bitloader#resolve</a>
+    </li></ul></dd>
+    
 
     
 
@@ -1961,6 +2603,11 @@ for loading a module from disk.
     
 
     
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#transform">Bitloader#transform</a>
+    </li></ul></dd>
+    
 
     
 
@@ -2053,7 +2700,7 @@ for loading a module from disk.
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 11:59:36 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 12:14:42 GMT-0500 (EST)
 </footer>
 
 <script> prettyPrint(); </script>
