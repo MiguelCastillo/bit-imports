@@ -11,7 +11,7 @@ class DOMRenderer {
 
 
   static __toString(items) {
-    if (!(items instanceof Array)) {
+    if (!Array.isArray(items)) {
       items = [items];
     }
 

@@ -1,10 +1,10 @@
-import Component, { content } from "../js/Component";
+import Component from "../js/Component";
 
 
 class Highlights extends Component {
   render() {
-    return content `
-      <div>
+    return this.content `
+      <div class="highlights-view">
         <div class="wrapper">
           <section>
             <img src="./img/formats.svg" alt="Formats">

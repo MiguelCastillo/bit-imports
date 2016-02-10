@@ -1,9 +1,9 @@
-import Component, { content } from "../js/Component";
+import Component from "../js/Component";
 
 
 class Footer extends Component {
   render() {
-    return content `
+    return this.content `
       <footer>
         © Miguel Castillo 2015
       </footer>

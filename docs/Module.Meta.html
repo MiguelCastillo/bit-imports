@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Class: Meta</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-font.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body class="api-docs">
+
+<div id="main">
+    <h1 class="page-title">Class: Meta</h1>
+    
+
+
+
+
+<section>
+
+<header>
+    
+        <h2>
+            <span class="ancestors"><a href="Module.html">Module</a>.</span>Meta</h2>
+        
+    
+</header>
+
+<article>
+    <div class="container-overview">
+    
+        
+
+    
+
+    <h4 class="name" id="Meta"><span class="type-signature"></span>new Meta<span class="signature">()</span><span class="type-signature"></span></h4>
+
+    
+
+
+
+<div class="description">
+    Module meta class definition. This is an intermediary representation of the processed
+module information before a proper Module instance is created. This is what all pipelines
+interact with before the build stage creates a Module instance.
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_bit-loader_src_module.js.html">node_modules/bit-loader/src/module.js</a>, <a href="node_modules_bit-loader_src_module.js.html#line96">line 96</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    </div>
+
+    
+
+    
+
+    
+
+     
+
+    
+
+    
+
+    
+        <h3 class="subsection-title">Methods</h3>
+
+        
+            
+
+    
+
+    <h4 class="name" id=".canCompile"><span class="type-signature">(static) </span>canCompile<span class="signature">(moduleMeta)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Checks if the module meta object can be compiled by verifying that it has NOT
+already been compiled and that it has a `source` property that need to be compiled.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>moduleMeta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Meta</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Module meta instance.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_bit-loader_src_module.js.html">node_modules/bit-loader/src/module.js</a>, <a href="node_modules_bit-loader_src_module.js.html#line180">line 180</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".hasDependencies"><span class="type-signature">(static) </span>hasDependencies<span class="signature">(moduleMeta)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Verifies if a module meta object has dependencies.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>moduleMeta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Meta</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Module meta instance.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_bit-loader_src_module.js.html">node_modules/bit-loader/src/module.js</a>, <a href="node_modules_bit-loader_src_module.js.html#line153">line 153</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".isCompiled"><span class="type-signature">(static) </span>isCompiled<span class="signature">(moduleMeta)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    A module meta object is considered compiled if it has a `exports` or `factory` method.
+That's because those are the two things that the compile step actually generates
+before creating a Module instance.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>moduleMeta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Meta</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Module meta instance.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_bit-loader_src_module.js.html">node_modules/bit-loader/src/module.js</a>, <a href="node_modules_bit-loader_src_module.js.html#line167">line 167</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id=".validate"><span class="type-signature">(static) </span>validate<span class="signature">(moduleMeta)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Verifies that a module meta object is either already compiled or can be compiled.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>moduleMeta</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Meta</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Module meta instance.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_bit-loader_src_module.js.html">node_modules/bit-loader/src/module.js</a>, <a href="node_modules_bit-loader_src_module.js.html#line135">line 135</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="configure"><span class="type-signature"></span>configure<span class="signature">(options)</span><span class="type-signature"> &rarr; {Meta}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Safely merges data into the instance of module meta. This returns a new instance
+to keep the module meta object as immutable as possible.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>options</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">object</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Options to merge into the module meta instance.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_bit-loader_src_module.js.html">node_modules/bit-loader/src/module.js</a>, <a href="node_modules_bit-loader_src_module.js.html#line122">line 122</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+<div class="param-desc">
+    New module meta instance with the aggregated options merged in.
+</div>
+
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">Meta</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+    
+
+    
+
+    
+</article>
+
+</section>
+
+
+
+
+</div>
+
+<nav id="side-nav">
+    <h3><a href="global.html">global</a></h3><ul><li><a href="global.html#bitimports">bitimports</a></li></ul><h3><a href="Bitimports.html">Bitimports</a></h3><ul><li><a href="Bitimports.html#clear">clear</a></li><li><a href="Bitimports.html#config">config</a></li><li><a href="Bitimports.html#create">create</a></li><li><a href="Bitimports.html#deleteModule">deleteModule</a></li><li><a href="Bitimports.html#getModule">getModule</a></li><li><a href="Bitimports.html#getSource">getSource</a></li><li><a href="Bitimports.html#hasModule">hasModule</a></li><li><a href="Bitimports.html#ignore">ignore</a></li><li><a href="Bitimports.html#import">import</a></li><li><a href="Bitimports.html#load">load</a></li><li><a href="Bitimports.html#logger">logger</a></li><li><a href="Bitimports.html#plugin">plugin</a></li><li><a href="Bitimports.html#register">register</a></li><li><a href="Bitimports.html#resolve">resolve</a></li><li><a href="Bitimports.html#transform">transform</a></li></ul><h3><a href="Module.html">Module</a></h3><ul><li><a href="Module.Meta.html">Meta</a></li><li><a href="Module.html#.State">State</a></li></ul><h3><a href="Module.Meta.html">Module Meta</a></h3><ul><li><a href="Module.Meta.html#.canCompile">canCompile</a></li><li><a href="Module.Meta.html#.hasDependencies">hasDependencies</a></li><li><a href="Module.Meta.html#.isCompiled">isCompiled</a></li><li><a href="Module.Meta.html#.validate">validate</a></li><li><a href="Module.Meta.html#configure">configure</a></li></ul><h3><a href="Module.html#.State">Module State</a></h3><ul><li><a href="Module.html#.State#.COMPILE">COMPILE</a></li><li><a href="Module.html#.State#.DEPENDENCY">DEPENDENCY</a></li><li><a href="Module.html#.State#.FETCH">FETCH</a></li><li><a href="Module.html#.State#.LINK">LINK</a></li><li><a href="Module.html#.State#.LOADED">LOADED</a></li><li><a href="Module.html#.State#.READY">READY</a></li><li><a href="Module.html#.State#.REGISTERED">REGISTERED</a></li><li><a href="Module.html#.State#.RESOLVE">RESOLVE</a></li><li><a href="Module.html#.State#.TRANSFORM">TRANSFORM</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 10:29:00 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

@@ -1,41 +1,43 @@
-// Import main style
 import "./style/application.css";
 
-// Import JavaScript
-import $el        from "./js/DOMElement";
-import Component  from "./js/Component";
-import Ready      from "./js/DOMReady";
-import Renderer   from "./js/DOMRenderer";
-import Header     from "./view/Header";
-import Footer     from "./view/Footer";
-import Home       from "./view/Home";
+import {
+  Component,
+  DOMElement,
+  DOMReady,
+  Eventing,
+  Region,
+  renderer,
+  router
+} from './js/ere';
+
+import Header from "./view/Header";
+import Footer from "./view/Footer";
+import Home   from "./view/Home";
+import Docs   from "./view/Docs";
 
 import SpecialEffect from "./effects/SpecialEffect";
 
 
 class AppMain extends Component {
-  constructor(options = {}) {
-    super(options);
-  }
-
   render() {
-    return Component.content `
-      ${new Header()}
-      ${new Home()}
-      ${new Footer()}
+    return this.content `
+      <div id="app-header">${ new Header() }</div>
+      <div id="app-body">${ new Region("content") }</div>
+      <div id="app-footer">${ new Footer() }</div>
     `;
-  }
-
-  ready(fn) {
-    Ready(() => {
-      fn(this);
-    });
   }
 }
 
 
-(new AppMain()).ready(function(app) {
-  // Render the application
-  Renderer.render(new $el(document.body), app);
+DOMReady(() => {
+  router
+    .on(/^docs/, () => Region.register("content", () => new Docs()))
+    .on(/^home/, () => Region.register("content", () => new Home()))
+    .on(router.match.none, () => router.navigate("home"))
+    .on(router.match.all, () => renderer.render(new DOMElement(document.getElementById("app")), new AppMain()))
+    .refresh();
+
+  // Move this to the Home view to be loaded each time the Home view is loaded.
   SpecialEffect.create();
 });
+

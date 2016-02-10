@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: src/bit-imports.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-font.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body class="api-docs">
+
+<div id="main">
+    <h1 class="page-title">Source: src/bit-imports.js</h1>
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>var Fetcher     = require("./fetcher");
+var Resolver    = require("./resolver");
+var logger      = require("./logger");
+var dependency  = require("deps-bits");
+var Bitloader   = require("bit-loader");
+var utils       = require("belty");
+
+
+/*
+ * Default options for Bitimports instances
+ *
+ * @private
+ * @memberof Bitimports
+ */
+var defaults = {
+  baseUrl  : ".",
+  packages : [],
+  paths    : {}
+};
+
+
+/**
+ * Bitimports is a module loader for the browser. It has flexible and powerful
+ * processing pipelines that allow you to load your modules the way you want.
+ * This module loader supports the System module loading interface for loading
+ * modules as well as CJS dependency processing. This combination enables the
+ * use of transpilers like [babel]{@link http://babeljs.io/} so that you can
+ * write ES6 (and later), write in the browser. [bit-loader]{@link Bitloader}
+ *
+ * @class
+ * @private
+ * @augments Bitloader
+ */
+function Bitimports(options) {
+  var settings = utils.merge({}, defaults, options);
+  var resolver = new Resolver(settings);
+  var fetcher  = new Fetcher(this, settings);
+
+  settings.resolve = settings.resolve || resolver.resolve.bind(resolver);
+  settings.fetch   = settings.fetch   || fetcher.fetch.bind(fetcher);
+
+  Bitloader.call(this, settings);
+
+  this.plugin("js", {
+    "dependency": dependency
+  });
+
+  // Make this option a bit obtuse - I wanna make it a lil difficult for people to
+  // enable processing of node_modules since it can be rather difficult to tweak
+  // configurations to properly excluce modules to be processed.
+  if (settings.doNotIgnoreNodeModules !== true) {
+    this.services.transform.ignore("path", /node_modules\//);
+    this.services.dependency.ignore("path", /node_modules\//);
+  }
+}
+
+
+// Setup inheritance.
+Bitimports.prototype = Object.create(Bitloader.prototype);
+Bitimports.prototype.constructor = Bitimports;
+
+// Add these contructs to the prototype so that bit import instances can have
+// access to them.
+
+/**
+ * Global logger instance.
+ */
+Bitimports.prototype.logger = logger;
+
+/*
+ * Module constructor
+ */
+Bitimports.prototype.Module = Bitloader.Module;
+
+/*
+ * Rule matching engine constructor
+ */
+Bitimports.prototype.Rule = Bitloader.Rule;
+
+
+/**
+ * Bitimports factory
+ *
+ * @returns {Bitimports} Instance of Bitimports
+ */
+Bitimports.prototype.create = function(options) {
+  return new Bitimports(options);
+};
+
+
+/**
+ * Method to configure an instance of Bitimports.
+ *
+ * config applies the configuration settings to `this` instance of Bitimports.
+ * It will also create and return a new instance of Bitimports with the
+ * configuration settings passed in. The config method is generally your
+ * primary way of configuring and creating instances of Bitimports.
+ *
+ * @param {Object} options - Configuration settings for Bitimports instance.
+ *  Please take a look over at [amd resolver]{@link https://github.com/MiguelCastillo/amd-resolver}
+ *  for details on the options.
+ * @param {string} options.baseUrl - Root URL for resolving modules names.
+ * @param {Object} options.paths - A map of module names to module paths.
+ *  The resolution pipeline will use the configured paths when loading modules
+ *  for the matching names.
+ * @param {string[]} options.extensions - List of known extensions. Files with
+ *  extensions in this list will not get `.js` appended.
+ * @param {string[]} options.packages - List of module names to be treated as packages.
+ *  Module names matching items in this list will resolve to URLs `packagename/main.js`.
+ *  That is to say that loading a module called `machine` will generate the URL `machine/main.js`.
+ * @param {Object[]} options.packages - List of package configuration settings.
+ *  Package objects allow you to granuarly configure what URLs are generated when
+ *  resolving module names.
+ * @param {string} options.packages[].location - Location of the module on disk
+ * @param {string} options.packages[].main - File name. Defaults to `main.js`.
+ * @param {string} options.packages[].name - Package name. This is what the resolution
+ *  matches module names against.
+ *
+ * @returns {Bitimports} Instance of Bitimports
+ */
+Bitimports.prototype.config = function(options) {
+  utils.merge(this.settings, options);
+  return this.create(options);
+};
+
+
+/**
+ * `bitimports` is the default Bitimports instance available in the environtment.
+ * Generally speaking, you configure it with the [config]{@link Bitimports#config} method
+ * to define how your application needs to be processed.
+ *
+ * When the bit-imports module is loaded via script tag, which is the more
+ * common use case in the browser, `bitimports` is automatically added to the
+ * global object.  But since bit-imports is a [UMD]{@link https://github.com/umdjs/umd}
+ * module, feel free to load it as an [AMD]{@link https://github.com/amdjs/amdjs-api/wiki/AMD}
+ * or [CJS]{@link http://wiki.commonjs.org/wiki/Modules/1.1.1} module.
+ *
+ *
+ * @example
+ * &lt;!DOCTYPE html>
+ * &lt;html lang="en">
+ *   &lt;head>
+ *     &lt;script type="text/javascript" src="node_modules/bit-imports/dist/bit-imports.min.js" defer>&lt;/script>
+ *     &lt;script type="text/javascript" src="config.js" defer>&lt;/script>
+ *   &lt;/head>
+ * &lt;/html>
+ *
+ * @example
+ * var System = bitimports
+ *  // Configure bitimports
+ *  .config({
+ *    paths: {
+ *      babel: "node_modules/babel-bits/dist/index.min"
+ *    }
+ *  })
+ *  // Setup js pipeline with babel-bits
+ *  .plugin("js", {
+ *    match: { path: /\.(js)$/ },
+ *    transform: {
+ *      handler: "babel",
+ *      options: {
+ *        sourceMap: "inline",
+ *        presets: ["es2015"]
+ *      }
+ *    }
+ *  });
+ *
+ * // Import "main" module.
+ * System.import("main");
+ *
+ * @global
+ * @name bitimports
+ * @type Bitimports
+ * @see {@link Bitimports}
+ */
+module.exports = new Bitimports();
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav id="side-nav">
+    <h3><a href="global.html">global</a></h3><ul><li><a href="global.html#bitimports">bitimports</a></li></ul><h3><a href="Bitimports.html">Bitimports</a></h3><ul><li><a href="Bitimports.html#clear">clear</a></li><li><a href="Bitimports.html#config">config</a></li><li><a href="Bitimports.html#create">create</a></li><li><a href="Bitimports.html#deleteModule">deleteModule</a></li><li><a href="Bitimports.html#getModule">getModule</a></li><li><a href="Bitimports.html#getSource">getSource</a></li><li><a href="Bitimports.html#hasModule">hasModule</a></li><li><a href="Bitimports.html#ignore">ignore</a></li><li><a href="Bitimports.html#import">import</a></li><li><a href="Bitimports.html#load">load</a></li><li><a href="Bitimports.html#logger">logger</a></li><li><a href="Bitimports.html#plugin">plugin</a></li><li><a href="Bitimports.html#register">register</a></li><li><a href="Bitimports.html#resolve">resolve</a></li><li><a href="Bitimports.html#transform">transform</a></li></ul><h3><a href="Module.html">Module</a></h3><ul><li><a href="Module.Meta.html">Meta</a></li><li><a href="Module.html#.State">State</a></li></ul><h3><a href="Module.Meta.html">Module Meta</a></h3><ul><li><a href="Module.Meta.html#.canCompile">canCompile</a></li><li><a href="Module.Meta.html#.hasDependencies">hasDependencies</a></li><li><a href="Module.Meta.html#.isCompiled">isCompiled</a></li><li><a href="Module.Meta.html#.validate">validate</a></li><li><a href="Module.Meta.html#configure">configure</a></li></ul><h3><a href="Module.html#.State">Module State</a></h3><ul><li><a href="Module.html#.State#.COMPILE">COMPILE</a></li><li><a href="Module.html#.State#.DEPENDENCY">DEPENDENCY</a></li><li><a href="Module.html#.State#.FETCH">FETCH</a></li><li><a href="Module.html#.State#.LINK">LINK</a></li><li><a href="Module.html#.State#.LOADED">LOADED</a></li><li><a href="Module.html#.State#.READY">READY</a></li><li><a href="Module.html#.State#.REGISTERED">REGISTERED</a></li><li><a href="Module.html#.State#.RESOLVE">RESOLVE</a></li><li><a href="Module.html#.State#.TRANSFORM">TRANSFORM</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 10:29:00 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

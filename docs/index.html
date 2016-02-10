@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-font.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body class="api-docs">
+
+<div id="main">
+    <h1 class="page-title">Home</h1>
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><p><img src="img/bit-imports_white.png" width="100%"></img></p>
+<p><a href="https://travis-ci.org/MiguelCastillo/bit-imports"><img src="https://travis-ci.org/MiguelCastillo/bit-imports.svg" alt="Build Status"></a>
+<a href="https://gitter.im/MiguelCastillo/bit-imports?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Gitter"></a>
+<a href="https://waffle.io/MiguelCastillo/bit-imports"><img src="https://badge.waffle.io/MiguelCastillo/bit-imports.png?label=ready&amp;title=Ready" alt="Stories in Ready"></a></p>
+<blockquote>
+<p>module loader for the browser</p>
+</blockquote>
+<p>System.import and CJS dependencies in the browser. And because it is built on top of <a href="https://github.com/MiguelCastillo/bit-loader">bit-loader</a>, you get a flexible and powerful plugin system that let's you tap into the power of tools like <a href="http://babeljs.io/">babel</a> - right in the browser - with no bundling tools.</p>
+<h3>Motivation</h3><blockquote>
+<p>A workflow that works really well is one in which your web application does not have an out of band build step during development, and all external dependencies consumed by your application are prebundled with bit-bundler, browserify, or similar tool. The key is in the separation of what is application code vs external dependencies. Your code vs someone else's code. Your application needs to load dependencies without needing an out of band build step for every change. Only when the application is ready for deployment are you encouraged to bundle your application up.</p>
+</blockquote>
+<h3>Install</h3><pre class="prettyprint source"><code>$ npm install bit-imports</code></pre><h3>Usage</h3><h4>index.html</h4><p>Include <code>bit-imports</code> to load <code>bitimports</code> in the globa object. Load <code>config.js</code> to setup your <code>bit-imports</code> instance.</p>
+<pre class="prettyprint source lang-html"><code>&lt;!DOCTYPE html>
+&lt;html lang=&quot;en&quot;>
+  &lt;head>
+    &lt;script type=&quot;text/javascript&quot; src=&quot;node_modules/bit-imports/dist/bit-imports.min.js&quot; defer>&lt;/script>
+    &lt;script type=&quot;text/javascript&quot; src=&quot;config.js&quot; defer>&lt;/script>
+  &lt;/head>
+&lt;/html></code></pre><h4>config.js</h4><p>Configure babel via <a href="https://github.com/MiguelCastillo/babel-bits">babel-bits</a>.</p>
+<pre class="prettyprint source lang-javascript"><code>var System = bitimports
+  // Configure bitimports
+  .config({
+    paths: {
+      babel: &quot;node_modules/babel-bits/dist/index.min&quot;
+    }
+  })
+  // Setup js pipeline with babel-bits
+  .plugin(&quot;js&quot;, {
+    match: { path: /\.(js)$/ },
+    transform: {
+      handler: &quot;babel&quot;,
+      options: {
+        sourceMap: &quot;inline&quot;,
+        presets: [&quot;es2015&quot;]
+      }
+    }
+  });
+
+// Import &quot;main&quot; module.
+System.import(&quot;main&quot;);</code></pre><h3>API</h3><h4>bitimports</h4><ul>
+<li>Global instance of <code>bit-imports</code></li>
+</ul>
+<h4>config( object ) : bit-imports</h4><ul>
+<li>Method to configure <code>bit-imports</code>. This method creates and returns a new instance of <code>bit-imports</code>.</li>
+</ul>
+<h4>plugin( plugin-name?, options? ) : bit-imports</h4><ul>
+<li>Method to configure plugins. <code>plugin-name</code> is optional unless you intend to configure the same plugin multiple times.</li>
+</ul>
+<h4>import( name | url ) : Promise</h4><ul>
+<li>Method to load modules and return module exports.</li>
+</ul>
+<h4>load( name ) : Promise</h4><ul>
+<li>Method to load modules and return module instances.</li>
+</ul>
+<h4>register( name, exports ) : bit-imports</h4><ul>
+<li>Method to register module exports in the internal cache.</li>
+</ul>
+<h4>ignore( names ) : bit-imports</h4><ul>
+<li>Method to exclude modules from the transform and dependency pipelines.</li>
+</ul>
+<h4>trasform( source ) : Promise</h4><ul>
+<li>Method to push source strings through the transform pipeline.</li>
+</ul>
+<h4>resolve( name ) : Promise</h4><ul>
+<li>Method to get the full path for a module.</li>
+</ul>
+<h4>getModule( id ) : Module</h4><ul>
+<li>Method to get a module instance from the internal cachce. If module isn't loaded, an exception is raised.</li>
+</ul>
+<h4>deleteModule( id ) : Module</h4><ul>
+<li>Method to delete a module instance from the internal cache. If module isn't loaded, an exception is raised.</li>
+</ul>
+<h4>hasModule( id ) : boolean</h4><ul>
+<li>Method to check if a module is loaded into the cache.</li>
+</ul>
+<h4>clear() : bit-imports</h4><ul>
+<li>Method to delete all the modules from the internal cache.</li>
+</ul>
+<h3>License</h3><p>Licensed under MIT</p></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav id="side-nav">
+    <h3><a href="global.html">global</a></h3><ul><li><a href="global.html#bitimports">bitimports</a></li></ul><h3><a href="Bitimports.html">Bitimports</a></h3><ul><li><a href="Bitimports.html#clear">clear</a></li><li><a href="Bitimports.html#config">config</a></li><li><a href="Bitimports.html#create">create</a></li><li><a href="Bitimports.html#deleteModule">deleteModule</a></li><li><a href="Bitimports.html#getModule">getModule</a></li><li><a href="Bitimports.html#getSource">getSource</a></li><li><a href="Bitimports.html#hasModule">hasModule</a></li><li><a href="Bitimports.html#ignore">ignore</a></li><li><a href="Bitimports.html#import">import</a></li><li><a href="Bitimports.html#load">load</a></li><li><a href="Bitimports.html#logger">logger</a></li><li><a href="Bitimports.html#plugin">plugin</a></li><li><a href="Bitimports.html#register">register</a></li><li><a href="Bitimports.html#resolve">resolve</a></li><li><a href="Bitimports.html#transform">transform</a></li></ul><h3><a href="Module.html">Module</a></h3><ul><li><a href="Module.Meta.html">Meta</a></li><li><a href="Module.html#.State">State</a></li></ul><h3><a href="Module.Meta.html">Module Meta</a></h3><ul><li><a href="Module.Meta.html#.canCompile">canCompile</a></li><li><a href="Module.Meta.html#.hasDependencies">hasDependencies</a></li><li><a href="Module.Meta.html#.isCompiled">isCompiled</a></li><li><a href="Module.Meta.html#.validate">validate</a></li><li><a href="Module.Meta.html#configure">configure</a></li></ul><h3><a href="Module.html#.State">Module State</a></h3><ul><li><a href="Module.html#.State#.COMPILE">COMPILE</a></li><li><a href="Module.html#.State#.DEPENDENCY">DEPENDENCY</a></li><li><a href="Module.html#.State#.FETCH">FETCH</a></li><li><a href="Module.html#.State#.LINK">LINK</a></li><li><a href="Module.html#.State#.LOADED">LOADED</a></li><li><a href="Module.html#.State#.READY">READY</a></li><li><a href="Module.html#.State#.REGISTERED">REGISTERED</a></li><li><a href="Module.html#.State#.RESOLVE">RESOLVE</a></li><li><a href="Module.html#.State#.TRANSFORM">TRANSFORM</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Wed Feb 10 2016 10:29:00 GMT-0500 (EST)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

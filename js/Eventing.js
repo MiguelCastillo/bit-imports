@@ -74,7 +74,7 @@
 })();
 
 
-class DOMEvents {
+class Eventing {
   constructor(target, events = {}) {
     this._el = target;
     this._events = {};
@@ -122,6 +122,10 @@ class DOMEvents {
 
     return this;
   }
+
+  static create(target, options = {}) {
+    return new Eventing(target, options);
+  }
 }
 
 
@@ -143,4 +147,4 @@ function evtsObject(evts) {
 }
 
 
-export default DOMEvents;
+export default Eventing;
