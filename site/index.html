@@ -8,6 +8,18 @@
     <meta name="author" content="Miguel Castillo">
     <link rel="icon" type="image/png" href="img/bit-loader-icon-transparent.jpg">
 
+    <script language="javascript">
+      (function() {
+        var rewrite = window.location.href.replace("#!", "");
+        if (typeof(window.history.pushState) == 'function') {
+          window.history.pushState(null, "Site Name", rewrite);
+        }
+        else {
+          window.location.hash = rewrite;
+        }
+      })();
+    </script>
+
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" media="screen" href="./style/spinner.css">
 
