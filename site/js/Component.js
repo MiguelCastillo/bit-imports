@@ -7,36 +7,55 @@ class Component {
     throw new TypeError("Must be implemented");
   }
 
-  static content() {
-    return content(...arguments);
+  refresh() {
+    var { chunks, params } = this.renderContext;
+    var result = chunks[0];
+    var i, length;
+
+    for (i = 0, length = params.length; i < length; i++) {
+      result += processChildren(this, params[i]) + chunks[i + 1];
+    }
+
+    return result;
+  }
+
+  content(chunks, ...params) {
+    return this
+      ._setRenderContext({ chunks, params })
+      .refresh();
+  }
+
+  _setOwner(owner) {
+    this.owner = owner;
+    return this;
+  }
+
+  _setRenderContext(context) {
+    this.renderContext = context;
+    return this;
   }
 }
 
 
-function content(items, ...params) {
-  var result = items[0];
-  var i, length;
-
-  for (i = 0, length = params.length; i < length; i++) {
-    result += processPart(params[i]) + items[i + 1];
+function processChildren(parent, components) {
+  if (!Array.isArray(components)) {
+    components = [components];
   }
 
-  return result;
-}
-
-
-function processPart(part) {
-  if (part instanceof Component) {
-    return part.render();
-  }
-  else if (typeof(part) === "function") {
-    return part();
-  }
-  else if (typeof(part) === "string") {
-    return part;
-  }
+  return components
+    .map(component => {
+      return typeof(component) === "function" ? component() : component;
+    })
+    .map(component => {
+      return component instanceof Component ? component._setOwner(parent).render() : component;
+    })
+    .reduce((html, component) => {
+      if (typeof(component) === "string") {
+        return html + component;
+      }
+      return html;
+    }, '');
 }
 
 
 export default Component;
-export { content };

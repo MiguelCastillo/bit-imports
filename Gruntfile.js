@@ -1,3 +1,6 @@
+var fallback = require('connect-history-api-fallback');
+var livereload = require('connect-livereload');
+
 //
 // http://24ways.org/2013/grunt-is-not-weird-and-hard/
 //
@@ -18,10 +21,22 @@ module.exports = function(grunt) {
       },
       site: {
         options: {
+          protocol: 'http2', // or 'https'
+
+          // key: grunt.file.read('server.key').toString(),
+          // cert: grunt.file.read('server.crt').toString(),
+          // ca: grunt.file.read('ca.crt').toString(),
+
           port: 8015,
           hostname: "localhost",
           keepalive: true,
-          open: "http://localhost:8015/_site/index.html"
+          base: "_site/",
+          open: "https://localhost:8015/",
+          middleware: function(connect, options, middlewares) {
+            middlewares.unshift(fallback());
+            middlewares.unshift(livereload({ port: 32012 }));
+            return middlewares;
+          }
         }
       },
       dev: {
@@ -32,12 +47,13 @@ module.exports = function(grunt) {
           open: "http://localhost:8010/test/SpecRunner.html"
         }
       },
-      doc: {
+      docs: {
         options: {
           port: 8017,
           host: "localhost",
           keepalive: true,
-          open: "http://localhost:8017/doc/index.html"
+          base: "_docs/",
+          open: "http://localhost:8017/global.html"
         }
       }
     },
@@ -54,7 +70,7 @@ module.exports = function(grunt) {
       }
     },
     watch: {
-      doc: {
+      docs: {
         files: ["src/**/*.js"],
         tasks: ["jshint:all", "jsdoc:build"],
         options: {
@@ -92,8 +108,8 @@ module.exports = function(grunt) {
           logConcurrentOutput: true
         }
       },
-      doc: {
-        tasks: ["connect:doc", "watch:doc"],
+      docs: {
+        tasks: ["connect:docs", "watch:docs"],
         options: {
           logConcurrentOutput: true
         }
@@ -107,10 +123,19 @@ module.exports = function(grunt) {
     },
     jsdoc: {
       build: {
-        src: ["src/**/*.js", "README.md"],
+        src: [
+          "src/bit-imports.js",
+          "node_modules/bit-loader/src/bit-loader.js",
+          "node_modules/bit-loader/src/module.js",
+          "README.md"
+        ],
         options: {
-          destination: "doc",
-          verbose: true
+          destination: "_docs",
+          verbose: true,
+          private: true,
+          plugins: ["plugins/markdown"],
+          template: "./docs/template",
+          configure: "./docs/site.conf.json"
         }
       }
     },
@@ -169,19 +194,29 @@ module.exports = function(grunt) {
     },
     copy: {
       site: {
-        cwd: "site/",
+        cwd: "site",
         expand: true,
-        src: ["**"],
-        dest: "_site/"
+        src: "**",
+        dest: "_site"
       },
       sitedeps: {
         expand: true,
         src: ["site/node_modules/babel-bits/dist/**", "site/node_modules/bit-imports/dist/**", "site/node_modules/spromise/dist/**"],
-        dest: "_site/"
+        dest: "_site"
       },
       siteignore: {
         src: ".site-gitignore",
         dest: "_site/.gitignore"
+      },
+      sitedocs: {
+        src: "_docs/**",
+        dest: "_site/"
+      },
+      sitedocs1: {
+        cwd: "_docs",
+        expand: true,
+        src: "**",
+        dest: "_site/docs"
       }
     },
     clean: {
@@ -193,9 +228,10 @@ module.exports = function(grunt) {
 
   grunt.registerTask("build", ["jshint:all", "browserify:build", "uglify:build"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
-  grunt.registerTask("doc", ["concurrent:doc"]);
   grunt.registerTask("serve", ["concurrent:build"]);
-  grunt.registerTask("build-site", ["clean:site", "build", "copy:siteignore", "copy:site", "copy:sitedeps"]);
+  grunt.registerTask("build-docs", ["jsdoc:build"]);
+  grunt.registerTask("serve-docs", ["build-docs", "concurrent:docs"]);
+  grunt.registerTask("build-site", ["clean:site", "build", "jsdoc", "copy:siteignore", "copy:site", "copy:sitedeps", "copy:sitedocs"]);
   grunt.registerTask("publish-site", ["build-site", "buildcontrol:pages"]);
   grunt.registerTask("serve-site", ["build-site", "concurrent:site"]);
 };

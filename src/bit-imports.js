@@ -6,62 +6,30 @@ var Bitloader   = require("bit-loader");
 var utils       = require("belty");
 
 
-/**
+/*
  * Default options for Bitimports instances
  *
  * @private
  * @memberof Bitimports
- *
- * @property {string} baseUrl - Url modules are relative to
- * @property {Object} paths - Map of module names to module locations
- * @property {Object} shim - Definition of modules that are loaded into the global space that need to be used a modules
- * @property {Array.<string>} deps - List of dependencies to be loaded before the first module is loaded.
- * @property {Array.<Object>} packages - List of package definition to map module names to directory structures
- * @property {Array.<string|Function|Object>} transforms - List of transformations that process module source files.
  */
 var defaults = {
-  baseUrl    : ".",
-  paths      : {},
-  shim       : {},
-  deps       : [],
-  packages   : [],
-  transforms : []
+  baseUrl  : ".",
+  packages : [],
+  paths    : {}
 };
 
 
 /**
- * Bitimports extends Bitloader's functionality to provide support for AMD and
- * CJS. It implements a fetch provider to load files from storage. It also adds
- * the `define` and `require` methods to facilitte defining and loading modules
+ * Bitimports is a module loader for the browser. It has flexible and powerful
+ * processing pipelines that allow you to load your modules the way you want.
+ * This module loader supports the System module loading interface for loading
+ * modules as well as CJS dependency processing. This combination enables the
+ * use of transpilers like [babel]{@link http://babeljs.io/} so that you can
+ * write ES6 (and later), write in the browser. [bit-loader]{@link Bitloader}
  *
  * @class
  * @private
- * @lends Bitloader.prototype
- *
- * @param {Object} options - Configuration settings to create Bitimports
- *  instance.
- *  Please take a look over at [amd resolver]{@link https://github.com/MiguelCastillo/amd-resolver}
- *  for details on the options.
- * @param {string} options.baseUrl - Is the root URL that all modules are
- *  relative to.
- * @param {Object} options.paths - Is a map of module names to module locations
- *  This really useful for setting up module names that are more legible and
- *  easier to maintain.
- * @param {Array.<(string|Function|Object)>} options.transforms[] - Collection of
- *  transforms to be applied to module meta sources.
- * @param {string} options.transforms[] - Transform to be loaded as a named
- *  module.
- * @param {Function} options.transforms[] - Anonymous transformation that
- *  transforms module meta source.
- * @param {Object} options.transforms[] - More specific transform configuration
- *  where either a name or handler function must be provided.
- * @param {string} options.transforms[].name - If item.handler isn't present,
- *  then Bitimports will load the transform as a module. Otherwise, it is
- *  pretty much only used for logging purposes.
- * @param {Function} options.transforms[].handler - If item.name isn't present,
- *  then the handler is considered an anonymous transform, otherwise it is
- *  considered a named transformed. Named transforms are very useful when
- *  debugging because transforms' names are logged
+ * @augments Bitloader
  */
 function Bitimports(options) {
   var settings = utils.merge({}, defaults, options);
@@ -87,15 +55,27 @@ function Bitimports(options) {
 }
 
 
-// Setup prototypal inheritance.
+// Setup inheritance.
 Bitimports.prototype = Object.create(Bitloader.prototype);
 Bitimports.prototype.constructor = Bitimports;
 
 // Add these contructs to the prototype so that bit import instances can have
 // access to them.
+
+/**
+ * Global logger instance.
+ */
 Bitimports.prototype.logger = logger;
+
+/*
+ * Module constructor
+ */
 Bitimports.prototype.Module = Bitloader.Module;
-Bitimports.prototype.Rule   = Bitloader.Rule;
+
+/*
+ * Rule matching engine constructor
+ */
+Bitimports.prototype.Rule = Bitloader.Rule;
 
 
 /**
@@ -116,8 +96,25 @@ Bitimports.prototype.create = function(options) {
  * configuration settings passed in. The config method is generally your
  * primary way of configuring and creating instances of Bitimports.
  *
- * @param {Object} [options] - Configuration settings used for creating the
- *  instance of Bitimports.
+ * @param {Object} options - Configuration settings for Bitimports instance.
+ *  Please take a look over at [amd resolver]{@link https://github.com/MiguelCastillo/amd-resolver}
+ *  for details on the options.
+ * @param {string} options.baseUrl - Root URL for resolving modules names.
+ * @param {Object} options.paths - A map of module names to module paths.
+ *  The resolution pipeline will use the configured paths when loading modules
+ *  for the matching names.
+ * @param {string[]} options.extensions - List of known extensions. Files with
+ *  extensions in this list will not get `.js` appended.
+ * @param {string[]} options.packages - List of module names to be treated as packages.
+ *  Module names matching items in this list will resolve to URLs `packagename/main.js`.
+ *  That is to say that loading a module called `machine` will generate the URL `machine/main.js`.
+ * @param {Object[]} options.packages - List of package configuration settings.
+ *  Package objects allow you to granuarly configure what URLs are generated when
+ *  resolving module names.
+ * @param {string} options.packages[].location - Location of the module on disk
+ * @param {string} options.packages[].main - File name. Defaults to `main.js`.
+ * @param {string} options.packages[].name - Package name. This is what the resolution
+ *  matches module names against.
  *
  * @returns {Bitimports} Instance of Bitimports
  */
@@ -128,11 +125,9 @@ Bitimports.prototype.config = function(options) {
 
 
 /**
- * `bitimports` is the default Bitimports instance available. All you need to
- * do if configure it with the [config]{@link Bitimports#config} method to
- * define how your application is structured. The goal of the configuration
- * step is to help you make your code simple and readable when importing and
- * exporting modules.
+ * `bitimports` is the default Bitimports instance available in the environtment.
+ * Generally speaking, you configure it with the [config]{@link Bitimports#config} method
+ * to define how your application needs to be processed.
  *
  * When the bit-imports module is loaded via script tag, which is the more
  * common use case in the browser, `bitimports` is automatically added to the
@@ -140,11 +135,38 @@ Bitimports.prototype.config = function(options) {
  * module, feel free to load it as an [AMD]{@link https://github.com/amdjs/amdjs-api/wiki/AMD}
  * or [CJS]{@link http://wiki.commonjs.org/wiki/Modules/1.1.1} module.
  *
- * `bitimports` exposes methods such as [require]{@link Bitimports#require},
- * [define]{@link Bitimports#define}, [import]{@link Bitimports#import}, and
- * [register]{@link Bitimports#register} to provide a comprehensive system for
- * loading modules synchronously and asynchronously in `AMD` and `CJS` module
- * formats.
+ *
+ * @example
+ * <!DOCTYPE html>
+ * <html lang="en">
+ *   <head>
+ *     <script type="text/javascript" src="node_modules/bit-imports/dist/bit-imports.min.js" defer></script>
+ *     <script type="text/javascript" src="config.js" defer></script>
+ *   </head>
+ * </html>
+ *
+ * @example
+ * var System = bitimports
+ *  // Configure bitimports
+ *  .config({
+ *    paths: {
+ *      babel: "node_modules/babel-bits/dist/index.min"
+ *    }
+ *  })
+ *  // Setup js pipeline with babel-bits
+ *  .plugin("js", {
+ *    match: { path: /\.(js)$/ },
+ *    transform: {
+ *      handler: "babel",
+ *      options: {
+ *        sourceMap: "inline",
+ *        presets: ["es2015"]
+ *      }
+ *    }
+ *  });
+ *
+ * // Import "main" module.
+ * System.import("main");
  *
  * @global
  * @name bitimports

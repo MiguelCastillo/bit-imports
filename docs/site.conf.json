@@ -1,0 +1,8 @@
+{
+  "exclude": [{
+    "kind": "class",
+    "name": "Bitloader"
+  }, {
+    "memberof": "Bitloader"
+  }]
+}

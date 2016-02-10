@@ -1,4 +1,4 @@
-import "./DOMEvents"; // Load this to make sure our event polyfills are installed
+import "./Eventing"; // Load this to make sure our event polyfills are installed
 
 var deferred = new Promise(function(resolve) {
   if (document.readyState === "complete") {
@@ -9,8 +9,4 @@ var deferred = new Promise(function(resolve) {
   }
 });
 
-function addHandler(fn) {
-  deferred.then(fn);
-}
-
-export default addHandler;
+export default (fn) => deferred.then(fn);
