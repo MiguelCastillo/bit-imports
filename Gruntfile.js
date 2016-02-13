@@ -1,11 +1,11 @@
-var fallback = require('connect-history-api-fallback');
-var livereload = require('connect-livereload');
+var fallback = require("connect-history-api-fallback");
+var livereload = require("connect-livereload");
 
 //
 // http://24ways.org/2013/grunt-is-not-weird-and-hard/
 //
 module.exports = function(grunt) {
-  require('load-grunt-tasks')(grunt);
+  require("load-grunt-tasks")(grunt);
 
   var pkg = grunt.file.readJSON("package.json");
 
@@ -21,11 +21,11 @@ module.exports = function(grunt) {
       },
       site: {
         options: {
-          protocol: 'http2', // or 'https'
+          protocol: "http2", // or "https"
 
-          // key: grunt.file.read('server.key').toString(),
-          // cert: grunt.file.read('server.crt').toString(),
-          // ca: grunt.file.read('ca.crt').toString(),
+          // key: grunt.file.read("server.key").toString(),
+          // cert: grunt.file.read("server.crt").toString(),
+          // ca: grunt.file.read("ca.crt").toString(),
 
           port: 8015,
           hostname: "localhost",
@@ -174,21 +174,21 @@ module.exports = function(grunt) {
     },
     buildcontrol: {
       options: {
-        dir: '_site',
+        dir: "_site",
         commit: true,
         push: true,
-        message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+        message: "Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%"
       },
       pages: {
         options: {
-          remote: 'https://github.com/MiguelCastillo/bit-imports.git',
-          branch: 'gh-pages'
+          remote: "https://github.com/MiguelCastillo/bit-imports.git",
+          branch: "gh-pages"
         }
       },
       local: {
         options: {
-          remote: '../',
-          branch: 'gh-pages'
+          remote: "../",
+          branch: "gh-pages"
         }
       }
     },
