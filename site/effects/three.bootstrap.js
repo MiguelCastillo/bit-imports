@@ -8,6 +8,6 @@ var THREE = require('three');
 
 // Unfortunately, the dependencies below expect THREE to be in the global object. :-/
 window.THREE = THREE;
-require('CanvasRenderer');
-require('Projector');
+require('three/examples/js/renderers/CanvasRenderer');
+require('three/examples/js/renderers/Projector');
 module.exports = THREE;
