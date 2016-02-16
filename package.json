@@ -22,7 +22,6 @@
   },
   "homepage": "https://github.com/MiguelCastillo/bit-imports",
   "devDependencies": {
-    "babel-bits": "^1.0.0",
     "bit-imports": "~1.0.3",
     "bootstrap": "^3.3.6",
     "chai": "~3.5.0",
@@ -51,10 +50,15 @@
   },
   "dependencies": {
     "amd-resolver": "~1.2.3",
+    "babel-bits": "^1.0.0",
     "belty": "^0.3.0",
+    "bit-bundler-utils": "^2.0.0",
     "bit-loader": "~2.0.2",
     "connect-history-api-fallback": "^1.1.0",
     "deps-bits": "~0.1.2",
+    "dis-isa": "^1.2.2",
+    "mkdirp": "^0.5.1",
+    "p-stream": "^1.0.3",
     "promjax": "~3.0.1",
     "spromise": "~0.9.3"
   }
