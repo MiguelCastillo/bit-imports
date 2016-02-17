@@ -1,11 +1,12 @@
-var fallback = require('connect-history-api-fallback');
-var livereload = require('connect-livereload');
+var fallback = require("connect-history-api-fallback");
+var livereload = require("connect-livereload");
 
 //
 // http://24ways.org/2013/grunt-is-not-weird-and-hard/
 //
 module.exports = function(grunt) {
-  require('load-grunt-tasks')(grunt);
+  require("load-grunt-tasks")(grunt);
+  grunt.loadNpmTasks('bit-imports');
 
   var pkg = grunt.file.readJSON("package.json");
 
@@ -21,11 +22,11 @@ module.exports = function(grunt) {
       },
       site: {
         options: {
-          protocol: 'http2', // or 'https'
+          protocol: "http2", // or "https"
 
-          // key: grunt.file.read('server.key').toString(),
-          // cert: grunt.file.read('server.crt').toString(),
-          // ca: grunt.file.read('ca.crt').toString(),
+          // key: grunt.file.read("server.key").toString(),
+          // cert: grunt.file.read("server.crt").toString(),
+          // ca: grunt.file.read("ca.crt").toString(),
 
           port: 8015,
           hostname: "localhost",
@@ -174,21 +175,21 @@ module.exports = function(grunt) {
     },
     buildcontrol: {
       options: {
-        dir: '_site',
+        dir: "_site",
         commit: true,
         push: true,
-        message: 'Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%'
+        message: "Built %sourceName% from commit %sourceCommit% on branch %sourceBranch%"
       },
       pages: {
         options: {
-          remote: 'https://github.com/MiguelCastillo/bit-imports.git',
-          branch: 'gh-pages'
+          remote: "https://github.com/MiguelCastillo/bit-imports.git",
+          branch: "gh-pages"
         }
       },
       local: {
         options: {
-          remote: '../',
-          branch: 'gh-pages'
+          remote: "../",
+          branch: "gh-pages"
         }
       }
     },
@@ -196,12 +197,12 @@ module.exports = function(grunt) {
       site: {
         cwd: "site",
         expand: true,
-        src: ["**", ".nojekyll"],
-        dest: "_site"
-      },
-      sitedeps: {
-        expand: true,
-        src: ["site/node_modules/babel-bits/dist/**", "site/node_modules/bit-imports/dist/**", "site/node_modules/spromise/dist/**"],
+        src: [
+          "bitimportsfile.js",
+          "node_modules/loadstyle-bits/dist/**/*",
+          "node_modules/bit-imports/dist/**/*",
+          "node_modules/spromise/dist/**/*"
+        ],
         dest: "_site"
       },
       siteignore: {
@@ -218,6 +219,27 @@ module.exports = function(grunt) {
       site: {
         src: ["_site"]
       }
+    },
+    bitimports: {
+      site: {
+        cwd: "site",
+        src: ["main.js", "img/**/*", "style/**/*", "*.html", ".nojekyll"],
+        dest: "_site",
+        options: {
+          ignore: ["three"],
+          plugins: [{
+            name: "js",
+            match: { path: /\.(js)$/ },
+            transform: {
+              handler: require("babel-bits"),
+              options: {
+                presets: ["es2015"],
+                sourceMap: "inline"
+              }
+            }
+          }]
+        }
+      }
     }
   });
 
@@ -226,7 +248,7 @@ module.exports = function(grunt) {
   grunt.registerTask("serve", ["concurrent:build"]);
   grunt.registerTask("build-docs", ["jsdoc:build"]);
   grunt.registerTask("serve-docs", ["build-docs", "concurrent:docs"]);
-  grunt.registerTask("build-site", ["clean:site", "build", "jsdoc", "copy:siteignore", "copy:site", "copy:sitedeps", "copy:sitedocs"]);
+  grunt.registerTask("build-site", ["clean:site", "build", "jsdoc", "bitimports:site", "copy:siteignore", "copy:site", "copy:sitedocs"]);
   grunt.registerTask("publish-site", ["build-site", "buildcontrol:pages"]);
   grunt.registerTask("serve-site", ["build-site", "concurrent:site"]);
 };
