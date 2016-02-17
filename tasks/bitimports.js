@@ -48,6 +48,10 @@ module.exports = function(grunt) {
       var id, mod, cache = {};
 
       while (stack.length !== i) {
+        if (!stack[i].id) {
+          console.warn("not found:", stack[i]);
+        }
+
         id = stack[i++].id;
 
         if (!id || cache.hasOwnProperty(id)) {

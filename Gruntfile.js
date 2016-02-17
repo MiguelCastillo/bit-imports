@@ -223,7 +223,7 @@ module.exports = function(grunt) {
     bitimports: {
       site: {
         cwd: "site",
-        src: ["main.js", "img/**", "style/**", "*.html", ".nojekyll"],
+        src: ["main.js", "img/*", "style/*", "*.html", ".nojekyll"],
         dest: "_site",
         options: {
           ignore: ["three"],
