@@ -199,9 +199,9 @@ module.exports = function(grunt) {
         expand: true,
         src: [
           "bitimportsfile.js",
-          "node_modules/loadstyle-bits/dist/**",
-          "node_modules/bit-imports/dist/**",
-          "node_modules/spromise/dist/**"
+          "node_modules/loadstyle-bits/dist/**/*",
+          "node_modules/bit-imports/dist/**/*",
+          "node_modules/spromise/dist/**/*"
         ],
         dest: "_site"
       },
@@ -223,7 +223,7 @@ module.exports = function(grunt) {
     bitimports: {
       site: {
         cwd: "site",
-        src: ["main.js", "img/*", "style/*", "*.html", ".nojekyll"],
+        src: ["main.js", "img/**/*", "style/**/*", "*.html", ".nojekyll"],
         dest: "_site",
         options: {
           ignore: ["three"],
