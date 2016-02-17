@@ -125,7 +125,7 @@ Bitimports.prototype.config = function(options) {
 
 
 /**
- * `bitimports` is the default Bitimports instance available in the environtment.
+ * `bitimports` is the default instance available in the environtment.
  * Generally speaking, you configure it with the [config]{@link Bitimports#config} method
  * to define how your application needs to be processed.
  *
