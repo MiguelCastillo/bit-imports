@@ -57,6 +57,7 @@
     "connect-history-api-fallback": "^1.1.0",
     "deps-bits": "~0.1.2",
     "dis-isa": "^1.2.2",
+    "isbinaryfile": "^3.0.0",
     "mkdirp": "^0.5.1",
     "p-stream": "^1.0.3",
     "promjax": "~3.0.1",

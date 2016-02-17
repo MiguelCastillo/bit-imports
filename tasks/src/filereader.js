@@ -1,5 +1,6 @@
 var fs = require("fs");
 var pstream = require("p-stream");
+var isBinaryFile = require("isbinaryfile");
 
 
 /**
@@ -29,9 +30,8 @@ function fileReader(moduleMeta) {
  * @returns {Promise}
  */
 function readFile(filePath) {
-  return fs
-    .createReadStream(filePath)
-    .setEncoding("utf8");
+  var stream = fs.createReadStream(filePath);
+  return isBinaryFile.sync(filePath) ? stream : stream.setEncoding("utf8");
 }
 
 
