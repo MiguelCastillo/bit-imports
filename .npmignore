@@ -1,6 +1,7 @@
 .jshintrc
 .travis.yml
+.site-gitignore
 Gruntfile.js
-tests
+test
 site
 docs
