@@ -44,14 +44,14 @@ var System = bitimports
   // Configure bitimports
   .config({
     paths: {
-      babel: "node_modules/babel-bits/dist/index.min"
+      "babel-bits": "node_modules/babel-bits/dist/index.min"
     }
   })
   // Setup js pipeline with babel-bits
   .plugin("js", {
     match: { path: /\.(js)$/ },
     transform: {
-      handler: "babel",
+      handler: "babel-bits",
       options: {
         sourceMap: "inline",
         presets: ["es2015"]
@@ -72,33 +72,33 @@ System.import("main");
 - Method to configure `bit-imports`. This method creates and returns a new instance of `bit-imports`.
 
 #### plugin( plugin-name?, options? ) : bit-imports
-- Method to configure plugins. `plugin-name` is optional unless you intend to configure the same plugin multiple times.
+- Method to configure plugins. `plugin-name` is optional unless you intend to configure the same plugin multiple times. For more information, please see [bit-loader plugins](https://github.com/MiguelCastillo/bit-loader#plugins).
 
-#### import( name | url ) : Promise
+#### import( module-name | url ) : Promise
 - Method to load modules and return module exports.
 
-#### load( name ) : Promise
+#### load( module-name ) : Promise
 - Method to load modules and return module instances.
 
-#### register( name, exports ) : bit-imports
-- Method to register module exports in the internal cache.
+#### register( module-name, module-exports ) : bit-imports
+- Method to add module exports to the internal cache.
 
-#### ignore( names ) : bit-imports
-- Method to exclude modules from the transform and dependency pipelines.
+#### ignore( module-names | mathing-rules ) : bit-imports
+- Method to exclude modules from the transform and dependency pipelines. For more information, please see [bit-loader matching rules](https://github.com/MiguelCastillo/bit-loader#matching-rules)
 
 #### trasform( source ) : Promise
 - Method to push source strings through the transform pipeline.
 
-#### resolve( name ) : Promise
+#### resolve( module-name ) : Promise
 - Method to get the full path for a module.
 
-#### getModule( id ) : Module
-- Method to get a module instance from the internal cachce. If module isn't loaded, an exception is raised.
+#### getModule( module-id ) : Module
+- Method to get a module instance from the internal cache. If module isn't loaded, an exception is raised.
 
-#### deleteModule( id ) : Module
+#### deleteModule( module-id ) : Module
 - Method to delete a module instance from the internal cache. If module isn't loaded, an exception is raised.
 
-#### hasModule( id ) : boolean
+#### hasModule( module-id ) : boolean
 - Method to check if a module is loaded into the cache.
 
 #### clear() : bit-imports
