@@ -5,3 +5,5 @@ Gruntfile.js
 test
 site
 docs
+_docs
+_site
