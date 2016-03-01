@@ -9,12 +9,12 @@ class Highlights extends Component {
           <section>
             <img src="./img/formats.svg" alt="Formats">
             <h2>Formats</h2>
-            <p>Build applications with System.import and CJS modules.</p>
+            <p>Build applications with System.import semantics and CJS module dependencies.</p>
           </section>
           <section>
             <img src="./img/pluggable.svg" alt="Pluggable">
             <h2>Pluggable</h2>
-            <p>Simple and powerful plugin system for processing your application assets, right in the browser.</p>
+            <p>Powerful plugin system that gives you fine grained control of your application assets.</p>
           </section>
           <section>
             <img src="./img/browser.svg" alt="Browser">

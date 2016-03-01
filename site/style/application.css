@@ -207,6 +207,7 @@ nav li a {
 .wrapper {
     max-width: 1000px;
     margin: 0 auto;
+    border-bottom: 1px solid rgba(0, 0, 0, .2);
 }
 
 p {
@@ -229,21 +230,17 @@ section h2 {
     text-align: center;
 }
 
-.babel {
-    border-top: 1px solid rgba(0, 0, 0, .2);
-}
-
-.babel a {
+.babel-view a {
     text-decoration: none;
 
     color: #8ec6ff;
 }
 
-.babel a:hover {
+.babel-view a:hover {
     text-decoration: underline;
 }
 
-.babel img {
+.babel-view img {
     max-width: 40%;
     width: 40%;
 }
@@ -277,7 +274,7 @@ section h2 {
         font-size: 1em;
     }
 
-    .babel {
+    .babel-view {
         display: -webkit-box;
         display: -webkit-flex;
         display: -ms-flexbox;
