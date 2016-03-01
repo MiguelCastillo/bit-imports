@@ -1,51 +1,15 @@
 import Component from "../js/Component";
+import BabelIntegration from "./BabelIntegration";
+import Banner from "./Banner";
 import Highlights from "./Highlights";
-
-
-class Description extends Component {
-  render() {
-    return this.content `
-      <div class="canvas-wrap">
-        <div class="canvas-content">
-          <img id="bit-imports" src="img/bit-imports.svg" alt="bit imports">
-          <h1>module loader for the browser</h1>
-        </div>
-        <div id="canvas" class="canvas"></div>
-      </div>
-    `;
-  }
-}
-
-
-class Babel extends Component {
-  render() {
-    return this.content `
-      <div class="babel-view">
-        <div class="wrapper">
-          <section class="babel">
-            <div class="text">
-              <h4>
-                With the flexibility of bit-imports' plugin system, adding <a href="https://babeljs.io/" target="_blank">babeljs</a> support is very trivial
-              </h4>
-              <div>This means you can start using the newest ES features available, right in the browser without an out of band build process.</div>
-            </div>
-            <div class="media">
-              <img src="img/babel.png" alt="Babel" class="babel-logo">
-            </div>
-          </section>
-        </div>
-      </div>
-    `;
-  }
-}
 
 
 class Home extends Component {
   render() {
     return this.content `
-      ${ new Description() }
+      ${ new Banner() }
       ${ new Highlights() }
-      ${ new Babel() }
+      ${ new BabelIntegration() }
     `;
   }
 }
