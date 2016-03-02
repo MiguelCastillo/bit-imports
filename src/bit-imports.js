@@ -1,9 +1,8 @@
-var Fetcher     = require("./fetcher");
-var Resolver    = require("./resolver");
-var logger      = require("./logger");
-var dependency  = require("deps-bits");
-var Bitloader   = require("bit-loader");
-var utils       = require("belty");
+var logger     = require("./logger");
+var factory    = require("./factory");
+var dependency = require("deps-bits");
+var Bitloader  = require("bit-loader");
+var utils      = require("belty");
 
 
 /*
@@ -33,11 +32,16 @@ var defaults = {
  */
 function Bitimports(options) {
   var settings = utils.merge({}, defaults, options);
-  var resolver = new Resolver(settings);
-  var fetcher  = new Fetcher(this, settings);
 
-  settings.resolve = settings.resolve || resolver.resolve.bind(resolver);
-  settings.fetch   = settings.fetch   || fetcher.fetch.bind(fetcher);
+  if (!settings.resolve) {
+    var resolver = factory.create("resolver", settings);
+    settings.resolve = resolver.resolve.bind(resolver);
+  }
+
+  if (!settings.fetch) {
+    var fetcher = factory.create("fetcher", settings);
+    settings.fetch = fetcher.fetch.bind(fetcher);
+  }
 
   Bitloader.call(this, settings);
 
@@ -119,8 +123,7 @@ Bitimports.prototype.create = function(options) {
  * @returns {Bitimports} Instance of Bitimports
  */
 Bitimports.prototype.config = function(options) {
-  utils.merge(this.settings, options);
-  return this.create(options);
+  return this.create(utils.merge({}, this.settings, { fetch: null, resolve: null }, options));
 };
 
 

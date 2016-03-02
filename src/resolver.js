@@ -4,12 +4,12 @@ var ResolverProvider = require("amd-resolver");
 function Resolver(settings) {
   settings = settings || {};
   settings.baseUrl = getBaseUrl(settings.baseUrl);
-  this._resolver = new ResolverProvider(settings);
+  this._provider = new ResolverProvider(settings);
 }
 
 
 Resolver.prototype.resolve = function(moduleMeta) {
-  var meta       = this._resolver.resolve(moduleMeta.name, getWorkingDirectory(moduleMeta.referrer));
+  var meta       = this._provider.resolve(moduleMeta.name, getWorkingDirectory(moduleMeta.referrer));
   var pathInfo   = ResolverProvider.file.parseParts(meta.url.href);
   meta.directory = pathInfo.directory;
   meta.path      = pathInfo.path;

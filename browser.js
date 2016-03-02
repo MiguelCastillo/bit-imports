@@ -1,19 +1,9 @@
-var promjax = require("promjax");
-var fileReader = require("./src/fileReader");
+var Fetcher  = require("./src/fetcher");
+var Resolver = require("./src/resolver");
+var factory  = require("./src/factory");
 
-// Register method to load file content from storage
-if (window.fetch) {
-  fileReader.register(function(path) {
-    return window
-      .fetch(path)
-      .then(function(response) {
-        return response.text();
-      });
-  });
-}
-else {
-  fileReader.register(promjax);
-}
+factory.register("fetcher", Fetcher);
+factory.register("resolver", Resolver);
 
-// Export bit imports!
-module.exports = require("./src/bit-imports");
+
+module.exports = require("./src/bit-imports").create({ doNotIgnoreNodeModules: false });

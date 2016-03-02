@@ -13,7 +13,7 @@ var utils = require("belty");
 var types = require("dis-isa");
 var path = require("path");
 var mkdirp = require("mkdirp");
-var bitimports = require("../index.js");
+var bitimports = require("../index");
 
 
 module.exports = function(grunt) {
