@@ -13,9 +13,8 @@ var utils = require("belty");
 var types = require("dis-isa");
 var path = require("path");
 var mkdirp = require("mkdirp");
-var bitimports = require("bit-imports");
-var resolvePath = require("bit-bundler-utils/resolvePath");
-var filereader = require("./src/filereader");
+var bitimports = require("../index.js");
+
 
 module.exports = function(grunt) {
   function sources(files) {
@@ -76,9 +75,6 @@ module.exports = function(grunt) {
 
 
   function loadModules(settings) {
-    settings.resolve = resolvePath.configure();
-    settings.fetch = filereader;
-    settings.doNotIgnoreNodeModules = true;
     var importer = bitimports.config(settings);
 
     return function(files) {
