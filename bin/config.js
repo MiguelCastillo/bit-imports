@@ -5,7 +5,11 @@ var types = require("dis-isa");
 
 function config(options) {
   var args = subarg(options);
-  var files = [].concat(args._).concat(flattenUnderscore(args.files || []));
+  var files = args._;
+
+  if (args.files) {
+    files = files.concat(parseSubArgs(args.files));
+  }
 
   return Object
     .keys(args)
@@ -27,10 +31,7 @@ function parseSubArgs(data) {
 
 
 function parseArray(data) {
-  return data.reduce(function(container, item) {
-    container.push(parseObject(item));
-    return container;
-  }, []);
+  return data.map(parseObject);
 }
 
 
@@ -39,8 +40,12 @@ function parseObject(data) {
     return data;
   }
 
-  if (data._ && data._.length) {
-    return flattenUnderscore(data);
+  if (data._.length) {
+    if (Object.keys(data).length !== 1) {
+      data._.push(extend({}, data, { _: [] }));
+    }
+
+    return parseArray(data._);
   }
 
   return Object
@@ -57,25 +62,6 @@ function parseObject(data) {
       }
       return container;
     }, {})
-}
-
-
-function flattenUnderscore(data) {
-  return toArray(data)
-    .reduce(function(container, item) {
-      if (types.isPlainObject(item)) {
-        container = container.concat(item._);
-
-        if (Object.keys(item).length !== 1) {
-          container.push(parseSubArgs(extend({}, item, { _: [] })));
-        }
-      }
-      else {
-        container.push(item);
-      }
-
-      return container;
-    }, []);
 }
 
 

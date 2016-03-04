@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 
+var path = require("path");
 var config = require("./config")(process.argv.slice(2));
 var bitimports = require("../index").config(config);
 
-bitimports
-  .import(config.files)
-  .then(flattenModules(bitimports))
-  .then(writeOut);
 
 function flattenModules(importer) {
   return function(modules) {
@@ -34,6 +31,27 @@ function flattenModules(importer) {
   };
 }
 
-function writeOut(cache) {
-  process.stdout.write(cache);
+
+function sourceFiles(files) {
+  return files.map(function(file) {
+    return path.resolve(file);
+  });
 }
+
+
+function writeOut(cache) {
+  Object.keys(cache).forEach(function(item) {
+    console.log(JSON.stringify(cache[item]));
+  });
+}
+
+
+function reportError() {
+  console.log(arguments);
+}
+
+
+bitimports
+  .fetch(sourceFiles(config.files))
+  .then(flattenModules(bitimports), reportError)
+  .then(writeOut, reportError);
