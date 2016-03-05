@@ -1,19 +1,19 @@
-var promjax = require("promjax");
-var fileReader = require("./src/fileReader");
+var resolvePath = require("bit-bundler-utils/resolvePath");
+var readFile    = require("bit-bundler-utils/readFile");
+var factory     = require("./src/factory");
 
-// Register method to load file content from storage
-if (window.fetch) {
-  fileReader.register(function(path) {
-    return window
-      .fetch(path)
-      .then(function(response) {
-        return response.text();
-      });
-  });
-}
-else {
-  fileReader.register(promjax);
-}
+function Resolver() {}
+Resolver.prototype.resolve = function(moduleMeta) {
+  return resolvePath(moduleMeta);
+};
 
-// Export bit imports!
-module.exports = require("./src/bit-imports");
+function Fetcher() {}
+Fetcher.prototype.fetch = function(moduleMeta) {
+  return readFile(moduleMeta);
+};
+
+factory.register("fetcher", Fetcher);
+factory.register("resolver", Resolver);
+
+
+module.exports = require("./src/bit-imports").create({ doNotIgnoreNodeModules: true });

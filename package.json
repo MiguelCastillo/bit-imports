@@ -6,6 +6,9 @@
     "test": "tests"
   },
   "main": "index.js",
+  "bin": {
+    "bitimports": "bin/cli.js"
+  },
   "scripts": {
     "docs": "docdown src/bit-imports.js api/README.md url='https://github.com/MiguelCastillo/bit-imports/tree/master/src/bit-imports.js' toc='categories' title='API documentation'",
     "prepublish": "grunt build",
@@ -52,7 +55,7 @@
     "amd-resolver": "~1.2.3",
     "babel-bits": "^1.0.1",
     "belty": "^0.3.0",
-    "bit-bundler-utils": "^2.0.0",
+    "bit-bundler-utils": "^2.0.1",
     "bit-loader": "~2.0.5",
     "connect-history-api-fallback": "^1.1.0",
     "deps-bits": "~0.1.2",
@@ -61,6 +64,7 @@
     "mkdirp": "^0.5.1",
     "p-stream": "^1.0.3",
     "promjax": "~3.0.1",
-    "spromise": "~0.9.3"
+    "spromise": "~0.9.3",
+    "subarg": "^1.0.0"
   }
 }

@@ -1,5 +1,20 @@
-var fileReader = require("./fileReader");
-var logger     = require("./logger").create("bitimports/fetch");
+var logger = require("./logger").create("bitimports/fetch");
+var promjax = require("promjax");
+var fetchProvider = null;
+
+// Register method to load file content from storage
+if (window.fetch) {
+  fetchProvider = function(path) {
+    return window
+      .fetch(path)
+      .then(function(response) {
+        return response.text();
+      });
+  };
+}
+else {
+  fetchProvider = promjax;
+}
 
 /**
  * @class
@@ -7,6 +22,7 @@ var logger     = require("./logger").create("bitimports/fetch");
  * FileReader that loads files from storage
  */
 function Fetcher() {
+  this._provider = fetchProvider;
 }
 
 
@@ -14,13 +30,15 @@ function Fetcher() {
  * Reads file content from storage
  */
 Fetcher.prototype.fetch = function(moduleMeta) {
-  logger.log(moduleMeta.name, moduleMeta, location);
+  logger.log(moduleMeta.name, moduleMeta);
 
-  function fileRead(source) {
-    return {source: source};
+  function setSource(source) {
+    return { source: source };
   }
 
-  return fileReader(moduleMeta.path).then(fileRead, logger.error);
+  return this
+    ._provider(moduleMeta.path)
+    .then(setSource, logger.error);
 };
 
 

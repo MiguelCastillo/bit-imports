@@ -1,4 +1,4 @@
-var System = (function (global) {
+System = (function () {
   /** dependency mapping */
   var paths = {
     "loadstyle-bits": "node_modules/loadstyle-bits/dist/index",
