@@ -49,7 +49,7 @@ var System = bitimports
   })
   // Setup js pipeline with babel-bits
   .plugin("js", {
-    match: { path: /\.(js)$/ },
+    extensions: ["js"],
     transform: {
       handler: "babel-bits",
       options: {
