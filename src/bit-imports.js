@@ -158,7 +158,7 @@ Bitimports.prototype.config = function(options) {
  *  })
  *  // Setup js pipeline with babel-bits
  *  .plugin("js", {
- *    match: { path: /\.(js)$/ },
+ *    extensions: ["js"],
  *    transform: {
  *      handler: "babel",
  *      options: {
