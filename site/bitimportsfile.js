@@ -17,11 +17,11 @@ System = (function () {
     })
     // Setup js pipeline with babel
     .plugin("js", {
-      match: { path: /\.(js)$/ }
+      extensions: ["js"]
     })
     // Setup style pipeline
     .plugin("style", {
-      match: { path: /\.(css)$/ },
+      extensions: ["css"],
       transform: "loadstyle-bits"
     });
 })();
