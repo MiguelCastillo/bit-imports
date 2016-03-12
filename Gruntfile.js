@@ -231,7 +231,7 @@ module.exports = function(grunt) {
             name: "js",
             match: { path: /\.(js)$/ },
             transform: {
-              handler: require("babel-bits"),
+              handler: "babel-bits",
               options: {
                 presets: ["es2015"],
                 sourceMap: "inline"
