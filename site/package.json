@@ -13,9 +13,9 @@
   "license": "MIT",
   "dependencies": {
     "babel-bits": "^1.0.1",
-    "bit-imports": "^1.0.4",
+    "bit-imports": "^1.0.5",
     "loadstyle-bits": "^1.0.0",
-    "spromise": "^0.9.3",
+    "spromise": "^1.0.0",
     "three": "^0.74.0"
   }
 }
