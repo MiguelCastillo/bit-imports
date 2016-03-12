@@ -95,7 +95,7 @@ write ES6 (and later), write in the browser. <a href="Bitloader.html">bit-loader
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line34">line 34</a>
+        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line33">line 33</a>
     </li></ul></dd>
     
 
@@ -194,7 +194,7 @@ write ES6 (and later), write in the browser. <a href="Bitloader.html">bit-loader
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line68">line 68</a>
+        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line72">line 72</a>
     </li></ul></dd>
     
 
@@ -278,7 +278,7 @@ data will be deleted.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line215">line 215</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line239">line 239</a>
     </li></ul></dd>
     
 
@@ -658,6 +658,11 @@ primary way of configuring and creating instances of Bitimports.
     
 
     
+    <dt class="tag-overrides">Overrides:</dt>
+    <dd class="tag-overrides"><ul class="dummy"><li>
+        <a href="Bitloader.html#config">Bitloader#config</a>
+    </li></ul></dd>
+    
 
     
 
@@ -678,7 +683,7 @@ primary way of configuring and creating instances of Bitimports.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line121">line 121</a>
+        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line125">line 125</a>
     </li></ul></dd>
     
 
@@ -782,7 +787,7 @@ primary way of configuring and creating instances of Bitimports.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line86">line 86</a>
+        <a href="src_bit-imports.js.html">src/bit-imports.js</a>, <a href="src_bit-imports.js.html#line90">line 90</a>
     </li></ul></dd>
     
 
@@ -940,7 +945,7 @@ primary way of configuring and creating instances of Bitimports.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line253">line 253</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line277">line 277</a>
     </li></ul></dd>
     
 
@@ -979,6 +984,168 @@ primary way of configuring and creating instances of Bitimports.
     <dd>
         
 <span class="param-type"><a href="Module.html">Module</a></span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="exclude"><span class="type-signature"></span>exclude<span class="signature">(name)</span><span class="type-signature"> &rarr; {<a href="Bitloader.html">Bitloader</a>}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Method to add module names to exclude. Modules in this list will
+basically add modules with source of empty string. Generally used
+to exclude external dependencies where module names are not paths
+that require name resolution. e.g. jquery, react, path...
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+|
+
+<span class="param-type">Array.&lt;string></span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Module name (or list of names)
+ to exclude from loading and processing. This will add a module entry
+ with the source  of empty string and the ID is the same as the name.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#exclude">Bitloader#exclude</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line302">line 302</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type"><a href="Bitloader.html">Bitloader</a></span>
 
 
     </dd>
@@ -1099,7 +1266,7 @@ module registry, then a TypeError exception is thrown
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line241">line 241</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line265">line 265</a>
     </li></ul></dd>
     
 
@@ -1284,7 +1451,7 @@ module registry, then a TypeError exception is thrown
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line175">line 175</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line199">line 199</a>
     </li></ul></dd>
     
 
@@ -1442,7 +1609,7 @@ module registry, then a TypeError exception is thrown
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line228">line 228</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line252">line 252</a>
     </li></ul></dd>
     
 
@@ -1596,7 +1763,7 @@ module registry, then a TypeError exception is thrown
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line273">line 273</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line321">line 321</a>
     </li></ul></dd>
     
 
@@ -1754,7 +1921,7 @@ exports.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line108">line 108</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line114">line 114</a>
     </li></ul></dd>
     
 
@@ -1794,6 +1961,160 @@ exports.
     <dd>
         
 <span class="param-type">Promise</span>
+
+
+    </dd>
+</dl>
+
+    
+
+
+
+        
+            
+
+    
+
+    <h4 class="name" id="isExcluded"><span class="type-signature"></span>isExcluded<span class="signature">(name)</span><span class="type-signature"> &rarr; {boolean}</span></h4>
+
+    
+
+
+
+<div class="description">
+    Method that determines if a module name is excluded from loading and processing.
+</div>
+
+
+
+
+
+
+
+
+
+    <h5>Parameters:</h5>
+    
+
+<table class="params">
+    <thead>
+    <tr>
+        
+        <th>Name</th>
+        
+
+        <th>Type</th>
+
+        
+
+        
+
+        <th class="last">Description</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    
+
+        <tr>
+            
+                <td class="name"><code>name</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">string</span>
+
+
+            
+            </td>
+
+            
+
+            
+
+            <td class="description last">Name of the module to test for exclusion.</td>
+        </tr>
+
+    
+    </tbody>
+</table>
+
+
+
+
+
+
+<dl class="details">
+
+    
+
+    
+
+    
+    <dt class="inherited-from">Inherited From:</dt>
+    <dd class="inherited-from"><ul class="dummy"><li>
+        <a href="Bitloader.html#isExcluded">Bitloader#isExcluded</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <dt class="tag-source">Source:</dt>
+    <dd class="tag-source"><ul class="dummy"><li>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line185">line 185</a>
+    </li></ul></dd>
+    
+
+    
+
+    
+
+    
+</dl>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h5>Returns:</h5>
+
+        
+
+
+<dl>
+    <dt>
+        Type
+    </dt>
+    <dd>
+        
+<span class="param-type">boolean</span>
 
 
     </dd>
@@ -1941,7 +2262,7 @@ instance(s).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line136">line 136</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line148">line 148</a>
     </li></ul></dd>
     
 
@@ -2103,7 +2424,7 @@ instance(s).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line348">line 348</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line396">line 396</a>
     </li></ul></dd>
     
 
@@ -2292,7 +2613,7 @@ instance(s).
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line160">line 160</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line172">line 172</a>
     </li></ul></dd>
     
 
@@ -2471,7 +2792,7 @@ for loading a module from disk.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line122">line 122</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line128">line 128</a>
     </li></ul></dd>
     
 
@@ -2630,7 +2951,7 @@ for loading a module from disk.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line198">line 198</a>
+        <a href="node_modules_bit-loader_src_bit-loader.js.html">node_modules/bit-loader/src/bit-loader.js</a>, <a href="node_modules_bit-loader_src_bit-loader.js.html#line222">line 222</a>
     </li></ul></dd>
     
 
@@ -2694,13 +3015,13 @@ for loading a module from disk.
 </div>
 
 <nav id="side-nav">
-    <h3><a href="global.html">global</a></h3><ul><li><a href="global.html#bitimports">bitimports</a></li></ul><h3><a href="Bitimports.html">Bitimports</a></h3><ul><li><a href="Bitimports.html#clear">clear</a></li><li><a href="Bitimports.html#config">config</a></li><li><a href="Bitimports.html#create">create</a></li><li><a href="Bitimports.html#deleteModule">deleteModule</a></li><li><a href="Bitimports.html#getModule">getModule</a></li><li><a href="Bitimports.html#getSource">getSource</a></li><li><a href="Bitimports.html#hasModule">hasModule</a></li><li><a href="Bitimports.html#ignore">ignore</a></li><li><a href="Bitimports.html#import">import</a></li><li><a href="Bitimports.html#load">load</a></li><li><a href="Bitimports.html#logger">logger</a></li><li><a href="Bitimports.html#plugin">plugin</a></li><li><a href="Bitimports.html#register">register</a></li><li><a href="Bitimports.html#resolve">resolve</a></li><li><a href="Bitimports.html#transform">transform</a></li></ul><h3><a href="Module.html">Module</a></h3><ul><li><a href="Module.Meta.html">Meta</a></li><li><a href="Module.html#.State">State</a></li></ul><h3><a href="Module.Meta.html">Module Meta</a></h3><ul><li><a href="Module.Meta.html#.canCompile">canCompile</a></li><li><a href="Module.Meta.html#.hasDependencies">hasDependencies</a></li><li><a href="Module.Meta.html#.isCompiled">isCompiled</a></li><li><a href="Module.Meta.html#.validate">validate</a></li><li><a href="Module.Meta.html#configure">configure</a></li></ul><h3><a href="Module.html#.State">Module State</a></h3><ul><li><a href="Module.html#.State#.COMPILE">COMPILE</a></li><li><a href="Module.html#.State#.DEPENDENCY">DEPENDENCY</a></li><li><a href="Module.html#.State#.FETCH">FETCH</a></li><li><a href="Module.html#.State#.LINK">LINK</a></li><li><a href="Module.html#.State#.LOADED">LOADED</a></li><li><a href="Module.html#.State#.READY">READY</a></li><li><a href="Module.html#.State#.REGISTERED">REGISTERED</a></li><li><a href="Module.html#.State#.RESOLVE">RESOLVE</a></li><li><a href="Module.html#.State#.TRANSFORM">TRANSFORM</a></li></ul>
+    <h3><a href="global.html">global</a></h3><ul><li><a href="global.html#bitimports">bitimports</a></li></ul><h3><a href="Bitimports.html">Bitimports</a></h3><ul><li><a href="Bitimports.html#clear">clear</a></li><li><a href="Bitimports.html#config">config</a></li><li><a href="Bitimports.html#create">create</a></li><li><a href="Bitimports.html#deleteModule">deleteModule</a></li><li><a href="Bitimports.html#exclude">exclude</a></li><li><a href="Bitimports.html#getModule">getModule</a></li><li><a href="Bitimports.html#getSource">getSource</a></li><li><a href="Bitimports.html#hasModule">hasModule</a></li><li><a href="Bitimports.html#ignore">ignore</a></li><li><a href="Bitimports.html#import">import</a></li><li><a href="Bitimports.html#isExcluded">isExcluded</a></li><li><a href="Bitimports.html#load">load</a></li><li><a href="Bitimports.html#logger">logger</a></li><li><a href="Bitimports.html#plugin">plugin</a></li><li><a href="Bitimports.html#register">register</a></li><li><a href="Bitimports.html#resolve">resolve</a></li><li><a href="Bitimports.html#transform">transform</a></li></ul><h3><a href="Module.html">Module</a></h3><ul><li><a href="Module.Meta.html">Meta</a></li><li><a href="Module.html#.State">State</a></li></ul><h3><a href="Module.Meta.html">Module Meta</a></h3><ul><li><a href="Module.Meta.html#.canCompile">canCompile</a></li><li><a href="Module.Meta.html#.hasDependencies">hasDependencies</a></li><li><a href="Module.Meta.html#.isCompiled">isCompiled</a></li><li><a href="Module.Meta.html#.validate">validate</a></li><li><a href="Module.Meta.html#configure">configure</a></li><li><a href="Module.Meta.html#getDirectory">getDirectory</a></li><li><a href="Module.Meta.html#getFileName">getFileName</a></li><li><a href="Module.Meta.html#getFilePath">getFilePath</a></li></ul><h3><a href="Module.html#.State">Module State</a></h3><ul><li><a href="Module.html#.State#.COMPILE">COMPILE</a></li><li><a href="Module.html#.State#.DEPENDENCY">DEPENDENCY</a></li><li><a href="Module.html#.State#.FETCH">FETCH</a></li><li><a href="Module.html#.State#.LINK">LINK</a></li><li><a href="Module.html#.State#.LOADED">LOADED</a></li><li><a href="Module.html#.State#.READY">READY</a></li><li><a href="Module.html#.State#.REGISTERED">REGISTERED</a></li><li><a href="Module.html#.State#.RESOLVE">RESOLVE</a></li><li><a href="Module.html#.State#.TRANSFORM">TRANSFORM</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 18 2016 23:39:58 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Mar 12 2016 16:24:17 GMT-0500 (EST)
 </footer>
 
 <script> prettyPrint(); </script>

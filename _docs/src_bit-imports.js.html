@@ -25,12 +25,11 @@
     
     <section>
         <article>
-            <pre class="prettyprint source linenums"><code>var Fetcher     = require("./fetcher");
-var Resolver    = require("./resolver");
-var logger      = require("./logger");
-var dependency  = require("deps-bits");
-var Bitloader   = require("bit-loader");
-var utils       = require("belty");
+            <pre class="prettyprint source linenums"><code>var logger     = require("./logger");
+var factory    = require("./factory");
+var dependency = require("deps-bits");
+var Bitloader  = require("bit-loader");
+var utils      = require("belty");
 
 
 /*
@@ -60,11 +59,16 @@ var defaults = {
  */
 function Bitimports(options) {
   var settings = utils.merge({}, defaults, options);
-  var resolver = new Resolver(settings);
-  var fetcher  = new Fetcher(this, settings);
 
-  settings.resolve = settings.resolve || resolver.resolve.bind(resolver);
-  settings.fetch   = settings.fetch   || fetcher.fetch.bind(fetcher);
+  if (!settings.resolve) {
+    var resolver = factory.create("resolver", settings);
+    settings.resolve = resolver.resolve.bind(resolver);
+  }
+
+  if (!settings.fetch) {
+    var fetcher = factory.create("fetcher", settings);
+    settings.fetch = fetcher.fetch.bind(fetcher);
+  }
 
   Bitloader.call(this, settings);
 
@@ -146,8 +150,7 @@ Bitimports.prototype.create = function(options) {
  * @returns {Bitimports} Instance of Bitimports
  */
 Bitimports.prototype.config = function(options) {
-  utils.merge(this.settings, options);
-  return this.create(options);
+  return this.create(utils.merge({}, this.settings, { fetch: null, resolve: null }, options));
 };
 
 
@@ -211,13 +214,13 @@ module.exports = new Bitimports();
 </div>
 
 <nav id="side-nav">
-    <h3><a href="global.html">global</a></h3><ul><li><a href="global.html#bitimports">bitimports</a></li></ul><h3><a href="Bitimports.html">Bitimports</a></h3><ul><li><a href="Bitimports.html#clear">clear</a></li><li><a href="Bitimports.html#config">config</a></li><li><a href="Bitimports.html#create">create</a></li><li><a href="Bitimports.html#deleteModule">deleteModule</a></li><li><a href="Bitimports.html#getModule">getModule</a></li><li><a href="Bitimports.html#getSource">getSource</a></li><li><a href="Bitimports.html#hasModule">hasModule</a></li><li><a href="Bitimports.html#ignore">ignore</a></li><li><a href="Bitimports.html#import">import</a></li><li><a href="Bitimports.html#load">load</a></li><li><a href="Bitimports.html#logger">logger</a></li><li><a href="Bitimports.html#plugin">plugin</a></li><li><a href="Bitimports.html#register">register</a></li><li><a href="Bitimports.html#resolve">resolve</a></li><li><a href="Bitimports.html#transform">transform</a></li></ul><h3><a href="Module.html">Module</a></h3><ul><li><a href="Module.Meta.html">Meta</a></li><li><a href="Module.html#.State">State</a></li></ul><h3><a href="Module.Meta.html">Module Meta</a></h3><ul><li><a href="Module.Meta.html#.canCompile">canCompile</a></li><li><a href="Module.Meta.html#.hasDependencies">hasDependencies</a></li><li><a href="Module.Meta.html#.isCompiled">isCompiled</a></li><li><a href="Module.Meta.html#.validate">validate</a></li><li><a href="Module.Meta.html#configure">configure</a></li></ul><h3><a href="Module.html#.State">Module State</a></h3><ul><li><a href="Module.html#.State#.COMPILE">COMPILE</a></li><li><a href="Module.html#.State#.DEPENDENCY">DEPENDENCY</a></li><li><a href="Module.html#.State#.FETCH">FETCH</a></li><li><a href="Module.html#.State#.LINK">LINK</a></li><li><a href="Module.html#.State#.LOADED">LOADED</a></li><li><a href="Module.html#.State#.READY">READY</a></li><li><a href="Module.html#.State#.REGISTERED">REGISTERED</a></li><li><a href="Module.html#.State#.RESOLVE">RESOLVE</a></li><li><a href="Module.html#.State#.TRANSFORM">TRANSFORM</a></li></ul>
+    <h3><a href="global.html">global</a></h3><ul><li><a href="global.html#bitimports">bitimports</a></li></ul><h3><a href="Bitimports.html">Bitimports</a></h3><ul><li><a href="Bitimports.html#clear">clear</a></li><li><a href="Bitimports.html#config">config</a></li><li><a href="Bitimports.html#create">create</a></li><li><a href="Bitimports.html#deleteModule">deleteModule</a></li><li><a href="Bitimports.html#exclude">exclude</a></li><li><a href="Bitimports.html#getModule">getModule</a></li><li><a href="Bitimports.html#getSource">getSource</a></li><li><a href="Bitimports.html#hasModule">hasModule</a></li><li><a href="Bitimports.html#ignore">ignore</a></li><li><a href="Bitimports.html#import">import</a></li><li><a href="Bitimports.html#isExcluded">isExcluded</a></li><li><a href="Bitimports.html#load">load</a></li><li><a href="Bitimports.html#logger">logger</a></li><li><a href="Bitimports.html#plugin">plugin</a></li><li><a href="Bitimports.html#register">register</a></li><li><a href="Bitimports.html#resolve">resolve</a></li><li><a href="Bitimports.html#transform">transform</a></li></ul><h3><a href="Module.html">Module</a></h3><ul><li><a href="Module.Meta.html">Meta</a></li><li><a href="Module.html#.State">State</a></li></ul><h3><a href="Module.Meta.html">Module Meta</a></h3><ul><li><a href="Module.Meta.html#.canCompile">canCompile</a></li><li><a href="Module.Meta.html#.hasDependencies">hasDependencies</a></li><li><a href="Module.Meta.html#.isCompiled">isCompiled</a></li><li><a href="Module.Meta.html#.validate">validate</a></li><li><a href="Module.Meta.html#configure">configure</a></li><li><a href="Module.Meta.html#getDirectory">getDirectory</a></li><li><a href="Module.Meta.html#getFileName">getFileName</a></li><li><a href="Module.Meta.html#getFilePath">getFilePath</a></li></ul><h3><a href="Module.html#.State">Module State</a></h3><ul><li><a href="Module.html#.State#.COMPILE">COMPILE</a></li><li><a href="Module.html#.State#.DEPENDENCY">DEPENDENCY</a></li><li><a href="Module.html#.State#.FETCH">FETCH</a></li><li><a href="Module.html#.State#.LINK">LINK</a></li><li><a href="Module.html#.State#.LOADED">LOADED</a></li><li><a href="Module.html#.State#.READY">READY</a></li><li><a href="Module.html#.State#.REGISTERED">REGISTERED</a></li><li><a href="Module.html#.State#.RESOLVE">RESOLVE</a></li><li><a href="Module.html#.State#.TRANSFORM">TRANSFORM</a></li></ul>
 </nav>
 
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Thu Feb 18 2016 23:39:58 GMT-0500 (EST)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.0</a> on Sat Mar 12 2016 16:24:17 GMT-0500 (EST)
 </footer>
 
 <script> prettyPrint(); </script>
