@@ -19,13 +19,13 @@ var System = (function() {
   var importer = bitimports.config({
     "baseUrl": ".",
     "paths": {
-      "babel": "../node_modules/babel-bits/dist/index.min.js",
+      "babel-bits": "../node_modules/babel-bits/dist/index.min",
     }
   });
 
   importer.plugin("js", {
     transform: {
-      handler: "babel",
+      handler: "babel-bits",
       options: {
         sourceMap: "inline"
       }
@@ -34,8 +34,6 @@ var System = (function() {
 
   return importer;
 })();
-
-var require = System.require;
 ```
 
 ## Running the example
