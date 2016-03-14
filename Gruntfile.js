@@ -42,10 +42,12 @@ module.exports = function(grunt) {
       },
       dev: {
         options: {
+          protocol: "http2", // or "https"
+
           port: 8010,
           host: "localhost",
           keepalive: true,
-          open: "http://localhost:8010/test/SpecRunner.html"
+          open: "https://localhost:8010/test/SpecRunner.html"
         }
       },
       docs: {
@@ -229,7 +231,7 @@ module.exports = function(grunt) {
           ignore: ["three"],
           plugins: [{
             name: "js",
-            match: { path: /\.(js)$/ },
+            extensions: ["js"],
             transform: {
               handler: "babel-bits",
               options: {
