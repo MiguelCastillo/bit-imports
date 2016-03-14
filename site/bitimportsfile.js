@@ -15,7 +15,7 @@ System = (function () {
       paths: paths,
       extensions: extensions
     })
-    // Setup js pipeline with babel
+    // Setup js pipeline
     .plugin("js", {
       extensions: ["js"]
     })
@@ -26,4 +26,5 @@ System = (function () {
     });
 })();
 
+System.logger.enable();
 System.import(["main"]);
