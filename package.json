@@ -28,6 +28,7 @@
     "bit-imports": "~2.0.1",
     "bootstrap": "^3.3.6",
     "chai": "~3.5.0",
+    "config-grunt-tasks": "^1.0.3",
     "connect-livereload": "^0.5.4",
     "grunt": "~1.0.1",
     "grunt-browserify": "~5.0.0",
