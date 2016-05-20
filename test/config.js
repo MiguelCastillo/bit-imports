@@ -18,5 +18,3 @@ var System = (function() {
   importer.logger.enable();
   return importer;
 })();
-
-var require = System.import;

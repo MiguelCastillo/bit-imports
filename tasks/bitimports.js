@@ -1,6 +1,6 @@
 /*
- * grunt-bitbundler
- * https://github.com/MiguelCastillo/bit-bundler
+ * grunt-bitimports
+ * https://github.com/MiguelCastillo/bit-imports
  *
  * Copyright (c) 2015 Miguel Castillo
  * Licensed under the MIT license.
@@ -9,7 +9,6 @@
 "use strict";
 
 
-var utils = require("belty");
 var types = require("dis-isa");
 var path = require("path");
 var mkdirp = require("mkdirp");
@@ -77,6 +76,25 @@ module.exports = function(grunt) {
   function loadModules(settings) {
     var importer = bitimports.config(settings);
 
+    if (settings.log) {
+      bitimports.logger.enable();
+
+      switch(settings.log) {
+        case "info": {
+          bitimports.logger.level(1);
+          break;
+        }
+        case "warn": {
+          bitimports.logger.level(2);
+          break;
+        }
+        case "error": {
+          bitimports.logger.level(3);
+          break;
+        }
+      }
+    }
+
     return function(files) {
       return importer
         .fetch(files)
@@ -102,7 +120,7 @@ module.exports = function(grunt) {
   }
 
 
-  grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", function() {
+  function runTask() {
     var settings = this.data || {};
     var done = this.async();
     var cwd = settings.cwd || "";
@@ -121,5 +139,8 @@ module.exports = function(grunt) {
     catch(err) {
       logError(err);
     }
-  });
+  }
+
+
+  grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", runTask);
 };
