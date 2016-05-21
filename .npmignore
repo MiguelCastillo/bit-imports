@@ -2,6 +2,7 @@
 .travis.yml
 .site-gitignore
 Gruntfile.js
+build-tasks
 test
 site
 docs
