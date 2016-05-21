@@ -9,72 +9,72 @@
 "use strict";
 
 
+var utils = require("belty");
+var fs = require("fs");
+var glob = require("glob");
 var types = require("dis-isa");
 var path = require("path");
 var mkdirp = require("mkdirp");
 var bitimports = require("../index");
 
-
-module.exports = function(grunt) {
-  function sources(files) {
-    return files.map(function(file) {
-      return file.src;
-    });
-  }
+var _cwd = process.cwd();
 
 
-  function dest(files) {
-    return files.map(function(file) {
-      return file.dest;
-    });
-  }
+function buildFiles(files, cwd) {
+  return files.map(function(file) {
+    var currCwd = file.cwd || cwd;
+    var baseDir = path.join(_cwd, currCwd);
+    var src = file.src.reduce(function(result, item) {
+      return result.concat(glob.sync(item, { cwd: baseDir, realpath: true }));
+    }, []);
 
-
-  function resolveFiles(cwd) {
-    return function(files) {
-      return files.map(function(file) {
-        return path.resolve(cwd, file);
-      });
+    return {
+      cwd: currCwd,
+      baseDir: baseDir,
+      src: src,
+      dest: file.dest
     };
-  }
+  });
+}
 
 
-  function flattenModules(importer) {
-    return function(modules) {
-      var i = 0;
-      var stack = modules.slice(0);
-      var id, mod, cache = {};
+function flattenModules(importer) {
+  return function(modules) {
+    var i = 0;
+    var stack = modules.slice(0);
+    var id, mod, cache = {};
 
-      while (stack.length !== i) {
-        if (!stack[i].id) {
-          console.warn("not found:", stack[i]);
-        }
-
-        id = stack[i++].id;
-
-        if (!id || cache.hasOwnProperty(id)) {
-          continue;
-        }
-
-        mod = importer.getModule(id);
-        stack = stack.concat(mod.deps);
-        cache[mod.id] = mod;
+    while (stack.length !== i) {
+      if (!stack[i].id) {
+        console.warn("not found:", stack[i]);
       }
 
-      return cache;
-    };
-  }
+      id = stack[i++].id;
+
+      if (!id || cache.hasOwnProperty(id)) {
+        continue;
+      }
+
+      mod = importer.getModule(id);
+      stack = stack.concat(mod.deps);
+      cache[mod.id] = mod;
+    }
+
+    return cache;
+  };
+}
 
 
-  function logError(err) {
-    var errStr = err && err.stack || err;
-    grunt.log.error(errStr);
-    return err;
-  }
+function logError(err) {
+  var errStr = err && err.stack || err;
+  console.error(errStr);
+  return err;
+}
 
 
-  function loadModules(settings) {
-    var importer = bitimports.config(settings);
+function loadModules(settings) {
+  return function(file) {
+    var importer = bitimports.config(utils.extend({ baseUrl: file.baseDir }, settings));
 
     if (settings.log) {
       bitimports.logger.enable();
@@ -95,52 +95,61 @@ module.exports = function(grunt) {
       }
     }
 
-    return function(files) {
-      return importer
-        .fetch(files)
-        .then(flattenModules(importer));
-    };
-  }
+    return importer
+      .fetch(file.src)
+      .then(flattenModules(importer));
+  };
+}
 
 
-  function writeFiles(outdir, baseDir) {
-    outdir = path.join(process.cwd(), outdir[0]);
-
-    return function(modules) {
-      modules = modules[0];
+function writeFiles(files, cwd) {
+  return function(moduleGroups) {
+    for (var i = 0; i < moduleGroups.length; i++) {
+      var baseDir = files[i].baseDir;
+      var currOutdir = path.join(_cwd, files[i].dest);
+      var currModules = moduleGroups[i];
 
       Object
-        .keys(modules)
+        .keys(currModules)
         .forEach(function(modulePath) {
-          var outpath = path.join(outdir, modulePath.replace(baseDir, ""));
+          var outpath = path.join(currOutdir, modulePath.replace(baseDir, ""));
           mkdirp.sync(path.dirname(outpath));
-          grunt.file.write(outpath, modules[modulePath].source);
+          fs.writeFileSync(outpath, currModules[modulePath].source);
         });
-    };
-  }
+    }
+  };
+}
 
 
-  function runTask() {
-    var settings = this.data || {};
-    var done = this.async();
-    var cwd = settings.cwd || "";
-    var baseDir = path.join(process.cwd(), cwd);
+function runTask(files, settings) {
+  var processedFiles = buildFiles(files, settings.cwd || "");
 
+  return new Promise(function(resolve, reject) {
     try {
-      Promise
+      return Promise
         .all(
-          sources(this.files)
-            .map(resolveFiles(cwd))
-            .map(loadModules(settings.options))
+          processedFiles.map(loadModules(settings.options))
         )
-        .then(writeFiles(dest(this.files), baseDir))
-        .then(function() { done(); }, function(err) { logError(err); done(err); });
+        .then(writeFiles(processedFiles))
+        .then(resolve, reject);
     }
     catch(err) {
-      logError(err);
+      reject(err);
     }
-  }
+  });
+}
 
 
-  grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", runTask);
+module.exports = function(grunt) {
+  grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", function() {
+    var done = this.async();
+
+    runTask(this.files, this.data)
+      .then(function() {
+        done();
+      }, function(err) {
+        logError(err);
+        done(err);
+      });
+  });
 };
