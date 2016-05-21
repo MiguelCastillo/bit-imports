@@ -9,138 +9,139 @@
 "use strict";
 
 
+var fs = require("fs");
+var glob = require("glob");
 var types = require("dis-isa");
 var path = require("path");
 var mkdirp = require("mkdirp");
 var bitimports = require("../index");
 
-
-module.exports = function(grunt) {
-  function sources(files) {
-    return files.map(function(file) {
-      return file.src;
-    });
-  }
+var _cwd = process.cwd();
 
 
-  function dest(files) {
-    return files.map(function(file) {
-      return file.dest;
-    });
-  }
+function sources(files, cwd) {
+  return files.map(function(file) {
+    var baseDir = path.join(_cwd, file.cwd || cwd);
+
+    return file.src.reduce(function(result, item) {
+      return result.concat(glob.sync(item, { cwd: baseDir, realpath: true }));
+    }, []);
+  });
+}
 
 
-  function resolveFiles(cwd) {
-    return function(files) {
-      return files.map(function(file) {
-        return path.resolve(cwd, file);
-      });
-    };
-  }
+function flattenModules(importer) {
+  return function(modules) {
+    var i = 0;
+    var stack = modules.slice(0);
+    var id, mod, cache = {};
 
-
-  function flattenModules(importer) {
-    return function(modules) {
-      var i = 0;
-      var stack = modules.slice(0);
-      var id, mod, cache = {};
-
-      while (stack.length !== i) {
-        if (!stack[i].id) {
-          console.warn("not found:", stack[i]);
-        }
-
-        id = stack[i++].id;
-
-        if (!id || cache.hasOwnProperty(id)) {
-          continue;
-        }
-
-        mod = importer.getModule(id);
-        stack = stack.concat(mod.deps);
-        cache[mod.id] = mod;
+    while (stack.length !== i) {
+      if (!stack[i].id) {
+        console.warn("not found:", stack[i]);
       }
 
-      return cache;
-    };
-  }
+      id = stack[i++].id;
 
-
-  function logError(err) {
-    var errStr = err && err.stack || err;
-    grunt.log.error(errStr);
-    return err;
-  }
-
-
-  function loadModules(settings) {
-    var importer = bitimports.config(settings);
-
-    if (settings.log) {
-      bitimports.logger.enable();
-
-      switch(settings.log) {
-        case "info": {
-          bitimports.logger.level(1);
-          break;
-        }
-        case "warn": {
-          bitimports.logger.level(2);
-          break;
-        }
-        case "error": {
-          bitimports.logger.level(3);
-          break;
-        }
+      if (!id || cache.hasOwnProperty(id)) {
+        continue;
       }
+
+      mod = importer.getModule(id);
+      stack = stack.concat(mod.deps);
+      cache[mod.id] = mod;
     }
 
-    return function(files) {
-      return importer
-        .fetch(files)
-        .then(flattenModules(importer));
-    };
+    return cache;
+  };
+}
+
+
+function logError(err) {
+  var errStr = err && err.stack || err;
+  console.error(errStr);
+  return err;
+}
+
+
+function loadModules(settings) {
+  var importer = bitimports.config(settings);
+
+  if (settings.log) {
+    bitimports.logger.enable();
+
+    switch(settings.log) {
+      case "info": {
+        bitimports.logger.level(1);
+        break;
+      }
+      case "warn": {
+        bitimports.logger.level(2);
+        break;
+      }
+      case "error": {
+        bitimports.logger.level(3);
+        break;
+      }
+    }
   }
 
+  return function(files) {
+    return importer
+      .fetch(files)
+      .then(flattenModules(importer));
+  };
+}
 
-  function writeFiles(outdir, baseDir) {
-    outdir = path.join(process.cwd(), outdir[0]);
 
-    return function(modules) {
-      modules = modules[0];
+function writeFiles(files, cwd) {
+  return function(moduleGroups) {
+    for (var i = 0; i < moduleGroups.length; i++) {
+      var baseDir = path.join(_cwd, files[i].cwd || cwd);
+      var currOutdir = path.join(_cwd, files[i].dest);
+      var currModules = moduleGroups[i];
 
       Object
-        .keys(modules)
+        .keys(currModules)
         .forEach(function(modulePath) {
-          var outpath = path.join(outdir, modulePath.replace(baseDir, ""));
+          var outpath = path.join(currOutdir, modulePath.replace(baseDir, ""));
           mkdirp.sync(path.dirname(outpath));
-          grunt.file.write(outpath, modules[modulePath].source);
+          fs.writeFileSync(outpath, currModules[modulePath].source);
         });
-    };
-  }
+    }
+  };
+}
 
 
-  function runTask() {
-    var settings = this.data || {};
-    var done = this.async();
-    var cwd = settings.cwd || "";
-    var baseDir = path.join(process.cwd(), cwd);
+function runTask(files, settings) {
+  var cwd = settings.cwd || "";
 
+  return new Promise(function(resolve, reject) {
     try {
-      Promise
+      return Promise
         .all(
-          sources(this.files)
-            .map(resolveFiles(cwd))
-            .map(loadModules(settings.options))
+          sources(files, cwd).map(loadModules(settings.options))
         )
-        .then(writeFiles(dest(this.files), baseDir))
-        .then(function() { done(); }, function(err) { logError(err); done(err); });
+        .then(writeFiles(files, cwd))
+        .then(resolve, reject);
     }
     catch(err) {
-      logError(err);
+      reject(err);
     }
-  }
+  });
+}
 
 
-  grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", runTask);
+module.exports = function(grunt) {
+  grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", function() {
+    var done = this.async();
+
+    runTask(this.files, this.data)
+      .then(function() {
+        done();
+      }, function(err) {
+        logError(err);
+        done(err);
+      });
+  });
 };

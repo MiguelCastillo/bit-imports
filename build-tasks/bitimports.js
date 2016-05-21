@@ -1,14 +1,10 @@
 module.exports = {
   "site": {
-    "cwd": "site",
-    "src": [
-      "main.js",
-      "img/**/*",
-      "style/**/*",
-      "*.html",
-      ".nojekyll"
-    ],
-    "dest": "_site",
+    "files": [{
+      "cwd": "site",
+      "src": [ "main.js", "img/**/*", "style/**/*", "*.html", ".nojekyll" ],
+      "dest": "_site"
+    }],
     "options": {
       "ignore": [
         "three"
