@@ -108,15 +108,15 @@ function writeFiles(files, cwd) {
   return function(moduleGroups) {
     for (var i = 0; i < moduleGroups.length; i++) {
       var baseDir = files[i].baseDir;
-      var currOutdir = files[i].dest;
-      var currModules = moduleGroups[i];
+      var outdir = files[i].dest;
+      var modules = moduleGroups[i];
 
       Object
-        .keys(currModules)
+        .keys(modules)
         .forEach(function(modulePath) {
-          var outpath = path.join(currOutdir, modulePath.replace(baseDir, ""));
+          var outpath = path.join(outdir, modulePath.replace(baseDir, ""));
           mkdirp.sync(path.dirname(outpath));
-          fs.writeFileSync(outpath, currModules[modulePath].source);
+          fs.writeFileSync(outpath, modules[modulePath].source);
         });
     }
   };
