@@ -9,6 +9,7 @@
 "use strict";
 
 
+var utils = require("belty");
 var fs = require("fs");
 var glob = require("glob");
 var types = require("dis-isa");
@@ -19,13 +20,20 @@ var bitimports = require("../index");
 var _cwd = process.cwd();
 
 
-function sources(files, cwd) {
+function buildFiles(files, cwd) {
   return files.map(function(file) {
-    var baseDir = path.join(_cwd, file.cwd || cwd);
-
-    return file.src.reduce(function(result, item) {
+    var currCwd = file.cwd || cwd;
+    var baseDir = path.join(_cwd, currCwd);
+    var src = file.src.reduce(function(result, item) {
       return result.concat(glob.sync(item, { cwd: baseDir, realpath: true }));
     }, []);
+
+    return {
+      cwd: currCwd,
+      baseDir: baseDir,
+      src: src,
+      dest: file.dest
+    };
   });
 }
 
@@ -65,30 +73,30 @@ function logError(err) {
 
 
 function loadModules(settings) {
-  var importer = bitimports.config(settings);
+  return function(file) {
+    var importer = bitimports.config(utils.extend({ baseUrl: file.baseDir }, settings));
 
-  if (settings.log) {
-    bitimports.logger.enable();
+    if (settings.log) {
+      bitimports.logger.enable();
 
-    switch(settings.log) {
-      case "info": {
-        bitimports.logger.level(1);
-        break;
-      }
-      case "warn": {
-        bitimports.logger.level(2);
-        break;
-      }
-      case "error": {
-        bitimports.logger.level(3);
-        break;
+      switch(settings.log) {
+        case "info": {
+          bitimports.logger.level(1);
+          break;
+        }
+        case "warn": {
+          bitimports.logger.level(2);
+          break;
+        }
+        case "error": {
+          bitimports.logger.level(3);
+          break;
+        }
       }
     }
-  }
 
-  return function(files) {
     return importer
-      .fetch(files)
+      .fetch(file.src)
       .then(flattenModules(importer));
   };
 }
@@ -97,7 +105,7 @@ function loadModules(settings) {
 function writeFiles(files, cwd) {
   return function(moduleGroups) {
     for (var i = 0; i < moduleGroups.length; i++) {
-      var baseDir = path.join(_cwd, files[i].cwd || cwd);
+      var baseDir = files[i].baseDir;
       var currOutdir = path.join(_cwd, files[i].dest);
       var currModules = moduleGroups[i];
 
@@ -114,15 +122,15 @@ function writeFiles(files, cwd) {
 
 
 function runTask(files, settings) {
-  var cwd = settings.cwd || "";
+  var processedFiles = buildFiles(files, settings.cwd || "");
 
   return new Promise(function(resolve, reject) {
     try {
       return Promise
         .all(
-          sources(files, cwd).map(loadModules(settings.options))
+          processedFiles.map(loadModules(settings.options))
         )
-        .then(writeFiles(files, cwd))
+        .then(writeFiles(processedFiles))
         .then(resolve, reject);
     }
     catch(err) {
