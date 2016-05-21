@@ -20,19 +20,21 @@ var bitimports = require("../index");
 var _cwd = process.cwd();
 
 
-function buildFiles(files, cwd) {
+function confgureFiles(files, cwd) {
   return files.map(function(file) {
     var currCwd = file.cwd || cwd;
     var baseDir = path.join(_cwd, currCwd);
-    var src = file.src.reduce(function(result, item) {
+    var destFile = path.join(_cwd, file.dest);
+
+    var srcFiles = file.src.reduce(function(result, item) {
       return result.concat(glob.sync(item, { cwd: baseDir, realpath: true }));
     }, []);
 
     return {
       cwd: currCwd,
       baseDir: baseDir,
-      src: src,
-      dest: file.dest
+      dest: destFile,
+      src: srcFiles
     };
   });
 }
@@ -106,15 +108,15 @@ function writeFiles(files, cwd) {
   return function(moduleGroups) {
     for (var i = 0; i < moduleGroups.length; i++) {
       var baseDir = files[i].baseDir;
-      var currOutdir = path.join(_cwd, files[i].dest);
-      var currModules = moduleGroups[i];
+      var outdir = files[i].dest;
+      var modules = moduleGroups[i];
 
       Object
-        .keys(currModules)
+        .keys(modules)
         .forEach(function(modulePath) {
-          var outpath = path.join(currOutdir, modulePath.replace(baseDir, ""));
+          var outpath = path.join(outdir, modulePath.replace(baseDir, ""));
           mkdirp.sync(path.dirname(outpath));
-          fs.writeFileSync(outpath, currModules[modulePath].source);
+          fs.writeFileSync(outpath, modules[modulePath].source);
         });
     }
   };
@@ -122,15 +124,15 @@ function writeFiles(files, cwd) {
 
 
 function runTask(files, settings) {
-  var processedFiles = buildFiles(files, settings.cwd || "");
+  files = confgureFiles(files, settings.cwd || "");
 
   return new Promise(function(resolve, reject) {
     try {
       return Promise
         .all(
-          processedFiles.map(loadModules(settings.options))
+          files.map(loadModules(settings.options))
         )
-        .then(writeFiles(processedFiles))
+        .then(writeFiles(files))
         .then(resolve, reject);
     }
     catch(err) {
