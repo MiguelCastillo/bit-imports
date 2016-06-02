@@ -4,8 +4,6 @@ var config = require("./config")(process.argv.slice(2));
 var utils = require("belty");
 var bitimports = require("../tasks/bitimports");
 
-console.log(config);
-
 bitimports
   .runTask([{
     cwd: config.cwd,
@@ -15,5 +13,5 @@ bitimports
     options: utils.omit(config, ["cwd", "out", "files"])
   })
   .then(function() {}, function(err) {
-    console.error(err);
+    bitimports.logError(err);
   });

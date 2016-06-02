@@ -8,7 +8,7 @@ module.exports = function(grunt) {
       .then(function() {
         done();
       }, function(err) {
-        logError(err);
+        bitimports.logError(err);
         done(err);
       });
   });

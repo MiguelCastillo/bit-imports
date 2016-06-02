@@ -184,3 +184,4 @@ module.exports.runTask = runTask;
 module.exports.confgureFiles = confgureFiles;
 module.exports.loadModules = loadModules;
 module.exports.flattenModules = flattenModules;
+module.exports.logError = logError;
