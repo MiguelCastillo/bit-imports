@@ -15,6 +15,7 @@ var glob = require("glob");
 var types = require("dis-isa");
 var path = require("path");
 var mkdirp = require("mkdirp");
+var stream = require("stream");
 var bitimports = require("../index");
 
 var _cwd = process.cwd();
@@ -22,21 +23,40 @@ var _cwd = process.cwd();
 
 function confgureFiles(files, cwd) {
   return files.map(function(file) {
-    var currCwd = file.cwd || cwd;
+    var currCwd = file.cwd || cwd || "";
     var baseDir = path.join(_cwd, currCwd);
-    var destFile = path.join(_cwd, file.dest);
-
-    var srcFiles = file.src.reduce(function(result, item) {
-      return result.concat(glob.sync(item, { cwd: baseDir, realpath: true }));
-    }, []);
 
     return {
       cwd: currCwd,
       baseDir: baseDir,
-      dest: destFile,
-      src: srcFiles
+      dest: dest(file.dest, _cwd),
+      src: src(file.src, baseDir)
     };
   });
+}
+
+
+function src(files, cwd) {
+  if (!types.isArray(files)) {
+    files = [files];
+  }
+
+  return files.reduce(function(result, file) {
+    var globResult = glob.sync(file, { cwd: cwd, realpath: true });
+    return result.concat(globResult);
+  }, []);
+}
+
+
+function dest(file, cwd) {
+  if (types.isString(file)) {
+    return path.isAbsolute(file) ? file : path.join(cwd, file);
+  }
+  else if (file instanceof stream.Writable) {
+    return file;
+  }
+
+  return file;
 }
 
 
@@ -104,27 +124,45 @@ function loadModules(settings) {
 }
 
 
-function writeFiles(files, cwd) {
-  return function(moduleGroups) {
-    for (var i = 0; i < moduleGroups.length; i++) {
+function writeFiles(files) {
+  return function writeFileDelegate(moduleGroups) {
+    var allDeferreds = moduleGroups.reduce(function(all, modules, i) {
       var baseDir = files[i].baseDir;
-      var outdir = files[i].dest;
-      var modules = moduleGroups[i];
+      var dest = files[i].dest;
 
-      Object
+      var deferreds = Object
         .keys(modules)
-        .forEach(function(modulePath) {
-          var outpath = path.join(outdir, modulePath.replace(baseDir, ""));
-          mkdirp.sync(path.dirname(outpath));
-          fs.writeFileSync(outpath, modules[modulePath].source);
+        .map(function(modulePath) {
+          return new Promise(function(resolve /*, reject*/) {
+            var file;
+
+            if (types.isString(dest)) {
+              var outpath = path.join(dest, modulePath.replace(baseDir, ""));
+              mkdirp.sync(path.dirname(outpath));
+              file = fs.createWriteStream(outpath);
+            }
+            else if (dest instanceof stream.Writable) {
+              file = dest;
+            }
+            else {
+              file = process.stdout;
+            }
+
+            file.write(modules[modulePath].source, null, resolve);
+          });
         });
-    }
+
+      return all.concat(deferreds);
+    }, []);
+
+    return Promise.all(allDeferreds);
   };
 }
 
 
 function runTask(files, settings) {
-  files = confgureFiles(files, settings.cwd || "");
+  settings = settings || {};
+  files = confgureFiles(files, settings.cwd);
 
   return new Promise(function(resolve, reject) {
     try {
@@ -142,16 +180,7 @@ function runTask(files, settings) {
 }
 
 
-module.exports = function(grunt) {
-  grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", function() {
-    var done = this.async();
-
-    runTask(this.files, this.data)
-      .then(function() {
-        done();
-      }, function(err) {
-        logError(err);
-        done(err);
-      });
-  });
-};
+module.exports.runTask = runTask;
+module.exports.confgureFiles = confgureFiles;
+module.exports.loadModules = loadModules;
+module.exports.flattenModules = flattenModules;
