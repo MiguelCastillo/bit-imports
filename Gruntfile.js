@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  require("bit-imports/tasks/grunt")(grunt);
+  require("bit-imports/tasks/bitimports")(grunt);
   require("load-grunt-tasks")(grunt);
 
   var taskConfig = require("config-grunt-tasks")(grunt, "./build-tasks");
