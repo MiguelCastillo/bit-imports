@@ -129,26 +129,27 @@ function writeFiles(files) {
     var allDeferreds = moduleGroups.reduce(function(all, modules, i) {
       var baseDir = files[i].baseDir;
       var dest = files[i].dest;
+      var isString = types.isString(dest);
+      var isStream = dest instanceof stream;
 
       var deferreds = Object
         .keys(modules)
         .map(function(modulePath) {
           return new Promise(function(resolve /*, reject*/) {
-            var file;
-
-            if (types.isString(dest)) {
+            if (isString) {
               var outpath = path.join(dest, modulePath.replace(baseDir, ""));
               mkdirp.sync(path.dirname(outpath));
-              file = fs.createWriteStream(outpath);
-            }
-            else if (dest instanceof stream.Writable) {
-              file = dest;
-            }
-            else {
-              file = process.stdout;
-            }
+              var file = fs.createWriteStream(outpath);
 
-            file.write(modules[modulePath].source, null, resolve);
+              file.write(modules[modulePath].source, null, function() {
+                resolve(modules[modulePath]);
+              });
+            }
+            else if (isStream) {
+              dest.write(JSON.stringify(modules[modulePath]) + "\n", null, function() {
+                resolve(modules[modulePath]);
+              });
+            }
           });
         });
 
