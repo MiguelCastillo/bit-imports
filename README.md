@@ -84,7 +84,7 @@ System.import("main");
 - Method to add module exports to the internal cache.
 
 #### ignore( module-names | mathing-rules ) : bit-imports
-- Method to exclude modules from the transform and dependency pipelines. For more information, please see [bit-loader matching rules](https://github.com/MiguelCastillo/bit-loader#matching-rules)
+- Method to exclude modules from the transform and dependency pipelines. For more information, please see [bit-loader matching rules](https://github.com/MiguelCastillo/bit-loader#ignore)
 
 #### trasform( source ) : Promise
 - Method to push source strings through the transform pipeline.
