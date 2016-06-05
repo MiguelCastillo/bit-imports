@@ -122,7 +122,7 @@ Bitimports.prototype.create = function(options) {
  *
  * @returns {Bitimports} Instance of Bitimports
  */
-Bitimports.prototype.config = function(options) {
+Bitimports.prototype.configure = Bitimports.prototype.config = function(options) {
   return this.create(utils.merge({}, this.settings, { fetch: null, resolve: null }, options));
 };
 
