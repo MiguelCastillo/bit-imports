@@ -68,7 +68,7 @@ System.import("main");
 #### bitimports
 - Global instance of `bit-imports`
 
-#### config( object ) : bit-imports
+#### configure( object ) : bit-imports
 - Method to configure `bit-imports`. This method creates and returns a new instance of `bit-imports`.
 
 #### plugin( plugin-name?, options? ) : bit-imports
