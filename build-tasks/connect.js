@@ -10,11 +10,11 @@ module.exports = {
   },
   "site": {
     "options": {
-      "protocol": "http2",
+      "protocol": "http", //http2
       "port": 8015,
       "hostname": "localhost",
       "keepalive": true,
-      "open": "https://localhost:8015/_site/index.html",
+      "open": "http://localhost:8015/_site/index.html",
       "middleware": function(connect, options, middlewares) {
         middlewares.unshift(fallback({ index: "/_site/index.html" }));
         middlewares.unshift(livereload({ port: 32012 }));

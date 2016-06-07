@@ -1,28 +1,18 @@
 import Component from "../js/Component";
-
+import UsageDropdown from "./UsageDropdown";
 
 class Header extends Component {
   render() {
     return this.content `
       <header>
         <nav id="nav">
-          <ul class="nav-left">
+          <ul class="nav-left dropdown">
             <li>
-              <a href="home">
-                Home
-              </a>
+              <a href="home">Home</a>
             </li>
             <li>
-              <a href="docs">
-                Docs
-              </a>
-            </li>
-        </ul>
-        <ul class="nav-middle">
-            <li>
-              <a href="home">
-                <img id="bit-imports-mini" src="img/bit-imports.svg" alt="bit imports" class="mini-logo">
-              </a>
+              <a>Usage <span class="caret"></span></a>
+              ${ new UsageDropdown() }
             </li>
         </ul>
         <ul class="nav-right">

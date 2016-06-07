@@ -8,7 +8,7 @@ System = (function () {
   };
 
   /** known file extensions that bitimports won't convert to .js */
-  var extensions = ["css", "js"];
+  var extensions = ["css", "js", "md"];
 
   return bitimports
     .config({
@@ -17,7 +17,7 @@ System = (function () {
     })
     // Setup js pipeline
     .plugin("js", {
-      extensions: ["js"]
+      extensions: ["js", "md"]
     })
     // Setup style pipeline
     .plugin("style", {

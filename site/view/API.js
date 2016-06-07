@@ -1,6 +1,6 @@
 import Component from "../js/Component";
 
-class Docs extends Component {
+class API extends Component {
   render() {
     return this.content `
       <iframe src="_docs/global.html" style="flex: 1; border:0px;"></iframe>
@@ -8,4 +8,4 @@ class Docs extends Component {
   }
 }
 
-export default Docs;
+export default API;
