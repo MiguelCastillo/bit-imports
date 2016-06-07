@@ -1,4 +1,8 @@
 import "./style/application.css";
+import "./style/nav.css";
+import "./style/dropdown.css";
+import "./style/utils.css";
+import "./style/github-markdown.css";
 
 import {
   Component,
@@ -13,7 +17,8 @@ import {
 import Header from "./view/Header";
 import Footer from "./view/Footer";
 import Home   from "./view/Home";
-import Docs   from "./view/Docs";
+import API    from "./view/API";
+import CLI    from "./view/CLI";
 
 import SpecialEffect from "./effects/SpecialEffect";
 
@@ -31,7 +36,8 @@ class AppMain extends Component {
 
 DOMReady(() => {
   router
-    .on(/docs/, () => Region.register("content", () => new Docs()))
+    .on(/api/, () => Region.register("content", () => new API()))
+    .on(/cli/, () => Region.register("content", () => new CLI()))
     .on(/home/, () => Region.register("content", () => new Home()))
     .on(router.match.none, () => router.navigate("home"))
     .on(router.match.all, () => renderer.render(new DOMElement(document.getElementById("app")), new AppMain()))

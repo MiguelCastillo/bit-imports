@@ -1,0 +1,92 @@
+nav .dropdown > li > a {
+    padding: 14px 10px;
+}
+
+nav .dropdown > li > a:hover {
+    cursor: pointer;
+}
+
+nav {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 10px;
+    width: inherit;
+    height: inherit;
+
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+}
+
+nav img {
+    height: 100%;
+    width: 100%;
+}
+
+nav ul {
+    margin: 0px;
+    padding: 0px;
+}
+
+nav li {
+    list-style: none;
+    display: inline-block;
+}
+
+nav li a {
+    display: block;
+    padding: 0 3px;
+}
+
+.nav-left {
+    flex: 1;
+    display: -webkit-box;
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.nav-middle {
+    flex: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-right {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+.nav-right li {
+    height: 50px;
+    width: 40px;
+}
+
+.nav-right li a,
+.nav-left li a {
+    height: 100%;
+    transition: opacity .25s;
+    opacity: .6;
+}
+
+.nav-right li a:hover,
+.nav-left li a:hover {
+    opacity: 1;
+}
+
+@media screen and (min-width: 400px) {
+    nav li {
+        margin-right: 10px;
+    }
+}

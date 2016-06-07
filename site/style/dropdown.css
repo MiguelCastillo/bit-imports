@@ -1,0 +1,34 @@
+.dropdown {
+    position: relative;
+    overflow: visible;
+    z-index: 10000000;
+}
+
+.dropdown ul {
+    position: absolute;
+    min-width: 200px;
+    background: #3b3b3b;
+}
+
+.dropdown li {
+    position: relative;
+    display: block;
+    list-style: none;
+    margin: 0px;
+}
+
+.dropdown ul > li > a {
+    padding: 5px 10px;
+}
+
+.dropdown ul > li:hover > a {
+    background: #0b0b0b;
+}
+
+.dropdown li > ul {
+    display: none;
+}
+
+.dropdown li:hover > ul {
+    display: block;
+}
