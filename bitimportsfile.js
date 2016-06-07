@@ -8,16 +8,16 @@ System = (function () {
   };
 
   /** known file extensions that bitimports won't convert to .js */
-  var extensions = ["css"];
+  var extensions = ["css", "js", "md"];
 
   return bitimports
     .config({
       paths: paths,
       extensions: extensions
     })
-    // Setup js pipeline with babel
+    // Setup js pipeline
     .plugin("js", {
-      extensions: ["js"]
+      extensions: ["js", "md"]
     })
     // Setup style pipeline
     .plugin("style", {
@@ -26,4 +26,5 @@ System = (function () {
     });
 })();
 
+System.logger.enable();
 System.import(["main"]);

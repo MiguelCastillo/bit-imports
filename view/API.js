@@ -6,15 +6,11 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(["\n      <div class=\"integrations-view\">\n        <div class=\"wrapper\">\n          ", "\n        </div>\n      </div>\n    "], ["\n      <div class=\"integrations-view\">\n        <div class=\"wrapper\">\n          ", "\n        </div>\n      </div>\n    "]);
+var _templateObject = _taggedTemplateLiteral(["\n      <iframe src=\"_docs/global.html\" style=\"flex: 1; border:0px;\"></iframe>\n    "], ["\n      <iframe src=\"_docs/global.html\" style=\"flex: 1; border:0px;\"></iframe>\n    "]);
 
 var _Component2 = require("../js/Component");
 
 var _Component3 = _interopRequireDefault(_Component2);
-
-var _Babel = require("./Babel");
-
-var _Babel2 = _interopRequireDefault(_Babel);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -26,24 +22,24 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Integrations = function (_Component) {
-  _inherits(Integrations, _Component);
+var API = function (_Component) {
+  _inherits(API, _Component);
 
-  function Integrations() {
-    _classCallCheck(this, Integrations);
+  function API() {
+    _classCallCheck(this, API);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Integrations).apply(this, arguments));
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(API).apply(this, arguments));
   }
 
-  _createClass(Integrations, [{
+  _createClass(API, [{
     key: "render",
     value: function render() {
-      return this.content(_templateObject, new _Babel2.default());
+      return this.content(_templateObject);
     }
   }]);
 
-  return Integrations;
+  return API;
 }(_Component3.default);
 
-exports.default = Integrations;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkludGVncmF0aW9ucy5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7O0FBQUE7Ozs7QUFDQTs7Ozs7Ozs7Ozs7Ozs7SUFFTSxZOzs7Ozs7Ozs7Ozs2QkFDSztBQUNQLGFBQU8sS0FBSyxPQUFaLGtCQUdTLHFCQUhUO0FBT0Q7Ozs7OztrQkFHWSxZIiwiZmlsZSI6IkludGVncmF0aW9ucy5qcyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBDb21wb25lbnQgZnJvbSBcIi4uL2pzL0NvbXBvbmVudFwiO1xuaW1wb3J0IEJhYmVsIGZyb20gXCIuL0JhYmVsXCI7XG5cbmNsYXNzIEludGVncmF0aW9ucyBleHRlbmRzIENvbXBvbmVudCB7XG4gIHJlbmRlcigpIHtcbiAgICByZXR1cm4gdGhpcy5jb250ZW50IGBcbiAgICAgIDxkaXYgY2xhc3M9XCJpbnRlZ3JhdGlvbnMtdmlld1wiPlxuICAgICAgICA8ZGl2IGNsYXNzPVwid3JhcHBlclwiPlxuICAgICAgICAgICR7IG5ldyBCYWJlbCgpIH1cbiAgICAgICAgPC9kaXY+XG4gICAgICA8L2Rpdj5cbiAgICBgO1xuICB9XG59XG5cbmV4cG9ydCBkZWZhdWx0IEludGVncmF0aW9ucztcbiJdfQ==
+exports.default = API;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkFQSS5qcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiOzs7Ozs7Ozs7O0FBQUE7Ozs7Ozs7Ozs7Ozs7O0lBRU0sRzs7Ozs7Ozs7Ozs7NkJBQ0s7QUFDUCxhQUFPLEtBQUssT0FBWjtBQUdEOzs7Ozs7a0JBR1ksRyIsImZpbGUiOiJBUEkuanMiLCJzb3VyY2VzQ29udGVudCI6WyJpbXBvcnQgQ29tcG9uZW50IGZyb20gXCIuLi9qcy9Db21wb25lbnRcIjtcblxuY2xhc3MgQVBJIGV4dGVuZHMgQ29tcG9uZW50IHtcbiAgcmVuZGVyKCkge1xuICAgIHJldHVybiB0aGlzLmNvbnRlbnQgYFxuICAgICAgPGlmcmFtZSBzcmM9XCJfZG9jcy9nbG9iYWwuaHRtbFwiIHN0eWxlPVwiZmxleDogMTsgYm9yZGVyOjBweDtcIj48L2lmcmFtZT5cbiAgICBgO1xuICB9XG59XG5cbmV4cG9ydCBkZWZhdWx0IEFQSTtcbiJdfQ==
