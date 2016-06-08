@@ -151,7 +151,8 @@ section h2 {
     text-align: center;
 }
 
-.cli {
+.cli,
+.grunt-task {
     margin: 20px;
 }
 

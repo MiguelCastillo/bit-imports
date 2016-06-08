@@ -6,13 +6,14 @@
 
 > module loader with System.import and CJS dependencies in the browser
 
-`bit-imports` is built on top of [bit-loader](https://github.com/MiguelCastillo/bit-loader) which provides you with a flexible and powerful plugin system that let's you fine tune how you process your application assests. For example, you can tap into the power of tools like [babel](http://babeljs.io/) - right in the browser - with no bundling tools.
+`bit-imports` is built on top of [bit-loader](https://github.com/MiguelCastillo/bit-loader) which provides you with a flexible and powerful plugin system that let's you fine tune how you process your application assests.
 
 
 ### Resources
 
 - [API](https://imports.bitjs.io/api)
 - [CLI](https://imports.bitjs.io/cli)
+- [Grunt task](https://imports.bitjs.io/grunt-task)
 
 
 ### License

@@ -19,6 +19,7 @@ import Footer from "./view/Footer";
 import Home   from "./view/Home";
 import API    from "./view/API";
 import CLI    from "./view/CLI";
+import GruntTask from "./view/GruntTask"
 
 import SpecialEffect from "./effects/SpecialEffect";
 
@@ -38,6 +39,7 @@ DOMReady(() => {
   router
     .on(/api/, () => Region.register("content", () => new API()))
     .on(/cli/, () => Region.register("content", () => new CLI()))
+    .on(/grunt-task/, () => Region.register("content", () => new GruntTask()))
     .on(/home/, () => Region.register("content", () => new Home()))
     .on(router.match.none, () => router.navigate("home"))
     .on(router.match.all, () => renderer.render(new DOMElement(document.getElementById("app")), new AppMain()))
