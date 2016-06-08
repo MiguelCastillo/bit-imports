@@ -1,13 +1,16 @@
-### CLI
+## CLI
 
-bit-imports provides you with a CLI to help you prebuild your assests, which is a good option for production deployments.
+bit-imports provides you with a CLI to help you prebuild your assets, which is a good option for production deployments.
 
 The CLI uses subarg syntax to configure input files, plugins, output directory, and all the other settings available via the JavaScript API.
+
+
+### Configure
 
 | Param | Default | Description |
 |-------|---------|-------------|
 | files    |       | Input files to be processed.
-| out      | process.stdout | Output directory to write proccessed assests to. If you don't specify an output directory then each module will be written to process.stdout as JSON.
+| out      | process.stdout | Output directory to write proccessed assets to. If you don't specify an output directory then each module will be written to process.stdout as JSON.
 | plugins  |     | List of plugin configurations. You can specify all same configurations available via the JavaScript API.
 | ignores  |     | List of modules to exclude from pipeline processing.
 | excludes |     | List of module names to skip if they are not found and therefore can't be loaded.
@@ -21,7 +24,7 @@ $ bitimports site/bitimportsfile.js
 
 #### Example with ignore and multiple files
 
-In this example we are loading two JavaScript files and all html files in the `site` directory. The configuration also excludes the module with name `three` and the module with fileName `bitimportsfiles.js` from the processing pipelines. The processed assests are written to the `build` directory.
+In this example we are loading two JavaScript files and all html files in the `site` directory. The configuration also excludes the module with name `three` and the module with fileName `bitimportsfiles.js` from the processing pipelines. The processed assets are written to the `build` directory.
 
 ```
 $ bitimports --files [ site/bitimportsfile.js site/main.js site/*.html ] --ignores [ --name three --fileName bitimportsfile.js ] --out build
