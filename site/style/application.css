@@ -152,7 +152,8 @@ section h2 {
 }
 
 .cli,
-.grunt-task {
+.grunt-task,
+.install {
     margin: 20px;
 }
 
