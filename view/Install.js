@@ -6,11 +6,15 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _templateObject = _taggedTemplateLiteral(["\n      <ul class=\"usage-dropdown\">\n        <li><a href=\"install\">Install</a></li>\n        <li><a href=\"api\">API</a></li>\n        <li><a href=\"cli\">CLI</a></li>\n        <li><a href=\"grunt-task\">Grunt Task</a></li>\n      </ul>\n    "], ["\n      <ul class=\"usage-dropdown\">\n        <li><a href=\"install\">Install</a></li>\n        <li><a href=\"api\">API</a></li>\n        <li><a href=\"cli\">CLI</a></li>\n        <li><a href=\"grunt-task\">Grunt Task</a></li>\n      </ul>\n    "]);
+var _templateObject = _taggedTemplateLiteral(["\n      <div class=\"install\">\n        <div class=\"markdown-body\">", "</div>\n      </div>\n    "], ["\n      <div class=\"install\">\n        <div class=\"markdown-body\">", "</div>\n      </div>\n    "]);
 
 var _Component2 = require("../js/Component");
 
 var _Component3 = _interopRequireDefault(_Component2);
+
+var _Install = require("./Install.md");
+
+var _Install2 = _interopRequireDefault(_Install);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -22,24 +26,24 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var UsageDropdown = function (_Component) {
-  _inherits(UsageDropdown, _Component);
+var Install = function (_Component) {
+  _inherits(Install, _Component);
 
-  function UsageDropdown() {
-    _classCallCheck(this, UsageDropdown);
+  function Install() {
+    _classCallCheck(this, Install);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(UsageDropdown).apply(this, arguments));
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Install).apply(this, arguments));
   }
 
-  _createClass(UsageDropdown, [{
+  _createClass(Install, [{
     key: "render",
     value: function render() {
-      return this.content(_templateObject);
+      return this.content(_templateObject, _Install2.default);
     }
   }]);
 
-  return UsageDropdown;
+  return Install;
 }(_Component3.default);
 
-exports.default = UsageDropdown;
-//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIlVzYWdlRHJvcGRvd24uanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUFBOzs7Ozs7Ozs7Ozs7OztJQUVNLGE7Ozs7Ozs7Ozs7OzZCQUNLO0FBQ1AsYUFBTyxLQUFLLE9BQVo7QUFRRDs7Ozs7O2tCQUdZLGEiLCJmaWxlIjoiVXNhZ2VEcm9wZG93bi5qcyIsInNvdXJjZXNDb250ZW50IjpbImltcG9ydCBDb21wb25lbnQgZnJvbSBcIi4uL2pzL0NvbXBvbmVudFwiO1xuXG5jbGFzcyBVc2FnZURyb3Bkb3duIGV4dGVuZHMgQ29tcG9uZW50IHtcbiAgcmVuZGVyKCkge1xuICAgIHJldHVybiB0aGlzLmNvbnRlbnQgYFxuICAgICAgPHVsIGNsYXNzPVwidXNhZ2UtZHJvcGRvd25cIj5cbiAgICAgICAgPGxpPjxhIGhyZWY9XCJpbnN0YWxsXCI+SW5zdGFsbDwvYT48L2xpPlxuICAgICAgICA8bGk+PGEgaHJlZj1cImFwaVwiPkFQSTwvYT48L2xpPlxuICAgICAgICA8bGk+PGEgaHJlZj1cImNsaVwiPkNMSTwvYT48L2xpPlxuICAgICAgICA8bGk+PGEgaHJlZj1cImdydW50LXRhc2tcIj5HcnVudCBUYXNrPC9hPjwvbGk+XG4gICAgICA8L3VsPlxuICAgIGA7XG4gIH1cbn1cblxuZXhwb3J0IGRlZmF1bHQgVXNhZ2VEcm9wZG93bjtcbiJdfQ==
+exports.default = Install;
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbIkluc3RhbGwuanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6Ijs7Ozs7Ozs7OztBQUFBOzs7O0FBQ0E7Ozs7Ozs7Ozs7Ozs7O0lBRU0sTzs7Ozs7Ozs7Ozs7NkJBQ0s7QUFDUCxhQUFPLEtBQUssT0FBWjtBQUtEOzs7Ozs7a0JBR1ksTyIsImZpbGUiOiJJbnN0YWxsLmpzIiwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IENvbXBvbmVudCBmcm9tIFwiLi4vanMvQ29tcG9uZW50XCI7XG5pbXBvcnQgSW5zdGFsbENvbnRlbnQgZnJvbSBcIi4vSW5zdGFsbC5tZFwiO1xuXG5jbGFzcyBJbnN0YWxsIGV4dGVuZHMgQ29tcG9uZW50IHtcbiAgcmVuZGVyKCkge1xuICAgIHJldHVybiB0aGlzLmNvbnRlbnQgYFxuICAgICAgPGRpdiBjbGFzcz1cImluc3RhbGxcIj5cbiAgICAgICAgPGRpdiBjbGFzcz1cIm1hcmtkb3duLWJvZHlcIj4keyBJbnN0YWxsQ29udGVudCB9PC9kaXY+XG4gICAgICA8L2Rpdj5cbiAgICBgO1xuICB9XG59XG5cbmV4cG9ydCBkZWZhdWx0IEluc3RhbGw7XG4iXX0=

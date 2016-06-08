@@ -1,0 +1,1 @@
+module.exports = ("<h2 id=\"install\">Install</h2>\n<p>Currently only through <a href=\"https://www.npmjs.com/package/bit-imports\">npm</a></p>\n<pre><code>$ npm install bit-imports --save-dev\n</code></pre>");
