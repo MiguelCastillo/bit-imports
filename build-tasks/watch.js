@@ -1,10 +1,8 @@
 module.exports = {
   "docs": {
-    "files": {
-      "src": [
-        "src/**/*.js"
-      ]
-    },
+    "files": [
+      "src/**/*.js"
+    ],
     "tasks": [
       "jshint:all",
       "jsdoc:build"
@@ -14,13 +12,11 @@ module.exports = {
     }
   },
   "build": {
-    "files": {
-      "src": [
-        "src/**/*.js",
-        "test/**/*.js",
-        "*.js"
-      ]
-    },
+    "files": [
+      "src/**/*.js",
+      "test/**/*.js",
+      "*.js"
+    ],
     "tasks": [
       "build"
     ],
@@ -29,13 +25,10 @@ module.exports = {
     }
   },
   "site": {
-    "files": {
-      "src": [
-        "src/**/*.js",
-        "site/**/*",
-        "!site/node_modules/**/*"
-      ]
-    },
+    "files": [
+      "src/**/*.js",
+      "site/**/*"
+    ],
     "tasks": [
       "build-site"
     ],
