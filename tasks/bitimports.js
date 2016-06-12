@@ -52,38 +52,33 @@ function dest(file, cwd) {
   if (types.isString(file)) {
     return path.isAbsolute(file) ? file : path.join(cwd, file);
   }
-  else if (file instanceof stream.Writable) {
-    return file;
-  }
 
   return file;
 }
 
 
-function flattenModules(importer) {
-  return function(modules) {
-    var i = 0;
-    var stack = modules.slice(0);
-    var id, mod, cache = {};
+function flattenModules(importer, modules) {
+  var i = 0;
+  var stack = modules.slice(0);
+  var id, mod, cache = {};
 
-    while (stack.length !== i) {
-      if (!stack[i].id) {
-        console.warn("not found:", stack[i]);
-      }
-
-      id = stack[i++].id;
-
-      if (!id || cache.hasOwnProperty(id)) {
-        continue;
-      }
-
-      mod = importer.getModule(id);
-      stack = stack.concat(mod.deps);
-      cache[mod.id] = mod;
+  while (stack.length !== i) {
+    if (!stack[i].id) {
+      console.warn("not found:", stack[i]);
     }
 
-    return cache;
-  };
+    id = stack[i++].id;
+
+    if (!id || cache.hasOwnProperty(id)) {
+      continue;
+    }
+
+    mod = importer.getModule(id);
+    stack = stack.concat(mod.deps);
+    cache[mod.id] = mod;
+  }
+
+  return cache;
 }
 
 
@@ -94,84 +89,99 @@ function logError(err) {
 }
 
 
-function loadModules(settings) {
-  return function(file) {
-    var importer = bitimports.config(utils.extend({ baseUrl: file.baseDir }, settings));
+function createLoder(settings) {
+  var loader = bitimports.config(settings);
 
-    if (settings.log) {
-      bitimports.logger.enable();
+  if (settings.log) {
+    loader.logger.enable();
 
-      switch(settings.log) {
-        case "info": {
-          bitimports.logger.level(1);
-          break;
-        }
-        case "warn": {
-          bitimports.logger.level(2);
-          break;
-        }
-        case "error": {
-          bitimports.logger.level(3);
-          break;
-        }
+    switch(settings.log) {
+      case "info": {
+        loader.logger.level(1);
+        break;
+      }
+      case "warn": {
+        loader.logger.level(2);
+        break;
+      }
+      case "error": {
+        loader.logger.level(3);
+        break;
       }
     }
+  }
 
-    return importer
-      .fetch(file.src)
-      .then(flattenModules(importer));
+  return loader;
+}
+
+
+function fileWriter(dest, moduleMeta, done) {
+  var outpath = path.join(dest, moduleMeta.path.replace(baseDir, ""));
+  mkdirp.sync(path.dirname(outpath));
+  var file = fs.createWriteStream(outpath);
+
+  file.write(moduleMeta.source, null, function() {
+    done(moduleMeta);
+  });
+}
+
+
+function streamWriter(dest, moduleMeta, done) {
+  dest.write(JSON.stringify(moduleMeta) + "\n", null, function() {
+    done(moduleMeta);
+  });
+}
+
+
+function buildContext(file, settings) {
+  return {
+    file: file,
+    loader: createLoder(utils.extend({ baseUrl: file.baseDir }, settings))
   };
 }
 
 
-function writeFiles(files) {
-  return function writeFileDelegate(moduleGroups) {
-    var allDeferreds = moduleGroups.reduce(function(all, modules, i) {
-      var baseDir = files[i].baseDir;
-      var dest = files[i].dest;
-      var isString = types.isString(dest);
-      var isStream = dest instanceof stream;
-
-      var deferreds = Object
-        .keys(modules)
-        .map(function(modulePath) {
-          return new Promise(function(resolve /*, reject*/) {
-            if (isString) {
-              var outpath = path.join(dest, modulePath.replace(baseDir, ""));
-              mkdirp.sync(path.dirname(outpath));
-              var file = fs.createWriteStream(outpath);
-
-              file.write(modules[modulePath].source, null, function() {
-                resolve(modules[modulePath]);
-              });
-            }
-            else if (isStream) {
-              dest.write(JSON.stringify(modules[modulePath]) + "\n", null, function() {
-                resolve(modules[modulePath]);
-              });
-            }
-          });
-        });
-
-      return all.concat(deferreds);
-    }, []);
-
-    return Promise.all(allDeferreds);
-  };
+function runContext(loaderContext, src) {
+  return loaderContext.loader
+    .fetch(src ? src : loaderContext.file.src)
+    .then(function(modules) {
+      return flattenModules(loaderContext.loader, modules);
+    })
+    .then(function(modules) {
+      return writeModules(loaderContext.file, modules)
+    });
 }
 
 
-function runTask(files, settings) {
+function writeModules(file, modules) {
+  var baseDir = file.baseDir;
+  var dest = file.dest;
+  var writer = types.isString(dest) ? fileWriter : streamWriter;
+
+  var deferreds = Object
+    .keys(modules)
+    .map(function(modulePath) {
+      return new Promise(function(resolve) {
+        writer(dest, modules[modulePath], resolve);
+      });
+    });
+
+  return deferreds;
+}
+
+
+function loadFiles(files, settings) {
   settings = settings || {};
   files = confgureFiles(files, settings.cwd);
 
   return new Promise(function(resolve, reject) {
     try {
+      var contexts = files.map(function(file) {
+        return buildContext(file, settings.options)
+      });
+
       return Promise
-        .all(
-          files.map(loadModules(settings.options))
-        )
-        .then(writeFiles(files))
+        .all(contexts.map(runContext))
         .then(resolve, reject);
     }
     catch(err) {
@@ -181,8 +191,10 @@ function runTask(files, settings) {
 }
 
 
-module.exports.runTask = runTask;
+module.loadFiles = loadFiles;
+module.exports.runTask = loadFiles;
 module.exports.confgureFiles = confgureFiles;
-module.exports.loadModules = loadModules;
+module.exports.createLoder = createLoder;
 module.exports.flattenModules = flattenModules;
+module.exports.writeModules = writeModules;
 module.exports.logError = logError;
