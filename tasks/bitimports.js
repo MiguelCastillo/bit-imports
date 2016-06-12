@@ -57,7 +57,7 @@ function dest(file, cwd) {
 }
 
 
-function flattenModules(importer, modules) {
+function flattenModules(loader, modules) {
   var i = 0;
   var stack = modules.slice(0);
   var id, mod, cache = {};
@@ -73,7 +73,7 @@ function flattenModules(importer, modules) {
       continue;
     }
 
-    mod = importer.getModule(id);
+    mod = loader.getModule(id);
     stack = stack.concat(mod.deps);
     cache[mod.id] = mod;
   }
@@ -115,20 +115,20 @@ function createLoder(settings) {
 }
 
 
-function fileWriter(dest, moduleMeta, done) {
+function fileWriter(dest, moduleMeta) {
   var outpath = path.join(dest, moduleMeta.path.replace(baseDir, ""));
   mkdirp.sync(path.dirname(outpath));
   var file = fs.createWriteStream(outpath);
 
-  file.write(moduleMeta.source, null, function() {
-    done(moduleMeta);
+  return new Promise(function(resolve) {
+    file.write(moduleMeta.source, null, resolve);
   });
 }
 
 
 function streamWriter(dest, moduleMeta, done) {
-  dest.write(JSON.stringify(moduleMeta) + "\n", null, function() {
-    done(moduleMeta);
+  return new Promise(function(resolve) {
+    dest.write(JSON.stringify(moduleMeta) + "\n", null, resolve);
   });
 }
 
@@ -141,14 +141,21 @@ function buildContext(file, settings) {
 }
 
 
-function runContext(loaderContext, src) {
-  return loaderContext.loader
-    .fetch(src ? src : loaderContext.file.src)
+function executeContext(context, src) {
+  return context.loader
+    .fetch(src ? src : context.file.src)
     .then(function(modules) {
-      return flattenModules(loaderContext.loader, modules);
+      return utils.merge({}, context, {
+        cache: flattenModules(context.loader, modules)
+      });
     })
-    .then(function(modules) {
-      return writeModules(loaderContext.file, modules)
+    .then(function(context) {
+      return writeModules(context.file, context.cache).then(function() {
+        return context;
+      });
+    })
+    .then(function(context) {
+      return context;
     });
 }
 
@@ -161,9 +168,7 @@ function writeModules(file, modules) {
   var deferreds = Object
     .keys(modules)
     .map(function(modulePath) {
-      return new Promise(function(resolve) {
-        writer(dest, modules[modulePath], resolve);
-      });
+      return writer(dest, modules[modulePath]);
     });
 
   return deferreds;
@@ -180,9 +185,7 @@ function loadFiles(files, settings) {
         return buildContext(file, settings.options)
       });
 
-      return Promise
-        .all(contexts.map(runContext))
-        .then(resolve, reject);
+      return Promise.all(contexts.map(executeContext));
     }
     catch(err) {
       reject(err);
@@ -197,4 +200,5 @@ module.exports.confgureFiles = confgureFiles;
 module.exports.createLoder = createLoder;
 module.exports.flattenModules = flattenModules;
 module.exports.writeModules = writeModules;
+module.exports.executeContext = executeContext;
 module.exports.logError = logError;
