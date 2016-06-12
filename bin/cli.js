@@ -8,9 +8,10 @@ bitimports
   .runTask([{
     cwd: config.cwd,
     dest: config.out || process.stdout,
-    src: config.files
+    src: config.files,
   }], {
-    options: utils.omit(config, ["cwd", "out", "files"])
+    watch: config.watch,
+    options: utils.omit(config, ["cwd", "out", "files", "watch"])
   })
   .then(function() {}, function(err) {
     bitimports.logError(err);

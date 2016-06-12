@@ -16,6 +16,7 @@ var types = require("dis-isa");
 var path = require("path");
 var mkdirp = require("mkdirp");
 var stream = require("stream");
+var chokidar = require("chokidar");
 var bitimports = require("../index");
 
 var _cwd = process.cwd();
@@ -171,7 +172,25 @@ function writeModules(file, modules) {
       return writer(dest, modules[modulePath]);
     });
 
-  return deferreds;
+  return Promise.all(deferreds);
+}
+
+
+function watchModules(context, settings) {
+  var watcher = chokidar.watch(context.file.baseDir, {
+    followSymlinks: false
+  });
+
+  watcher
+    .on("add", function(path) {
+      // console.log("File", path, "has been added");
+    })
+    .on("change", function(path) {
+      // console.log("File", path, "has been changed");
+    })
+    .on("unlink", function(path) {
+      // console.log("File", path, "has been removed");
+    });
 }
 
 
@@ -185,7 +204,19 @@ function loadFiles(files, settings) {
         return buildContext(file, settings.options)
       });
 
-      return Promise.all(contexts.map(executeContext));
+      return Promise
+        .all(contexts.map(executeContext))
+        .then(function(contexts) {
+          if (settings.watch) {
+            contexts.forEach(function(context) {
+              watchModules(context, settings.watch);
+            });
+
+            process.stdin.resume();
+          }
+
+          return contexts;
+        });
     }
     catch(err) {
       reject(err);
