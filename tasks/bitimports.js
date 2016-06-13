@@ -116,7 +116,9 @@ function createLoder(settings) {
 }
 
 
-function fileWriter(dest, moduleMeta) {
+function fileWriter(file, moduleMeta) {
+  var dest = file.dest;
+  var baseDir = file.baseDir;
   var outpath = path.join(dest, moduleMeta.path.replace(baseDir, ""));
   mkdirp.sync(path.dirname(outpath));
   var file = fs.createWriteStream(outpath);
@@ -127,10 +129,37 @@ function fileWriter(dest, moduleMeta) {
 }
 
 
-function streamWriter(dest, moduleMeta, done) {
+function streamWriter(file, moduleMeta) {
   return new Promise(function(resolve) {
-    dest.write(JSON.stringify(moduleMeta) + "\n", null, resolve);
+    file.dest.write(JSON.stringify(moduleMeta) + "\n", null, resolve);
   });
+}
+
+
+function finalizeLoading(contexts, settings) {
+  if (settings.watch) {
+    contexts.forEach(function(context) {
+      watchModules(context, settings.watch);
+    });
+
+    process.stdin.resume();
+
+    //
+    // TODO: Add simple REPL
+    //
+    // process.stdin
+    //   .on('readable', () => {
+    //     var chunk = process.stdin.read();
+    //     if (chunk !== null) {
+    //       process.stdout.write(chunk);
+    //     }
+    //   })
+    //   .on('end', () => {
+    //     process.stdout.write('end');
+    //   });
+  }
+
+  return contexts;
 }
 
 
@@ -143,8 +172,7 @@ function buildContext(file, settings) {
 
 
 function executeContext(context, src) {
-  return context.loader
-    .fetch(src ? src : context.file.src)
+  return context.loader.fetch(src)
     .then(function(modules) {
       return utils.merge({}, context, {
         cache: flattenModules(context.loader, modules)
@@ -162,35 +190,61 @@ function executeContext(context, src) {
 
 
 function writeModules(file, modules) {
-  var baseDir = file.baseDir;
-  var dest = file.dest;
-  var writer = types.isString(dest) ? fileWriter : streamWriter;
+  var writer = types.isString(file.dest) ? fileWriter : streamWriter;
 
   var deferreds = Object
     .keys(modules)
     .map(function(modulePath) {
-      return writer(dest, modules[modulePath]);
+      return writer(file, modules[modulePath]);
     });
 
   return Promise.all(deferreds);
 }
 
 
-function watchModules(context, settings) {
-  var watcher = chokidar.watch(context.file.baseDir, {
-    followSymlinks: false
-  });
+function watchModules(context, options) {
+  if (options === true) {
+    options = {};
+  }
+
+  var settings = utils.merge({ followSymlinks: false }, options);
+
+  if (!settings.hasOwnProperty("ignored")) {
+    settings.ignored = [/[\/\\]\./, /node_modules\//];
+  }
+
+  var filesToWatch = Object.keys(context.cache);
+  var watcher = chokidar.watch(filesToWatch, settings);
+  console.log("Watching...");
+
+  function onAdd(path) {
+    if (context.cache.hasOwnProperty(path)) {
+      console.log("[watched]", path);
+    }
+  }
+
+  function onChange(path) {
+    if (context.cache.hasOwnProperty(path)) {
+      var module = context.cache[path];
+      context.loader.deleteModule(module);
+
+      executeContext(context, [path]).then(function(ctx) {
+        context = ctx;
+        console.log("[changed]", path);
+      }, logError);
+    }
+  }
+
+  function onDelete(path) {
+    if (context.cache.hasOwnProperty(path)) {
+      console.warn("[removed]", path);
+    }
+  }
 
   watcher
-    .on("add", function(path) {
-      // console.log("File", path, "has been added");
-    })
-    .on("change", function(path) {
-      // console.log("File", path, "has been changed");
-    })
-    .on("unlink", function(path) {
-      // console.log("File", path, "has been removed");
-    });
+    .on("add", onAdd)
+    .on("change", onChange)
+    .on("unlink", onDelete);
 }
 
 
@@ -201,22 +255,16 @@ function loadFiles(files, settings) {
   return new Promise(function(resolve, reject) {
     try {
       var contexts = files.map(function(file) {
-        return buildContext(file, settings.options)
+        return buildContext(file, settings.options);
       });
 
       return Promise
-        .all(contexts.map(executeContext))
+        .all(contexts.map(function(context) {
+          return executeContext(context, context.file.src)
+        }))
         .then(function(contexts) {
-          if (settings.watch) {
-            contexts.forEach(function(context) {
-              watchModules(context, settings.watch);
-            });
-
-            process.stdin.resume();
-          }
-
-          return contexts;
-        });
+          return finalizeLoading(contexts, settings)
+        }, logError);
     }
     catch(err) {
       reject(err);
