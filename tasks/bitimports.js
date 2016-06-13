@@ -213,25 +213,52 @@ function watchModules(context, options) {
     settings.ignored = [/[\/\\]\./, /node_modules\//];
   }
 
+  var nextPaths = {}, inProgress;
   var filesToWatch = Object.keys(context.cache);
   var watcher = chokidar.watch(filesToWatch, settings);
+
   console.log("Watching...");
+
+  watcher
+    .on("add", onAdd)
+    .on("change", onChange)
+    .on("unlink", onDelete);
+
+  function onChange(path) {
+    var paths = toArray(path).filter(function(path) {
+      return context.cache.hasOwnProperty(path);
+    });
+
+    if (inProgress) {
+      paths.forEach(function(path) {
+        nextPaths[path] = path;
+      });
+    }
+    else if (paths.length) {
+      inProgress = true;
+
+      paths.forEach(function(path) {
+        context.loader.deleteModule(context.cache[path]);
+      });
+
+      executeContext(context, paths).then(function(ctx) {
+        context = ctx;
+        console.log("[changed]", paths);
+        inProgress = false;
+
+        var pendingPaths = Object.keys(nextPaths);
+
+        if (pendingPaths.length) {
+          nextPaths = {};
+          onChange(pendingPaths);
+        }
+      }, logError);
+    }
+  }
 
   function onAdd(path) {
     if (context.cache.hasOwnProperty(path)) {
       console.log("[watched]", path);
-    }
-  }
-
-  function onChange(path) {
-    if (context.cache.hasOwnProperty(path)) {
-      var module = context.cache[path];
-      context.loader.deleteModule(module);
-
-      executeContext(context, [path]).then(function(ctx) {
-        context = ctx;
-        console.log("[changed]", path);
-      }, logError);
     }
   }
 
@@ -240,11 +267,6 @@ function watchModules(context, options) {
       console.warn("[removed]", path);
     }
   }
-
-  watcher
-    .on("add", onAdd)
-    .on("change", onChange)
-    .on("unlink", onDelete);
 }
 
 
@@ -270,6 +292,11 @@ function loadFiles(files, settings) {
       reject(err);
     }
   });
+}
+
+
+function toArray(data) {
+  return types.isArray(data) ? data : [data];
 }
 
 
