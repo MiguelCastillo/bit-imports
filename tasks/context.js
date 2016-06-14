@@ -6,7 +6,7 @@ var path = require("path");
 
 function Context(options) {
   this.loader = options.loader;
-  this.cache = options.cache || {};
+  this.cache = options.cache || null;
   this.file = options.file;
 }
 
@@ -15,12 +15,17 @@ Context.prototype.execute = function(src) {
 
   return context.loader.fetch(src)
     .then(function(modules) {
-      utils.merge(context.cache, flattenModules(context.loader, modules));
+      var updates = flattenModules(context.loader, modules);
+      return context.cache ? onlyChanged(src, updates) : updates;
     })
-    .then(function() {
-      return writeModules(context.file, context.cache);
+    .then(function(updates) {
+      return writeModules(context.file, updates)
+        .then(function() {
+          return updates;
+        });
     })
-    .then(function() {
+    .then(function(updates) {
+      context.cache = utils.merge(context.cache || {}, updates);
       return context;
     });
 }
@@ -77,6 +82,13 @@ function flattenModules(loader, modules) {
   }
 
   return cache;
+}
+
+function onlyChanged(src, cache) {
+  return src.reduce(function(changedModules, item) {
+    changedModules[item] = cache[item];
+    return changedModules;
+  }, {})
 }
 
 module.exports = Context;
