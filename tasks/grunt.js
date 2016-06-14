@@ -1,36 +1,53 @@
-var bitimports = require("./bitimports");
+var bitimports = require("./index");
+var logError = require("./logError");
 var chalk = require("chalk");
 var ora = require("ora");
 
 module.exports = function(grunt) {
   grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", function() {
     var done = this.async();
+    var files = this.files;
+    var settings = this.data;
+
     var spinner = ora({
       text: "Loading modules",
       spinner: "bouncingBall"
     }).start();
 
-    bitimports.runTask(this.files, this.data)
-      .then(function(modules) {
-        spinner.stop();
-
-        var paths = modules.forEach(function(m) {
-          grunt.verbose.writeln("Module", chalk.cyan(m.path));
-
-          var deps = m.deps.forEach(function(dep) {
-            grunt.verbose.writeln(" + Dependency", chalk.cyan(dep.path));
-          });
-
-          if (m.deps.length) {
-            grunt.verbose.writeln();
-          }
+    function processContext(context, settings) {
+      var modules = Object
+        .keys(context.cache)
+        .map(function(id) {
+          return context.cache[id];
         });
 
-        grunt.log.writeln("Processed", chalk.cyan(modules.length), "files");
+      var paths = modules.forEach(function(m) {
+        grunt.verbose.writeln("Module", chalk.cyan(m.path));
+
+        var deps = m.deps.forEach(function(dep) {
+          grunt.verbose.writeln(" + Dependency", chalk.cyan(dep.path));
+        });
+
+        if (m.deps.length) {
+          grunt.verbose.writeln();
+        }
+      });
+
+      grunt.log.writeln("Processed", chalk.cyan(modules.length), "files");
+    }
+
+    bitimports
+      .runTask(files, settings)
+      .then(function(contexts) {
+        spinner.stop();
+
+        contexts.forEach(function(context) {
+          processContext(context, settings);
+        });
 
         done();
       }, function(err) {
-        bitimports.logError(err);
+        logError(err);
         done(err);
       });
   });
