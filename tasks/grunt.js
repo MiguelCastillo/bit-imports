@@ -1,4 +1,5 @@
 var bitimports = require("./index");
+var watch = require("./watch");
 var logError = require("./logError");
 var chalk = require("chalk");
 var ora = require("ora");
@@ -34,6 +35,10 @@ module.exports = function(grunt) {
       });
 
       grunt.log.writeln("Processed", chalk.cyan(modules.length), "files");
+
+      if (settings.watch) {
+        watch(context, settings.watch);
+      }
     }
 
     bitimports

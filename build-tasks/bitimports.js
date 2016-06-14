@@ -7,6 +7,7 @@ module.exports = {
       "src": [ "main.js", "img/**/*", "style/**/*", "*.html", ".nojekyll" ],
       "dest": "_site"
     }],
+    "watch": true,
     "options": {
       "ignore": [ "three" ],
       "plugins": [{

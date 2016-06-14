@@ -43,7 +43,10 @@ function watch(context, options) {
       });
 
       context.execute(paths).then(function() {
-        console.log("[changed]", paths);
+        paths.forEach(function(path) {
+          console.log("[changed]", path);
+        });
+
         inProgress = false;
 
         var pendingPaths = Object.keys(nextPaths);
