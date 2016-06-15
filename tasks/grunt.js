@@ -5,7 +5,7 @@ var chalk = require("chalk");
 var ora = require("ora");
 var utils = require("belty");
 
-module.exports = function(grunt) {
+function gruntTask(grunt) {
   grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", function() {
     var done = this.async();
     var files = this.files;
@@ -59,3 +59,5 @@ module.exports = function(grunt) {
       });
   });
 };
+
+module.exports = gruntTask;
