@@ -8,8 +8,7 @@ var logError = require("../tasks/logError");
 
 settings.options = utils.omit(settings, ["cwd", "files", "out", "watch"]);
 
-bitimports
-  .runTask([{
+bitimports([{
     cwd: settings.cwd,
     dest: settings.out || process.stdout,
     src: settings.files,

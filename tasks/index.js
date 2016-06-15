@@ -10,50 +10,11 @@
 
 
 var utils = require("belty");
-var glob = require("glob");
 var types = require("dis-isa");
-var path = require("path");
 var bitimports = require("../index");
 var Context = require("./context");
 var logError = require("./logError");
-
-var _cwd = process.cwd();
-
-
-function confgureFiles(files, cwd) {
-  return files.map(function(file) {
-    var currCwd = file.cwd || cwd || "";
-    var baseDir = path.join(_cwd, currCwd);
-
-    return {
-      cwd: currCwd,
-      baseDir: baseDir,
-      dest: dest(file.dest, _cwd),
-      src: src(file.src, baseDir)
-    };
-  });
-}
-
-
-function src(files, cwd) {
-  if (!types.isArray(files)) {
-    files = [files];
-  }
-
-  return files.reduce(function(result, file) {
-    var globResult = glob.sync(file, { cwd: cwd, realpath: true });
-    return result.concat(globResult);
-  }, []);
-}
-
-
-function dest(file, cwd) {
-  if (types.isString(file)) {
-    return path.isAbsolute(file) ? file : path.join(cwd, file);
-  }
-
-  return file;
-}
+var fileFactory = require("./file");
 
 
 function createLoder(settings) {
@@ -82,7 +43,7 @@ function createLoder(settings) {
 }
 
 
-function buildContext(file, settings) {
+function createContext(file, settings) {
   return new Context({
     file: file,
     loader: createLoder(utils.extend({ baseUrl: file.baseDir }, settings))
@@ -92,12 +53,12 @@ function buildContext(file, settings) {
 
 function loadFiles(files, settings) {
   settings = settings || {};
-  files = confgureFiles(files, settings.cwd);
+  files = fileFactory(files, settings.cwd);
 
   return new Promise(function(resolve, reject) {
     try {
       var contexts = files.map(function(file) {
-        return buildContext(file, settings.options);
+        return createContext(file, settings.options);
       });
 
       return Promise
@@ -115,5 +76,4 @@ function loadFiles(files, settings) {
 }
 
 
-module.loadFiles = loadFiles;
-module.exports.runTask = loadFiles;
+module.exports = loadFiles;

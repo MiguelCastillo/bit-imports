@@ -43,8 +43,7 @@ function gruntTask(grunt) {
       }
     }
 
-    bitimports
-      .runTask(files, settings)
+    bitimports(files, settings)
       .then(function(contexts) {
         spinner.stop();
 
