@@ -20,17 +20,17 @@ Context.prototype.execute = function(src) {
       return context.lastUpdatedModules ? onlyChanged(src, updates) : updates;
     })
     .then(function(updates) {
-      return writeModules(context.file, updates)
-        .then(function() {
-          return updates;
-        });
-    })
-    .then(function(updates) {
       context.lastUpdatedModules = updates;
-      context.cache = utils.merge(context.cache || {}, updates);
+      context.cache = utils.merge(context.cache, updates);
       return context;
+    })
+    .then(function(context) {
+      return writeModules(context.file, context.lastUpdatedModules)
+        .then(function() {
+          return context;
+        });
     });
-}
+};
 
 function fileWriter(file, moduleMeta) {
   var dest = file.dest;
