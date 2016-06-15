@@ -6,8 +6,9 @@ var path = require("path");
 
 function Context(options) {
   this.loader = options.loader;
-  this.cache = options.cache || null;
+  this.cache = options.cache || {};
   this.file = options.file;
+  this.lastUpdatedModules = null;
 }
 
 Context.prototype.execute = function(src) {
@@ -16,7 +17,7 @@ Context.prototype.execute = function(src) {
   return context.loader.fetch(src)
     .then(function(modules) {
       var updates = flattenModules(context.loader, modules);
-      return context.cache ? onlyChanged(src, updates) : updates;
+      return context.lastUpdatedModules ? onlyChanged(src, updates) : updates;
     })
     .then(function(updates) {
       return writeModules(context.file, updates)
@@ -25,6 +26,7 @@ Context.prototype.execute = function(src) {
         });
     })
     .then(function(updates) {
+      context.lastUpdatedModules = updates;
       context.cache = utils.merge(context.cache || {}, updates);
       return context;
     });
