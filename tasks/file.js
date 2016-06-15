@@ -2,6 +2,7 @@ var glob = require("glob");
 var types = require("dis-isa");
 var utils = require("belty");
 var path = require("path");
+var toArray = require("./toArray");
 
 var _cwd = process.cwd();
 
@@ -22,21 +23,13 @@ function createFile(file, cwd) {
 }
 
 function factory(files, cwd) {
-  if (!types.isArray(files)) {
-    files = [files];
-  }
-
-  return files.map(function(file) {
+  return toArray(files).map(function(file) {
     return createFile(file, cwd);
   });
 }
 
 function src(files, cwd) {
-  if (!types.isArray(files)) {
-    files = [files];
-  }
-
-  return files.reduce(function(result, file) {
+  return toArray(files).reduce(function(result, file) {
     var globResult = glob.sync(file, { cwd: cwd, realpath: true });
     return result.concat(globResult);
   }, []);
