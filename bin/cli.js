@@ -8,11 +8,11 @@ var logError = require("../tasks/logError");
 
 settings.options = utils.omit(settings, ["cwd", "files", "out", "watch"]);
 
-bitimports([{
+bitimports({
     cwd: settings.cwd,
     dest: settings.out || process.stdout,
     src: settings.files,
-  }], settings)
+  }, settings)
   .then(function(contexts) {
     contexts.forEach(function(context) {
       processContext(context, settings)

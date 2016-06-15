@@ -22,6 +22,10 @@ function createFile(file, cwd) {
 }
 
 function factory(files, cwd) {
+  if (!types.isArray(files)) {
+    files = [files];
+  }
+
   return files.map(function(file) {
     return createFile(file, cwd);
   });
