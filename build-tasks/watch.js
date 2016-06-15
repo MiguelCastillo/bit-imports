@@ -26,11 +26,9 @@ module.exports = {
   },
   "site": {
     "files": [
-      "src/**/*.js",
-      "site/**/*"
+      "_site/**/*"
     ],
     "tasks": [
-      "build-site"
     ],
     "options": {
       "livereload": 32012
