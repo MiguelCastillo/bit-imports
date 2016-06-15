@@ -10,11 +10,13 @@ The CLI uses subarg syntax to configure input files, plugins, output directory, 
 | Param | Default | Description |
 |-------|---------|-------------|
 | files    |       | Input files to be processed.
-| out      | process.stdout | Output directory to write proccessed assets to. If you don't specify an output directory then each module will be written to process.stdout as JSON.
-| plugins  |     | List of plugin configurations. You can specify all same configurations available via the JavaScript API.
-| ignores  |     | List of modules to exclude from pipeline processing.
-| excludes |     | List of module names to skip if they are not found and therefore can't be loaded.
+| out      | process.stdout | Can be a string for a directory to write proccessed assets to or a stream. If you don't specify an output directory then each module will be written to process.stdout as JSON lines
+| watch    | false | Enable file watching for automatically reprocessing *only* changed files. The value can be a boolean for enabling the feature or a configuration object for fine tuning the file watcher. Internally the file watcher is [chokidar](https://github.com/paulmillr/chokidar), and all configurations provided will be passed right along to it. By default, chokidar is configured to *not* follow symlinks. Also, by default dot files, dot directories, and node_modules are all excluded from the watcher
+| ignores  |       | Modules to exlcude from the transform and dependency pipelines
+| excludes |       | Modules to exclude from output if not found
+| plugins  |       | List of plugins for processing your assets
 
+> All options besides `files`, `out`, and `watch` are passed right along to bit-imports. So please checkout the JavaScript API to see more details about each available option.
 
 #### Basic example
 

@@ -7,11 +7,16 @@ bit-imports provisions you with a grunt plugin that allows you to pre-process yo
 
 | Option | Default | Descrition |
 |--------|---------|------------|
-| files  |         | Array of src files to be loaded and a dest to write processed assets to
-| files.src  |     | Array of source file to load.  Supports `globs`
+| files  |         | Configuration, or array of configurations with src files to be loaded and a dest to write processed assets to.
+| files.src  |     | Array of source file to load. Supports [glob](https://github.com/isaacs/node-glob) syntax
 | files.cwd  | process.cwd() | Current working directory to read source files relative to
-| files.dest | process.cwd() | Directory to copy processed assets to.  If a value isn't provided, then each module is written to process.stdout as JSON
-| options |        | Options to configure bit-imports module loader. These are all the same options available in the JavaScript API
+| files.dest | process.cwd() | Directory to copy processed assets to.  If a value isn't provided, then each module is written to process.stdout as JSON lines
+| watch    | false | Enable file watching for automatically reprocessing *only* changed files. The value can be a boolean for enabling the feature or a configuration object for fine tuning the file watcher. Internally the file watcher is [chokidar](https://github.com/paulmillr/chokidar), and all configurations provided will be passed right along to it. By default, chokidar is configured to *not* follow symlinks. Also, by default dot files, dot directories, and node_modules are all excluded from the watcher
+| ignores  |       | Modules to exlcude from the transform and dependency pipelines
+| excludes |       | Modules to exclude from output if not found
+| plugins  |       | List of plugins for processing your assets
+
+> All options besides `files` and `watch` are passed right along to bit-imports. So please checkout the JavaScript API to see more details about each available option.
 
 
 #### Setup with babel-bits
@@ -44,6 +49,9 @@ module.exports = function(grunt) {
           src: ["main.js", "img/**/*", "style/**/*", "*.html", ".nojekyll"],
           dest: "_site"
         }],
+        watch: {
+          followSymlinks: true
+        },
         plugins: [{
           name: "js",
           extensions: ["js"],
