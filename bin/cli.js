@@ -1,21 +1,18 @@
 #!/usr/bin/env node
 
-var config = require("./config")(process.argv.slice(2));
+var settings = require("./config")(process.argv.slice(2));
 var utils = require("belty");
 var bitimports = require("../tasks/index");
 var watch = require("../tasks/watch");
 var logError = require("../tasks/logError");
 
-var settings = {
-  watch: config.watch,
-  options: utils.omit(config, ["cwd", "out", "files", "watch"])
-};
+settings.options = utils.omit(settings, ["cwd", "files", "out", "watch"]);
 
 bitimports
   .runTask([{
-    cwd: config.cwd,
-    dest: config.out || process.stdout,
-    src: config.files,
+    cwd: settings.cwd,
+    dest: settings.out || process.stdout,
+    src: settings.files,
   }], settings)
   .then(function(contexts) {
     contexts.forEach(function(context) {

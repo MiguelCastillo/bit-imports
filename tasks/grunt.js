@@ -3,12 +3,14 @@ var watch = require("./watch");
 var logError = require("./logError");
 var chalk = require("chalk");
 var ora = require("ora");
+var utils = require("belty");
 
 module.exports = function(grunt) {
   grunt.task.registerMultiTask("bitimports", "bit-imports grunt plugin", function() {
     var done = this.async();
     var files = this.files;
-    var settings = this.data;
+    var settings = utils.merge({}, this.data);
+    settings.options = settings.options || utils.omit(settings, ["cwd", "files", "watch"]);
 
     var spinner = ora({
       text: "Loading modules",

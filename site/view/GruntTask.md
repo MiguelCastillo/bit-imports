@@ -44,19 +44,17 @@ module.exports = function(grunt) {
           src: ["main.js", "img/**/*", "style/**/*", "*.html", ".nojekyll"],
           dest: "_site"
         }],
-        options: {
-          plugins: [{
-            name: "js",
-            extensions: ["js"],
-            transform: {
-              handler: "babel-bits",
-              options: {
-                presets: ["es2015"],
-                sourceMap: "inline"
-              }
+        plugins: [{
+          name: "js",
+          extensions: ["js"],
+          transform: {
+            handler: "babel-bits",
+            options: {
+              presets: ["es2015"],
+              sourceMap: "inline"
             }
-          }]
-        }
+          }
+        }]
       }
     }
   });
