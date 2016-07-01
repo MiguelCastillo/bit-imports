@@ -24,7 +24,7 @@ var defaults = {
  * This module loader supports the System module loading interface for loading
  * modules as well as CJS dependency processing. This combination enables the
  * use of transpilers like [babel]{@link http://babeljs.io/} so that you can
- * write ES6 (and later), write in the browser. [bit-loader]{@link Bitloader}
+ * write ES6 (and later), right in the browser. [bit-loader]{@link Bitloader}
  *
  * @class
  * @private
