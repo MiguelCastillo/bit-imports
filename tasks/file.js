@@ -1,49 +1,80 @@
 var glob = require("glob");
+var path = require("path");
 var types = require("dis-isa");
 var utils = require("belty");
-var path = require("path");
-var toArray = require("./toArray");
-
+var configurator = require("setopt")();
 var _cwd = process.cwd();
 
-function File(options) {
-  utils.merge(this, options);
+function File(options, cwd) {
+  if (!(this instanceof File)) {
+    return new File(options);
+  }
+
+  if (!options) {
+    options = {};
+  }
+  else if (types.isString(options)) {
+    options = {
+      src: options
+    };
+  }
+
+  var currCwd = options.cwd || cwd || _cwd;
+  var baseDir = _cwd === currCwd ? currCwd : path.join(_cwd, currCwd);
+
+  this.src = [];
+  this.dest = null;
+  this.cwd = currCwd;
+  this.baseDir = baseDir;
+  configurator.configure(this, parseOptions(options));
 }
 
-function createFile(file, cwd) {
-  var currCwd = file.cwd || cwd || "";
-  var baseDir = path.join(_cwd, currCwd);
+File.prototype.setSrc = function(files) {
+  this.src = src(files, this.baseDir);
+  return this;
+};
 
-  return new File({
-    cwd: currCwd,
-    baseDir: baseDir,
-    dest: dest(file.dest, _cwd),
-    src: src(file.src, baseDir)
+File.prototype.setDest = function(file) {
+  this.dest = dest(file, this.cwd);
+  return this;
+};
+
+function create(files, cwd) {
+  return utils.toArray(files).map(function(file) {
+    return new File(file, cwd);
   });
 }
 
-function factory(files, cwd) {
-  return toArray(files).map(function(file) {
-    return createFile(file, cwd);
-  });
-}
+function src(files, baseDir) {
+  return utils.toArray(files).reduce(function(result, file) {
+    var globResult = types.isString(file) ?
+      glob.sync(file, { cwd: baseDir, realpath: true }) :
+      [file];
 
-function src(files, cwd) {
-  return toArray(files).reduce(function(result, file) {
-    var globResult = glob.sync(file, { cwd: cwd, realpath: true });
     return result.concat(globResult);
   }, []);
 }
 
 function dest(file, cwd) {
-  if (types.isString(file)) {
-    return path.isAbsolute(file) ? file : path.join(cwd, file);
-  }
-
-  return file;
+  return types.isString(file) ?
+    path.isAbsolute(file) ? file : path.join(cwd, file) :
+    file;
 }
 
-module.exports = factory;
-module.exports.File = File;
+function parseOptions(options) {
+  if (!options) {
+    options = {};
+  }
+  else if (!types.isPlainObject(options)) {
+    options = {
+      src: options
+    };
+  }
+
+  return options;
+}
+
+module.exports = File;
+module.exports.create = create;
 module.exports.src = src;
 module.exports.dest = dest;

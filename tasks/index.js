@@ -14,7 +14,7 @@ var types = require("dis-isa");
 var bitimports = require("../index");
 var Context = require("./context");
 var logError = require("./logError");
-var fileFactory = require("./file");
+var File = require("./file");
 
 
 function createLoder(settings) {
@@ -53,7 +53,7 @@ function createContext(file, settings) {
 
 function loadFiles(files, settings) {
   settings = settings || {};
-  files = fileFactory(files, settings.cwd);
+  files = File.create(files, settings.cwd);
 
   return new Promise(function(resolve, reject) {
     try {
