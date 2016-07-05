@@ -11,10 +11,10 @@
 
 var utils = require("belty");
 var types = require("dis-isa");
+var File = require("src-dest");
 var bitimports = require("../index");
 var Context = require("./context");
 var logError = require("./logError");
-var File = require("./file");
 
 
 function createLoder(settings) {
@@ -46,14 +46,14 @@ function createLoder(settings) {
 function createContext(file, settings) {
   return new Context({
     file: file,
-    loader: createLoder(utils.extend({ baseUrl: file.baseDir }, settings))
+    loader: createLoder(utils.extend({ baseUrl: file.cwd }, settings))
   });
 }
 
 
 function loadFiles(files, settings) {
   settings = settings || {};
-  files = File.create(files, settings.cwd);
+  files = File.list(files, settings.cwd);
 
   return new Promise(function(resolve, reject) {
     try {
