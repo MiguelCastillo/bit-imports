@@ -33,9 +33,7 @@ Context.prototype.execute = function(src) {
 };
 
 function fileWriter(file, moduleMeta) {
-  var dest = file.dest;
-  var baseDir = file.baseDir;
-  var outpath = path.join(dest, moduleMeta.path.replace(baseDir, ""));
+  var outpath = path.join(file.dest, moduleMeta.path.replace(file.cwd, ""));
   mkdirp.sync(path.dirname(outpath));
   var file = fs.createWriteStream(outpath);
 
