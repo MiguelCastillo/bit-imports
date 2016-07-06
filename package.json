@@ -1,7 +1,7 @@
 {
   "name": "bit-imports",
   "description": "module loader for the browser",
-  "version": "2.0.5",
+  "version": "2.0.6",
   "directories": {
     "test": "tests"
   },
