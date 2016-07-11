@@ -1,6 +1,5 @@
 var utils = require("belty");
 var chokidar = require("chokidar");
-var toArray = require("./toArray");
 var logError = require("./logError");
 
 function watch(context, options) {
@@ -26,7 +25,7 @@ function watch(context, options) {
     .on("unlink", onDelete);
 
   function onChange(path) {
-    var paths = toArray(path).filter(function(path) {
+    var paths = utils.toArray(path).filter(function(path) {
       return context.cache.hasOwnProperty(path);
     });
 
@@ -42,20 +41,17 @@ function watch(context, options) {
         context.loader.deleteModule(context.cache[path]);
       });
 
-      context.execute(paths).then(function() {
+      context.execute(paths).then(function(ctx) {
+        context = ctx;
         paths.forEach(function(path) {
-          console.log("[changed]", path);
+          console.log("[updated]", path);
         });
 
-        inProgress = false;
-
-        var pendingPaths = Object.keys(nextPaths);
-
-        if (pendingPaths.length) {
-          nextPaths = {};
-          onChange(pendingPaths);
-        }
-      }, logError);
+        executePending();
+      }, function(err) {
+        logError(err);
+        executePending();
+      });
     }
   }
 
@@ -70,7 +66,19 @@ function watch(context, options) {
       console.warn("[removed]", path);
     }
   }
-}
 
+  function executePending() {
+    inProgress = false;
+
+    var pendingPaths = Object.keys(nextPaths);
+
+    if (pendingPaths.length) {
+      nextPaths = {};
+      onChange(pendingPaths);
+    }
+  }
+
+  return context;
+}
 
 module.exports = watch;
