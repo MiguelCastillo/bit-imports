@@ -19,26 +19,7 @@ var logError = require("./logError");
 
 function createLoder(settings) {
   var loader = bitimports.config(settings);
-
-  if (settings.log) {
-    loader.logger.enable();
-
-    switch(settings.log) {
-      case "info": {
-        loader.logger.level(1);
-        break;
-      }
-      case "warn": {
-        loader.logger.level(2);
-        break;
-      }
-      case "error": {
-        loader.logger.level(3);
-        break;
-      }
-    }
-  }
-
+  configureLog(loader.logger, settings.log);
   return loader;
 }
 
@@ -73,6 +54,20 @@ function loadFiles(files, settings) {
       reject(err);
     }
   });
+}
+
+function configureLog(logger, level) {
+  if (level) {
+    if (level === true) {
+      level = "info";
+    }
+
+    logger.enable();
+    logger.level(logger.levels[level]);
+  }
+  else {
+    logger.disable();
+  }
 }
 
 
