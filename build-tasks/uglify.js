@@ -7,10 +7,19 @@ module.exports = {
       "preserveComments": /(?:^!|@(?:license|preserve|cc_on))/,
       "sourceMap": true
     },
-    "files": {
-      "dist/<%= pkg.name %>.min.js": [
-        "<%= browserify.build.dest %>"
-      ]
-    }
+    "files": [{
+      "src": "dist/<%= pkg.name %>.js",
+      "dest": "dist/<%= pkg.name %>.min.js"
+    }]
+  },
+  "browserify": {
+    "options": {
+      "preserveComments": /(?:^!|@(?:license|preserve|cc_on))/,
+      "sourceMap": true
+    },
+    "files": [{
+      "src": "<%= browserify.build.dest %>",
+      "dest": "dist/browserify-<%= pkg.name %>.min.js"
+    }]
   }
 };
