@@ -9,6 +9,17 @@ module.exports = {
     },
     "files": {
       "dist/<%= pkg.name %>.min.js": [
+        "dist/<%= pkg.name %>.js"
+      ]
+    }
+  },
+  "browserify": {
+    "options": {
+      "preserveComments": /(?:^!|@(?:license|preserve|cc_on))/,
+      "sourceMap": true
+    },
+    "files": {
+      "dist/browserify-<%= pkg.name %>.min.js": [
         "<%= browserify.build.dest %>"
       ]
     }
