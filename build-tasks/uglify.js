@@ -1,7 +1,10 @@
+// https://github.com/gruntjs/grunt-contrib-uglify/issues/366
+// preserveComment: "some" isn't working.
+
 module.exports = {
   "build": {
     "options": {
-      "preserveComments": "some",
+      "preserveComments": /(?:^!|@(?:license|preserve|cc_on))/,
       "sourceMap": true
     },
     "files": {
