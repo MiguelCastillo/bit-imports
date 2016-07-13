@@ -20,7 +20,7 @@ describe("Imports Test Suite", function() {
     });
 
     it("then transform generates a string as output", function() {
-      expect(result).to.be.a('string');
+      expect(result).to.be.a("string");
     });
   });
 
