@@ -1,5 +1,5 @@
-import { Eventing } from '../js/ere';
-import THREE from './three.bootstrap';
+import { Eventing } from "../js/ere";
+import THREE from "./three.bootstrap";
 
 
 class SpecialEffect {
@@ -23,9 +23,9 @@ class SpecialEffect {
     this.container = document.getElementById("canvas");
     this.container.appendChild( this.renderer.domElement );
 
-    this.logo = document.getElementById('bit-imports');
-    this.logoMini = document.getElementById('bit-imports-mini');
-    this.nav = document.getElementById('nav');
+    this.logo = document.getElementById("bit-imports");
+    this.logoMini = document.getElementById("bit-imports-mini");
+    this.nav = document.getElementById("nav");
 
     this.init();
     this.animate();
@@ -73,13 +73,13 @@ class SpecialEffect {
     this.scene.add( line );
 
     (new Eventing(document))
-      .on('mousemove', onDocumentMouseMove.bind(this))
-      .on('touchstart', onDocumentTouchStart.bind(this))
-      .on('touchmove', onDocumentTouchMove.bind(this));
+      .on("mousemove", onDocumentMouseMove.bind(this))
+      .on("touchstart", onDocumentTouchStart.bind(this))
+      .on("touchmove", onDocumentTouchMove.bind(this));
 
     (new Eventing(window))
-      .on('resize', onWindowResize.bind(this))
-      .on('scroll', docScroll.bind(this));
+      .on("resize", onWindowResize.bind(this))
+      .on("scroll", docScroll.bind(this));
   }
 
   animate() {
@@ -146,18 +146,18 @@ function docScroll() {
 
   if (logoTop < navHeight) {
     var ratio = logoMiniHeight / logoHeight;
-    this.logoMini.style.webkitTransform = 'translate3d(0,'+logoTop / ratio + 'px,0)';
-    this.logoMini.style.transform = 'translate3d(0,'+logoTop / ratio + 'px,0)';
+    this.logoMini.style.webkitTransform = "translate3d(0," + logoTop/ratio + "px,0)";
+    this.logoMini.style.transform = "translate3d(0," + logoTop/ratio + "px,0)";
   }
 
   if (logoTop > navHeight) {
-    this.logoMini.style.webkitTransform = 'translate3d(0,100%,0)';
-    this.logoMini.style.transform = 'translate3d(0,100%,0)';
+    this.logoMini.style.webkitTransform = "translate3d(0,100%,0)";
+    this.logoMini.style.transform = "translate3d(0,100%,0)";
   }
 
   if (logoTop < 0) {
-    this.logoMini.style.webkitTransform = 'translate3d(0,0,0)';
-    this.logoMini.style.transform = 'translate3d(0,0,0)';
+    this.logoMini.style.webkitTransform = "translate3d(0,0,0)";
+    this.logoMini.style.transform = "translate3d(0,0,0)";
   }
 }
 
