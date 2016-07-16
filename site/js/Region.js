@@ -1,5 +1,4 @@
-import Component from './Component';
-import router from './Routing';
+import Component from "./Component";
 
 var registered = {};
 

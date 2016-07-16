@@ -1,4 +1,4 @@
-import Eventing from './Eventing';
+import Eventing from "./Eventing";
 
 var enabled = true;
 
@@ -208,7 +208,7 @@ var match = {
   all: new MatchAll(),
   none: new MatchNone(),
   empty: new MatchEmpty()
-}
+};
 
 export default new Routing();
 export { Routing, match };
