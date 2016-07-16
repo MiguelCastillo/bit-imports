@@ -42,13 +42,13 @@ function loadFiles(files, settings) {
         return createContext(file, settings.options);
       });
 
-      return Promise
+      Promise
         .all(contexts.map(function(context) {
           return context.execute(context.file.src)
         }))
         .then(function(contexts) {
           resolve(contexts);
-        });
+        }, reject);
     }
     catch(err) {
       reject(err);

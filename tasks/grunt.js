@@ -53,6 +53,7 @@ function gruntTask(grunt) {
 
         done();
       }, function(err) {
+        spinner.stop();
         logError(err);
         done(err);
       });
