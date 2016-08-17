@@ -1,4 +1,4 @@
-/* jshint unused: false, undef: false */
+/*eslint no-unused-vars: 0 */
 var System = (function() {
   var importer = bitimports.config({
     "baseUrl": "../",
