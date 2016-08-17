@@ -53,8 +53,9 @@ function gruntTask(grunt) {
 
         done();
       }, function(err) {
+        spinner.stop();
         logError(err);
-        done(err);
+        done(err instanceof Error ? err : false);
       });
   });
 };

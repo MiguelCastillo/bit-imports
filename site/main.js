@@ -8,11 +8,10 @@ import {
   Component,
   DOMElement,
   DOMReady,
-  Eventing,
   Region,
   renderer,
   router
-} from './js/ere';
+} from "./js/ere";
 
 import Header from "./view/Header";
 import Footer from "./view/Footer";

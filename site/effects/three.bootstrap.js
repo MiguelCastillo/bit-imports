@@ -4,10 +4,10 @@
 // is pushed to the bottom after the importing CanvasRenderer and Projector,
 // which depend on THREE being in the window object.
 
-var THREE = require('three');
+var THREE = require("three");
 
 // Unfortunately, the dependencies below expect THREE to be in the global object. :-/
 window.THREE = THREE;
-require('three/examples/js/renderers/CanvasRenderer');
-require('three/examples/js/renderers/Projector');
+require("three/examples/js/renderers/CanvasRenderer");
+require("three/examples/js/renderers/Projector");
 module.exports = THREE;

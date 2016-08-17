@@ -54,7 +54,7 @@ function processChildren(parent, components) {
         return html + component;
       }
       return html;
-    }, '');
+    }, "");
 }
 
 
