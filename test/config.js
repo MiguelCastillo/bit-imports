@@ -14,7 +14,7 @@ var System = (function() {
     "urlArgs": "bust=" + (new Date()).getTime()
   });
 
-  importer.ignore(["dist/bit-imports"]);
+  importer.ignore(["dist/bit-imports.min.js"]);
   importer.logger.enable();
   return importer;
 })();

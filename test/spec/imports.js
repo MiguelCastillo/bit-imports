@@ -1,4 +1,4 @@
-var Importer = require("dist/bit-imports");
+var Importer = require("dist/bit-imports.min.js");
 
 function noop(arg) {return arg;}
 

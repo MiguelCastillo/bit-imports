@@ -7,7 +7,7 @@ module.exports = function(grunt) {
 
   grunt.initConfig(taskConfig);
 
-  grunt.registerTask("build", ["eslint:all", "browserify:build", "uglify:build"]);
+  grunt.registerTask("build", ["bitbundler:build"]);
   grunt.registerTask("test", ["connect:test", "mocha:test"]);
   grunt.registerTask("serve", ["concurrent:build"]);
   grunt.registerTask("build-docs", ["jsdoc:build"]);

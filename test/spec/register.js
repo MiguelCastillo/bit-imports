@@ -1,4 +1,4 @@
-var Importer = require("dist/bit-imports");
+var Importer = require("dist/bit-imports.min.js");
 
 describe("Register Test Suite", function() {
   describe("When registering a module with no dependencies", function() {
