@@ -24,11 +24,15 @@ module.exports = {
   },
   "dev": {
     "options": {
-      "protocol": "http2",
+      "protocol": "http",
       "port": 8010,
       "host": "localhost",
       "keepalive": true,
-      "open": "https://localhost:8010/test/SpecRunner.html"
+      "open": "http://localhost:8010/test/SpecRunner.html",
+      "middleware": function(connect, options, middlewares) {
+        middlewares.unshift(livereload({ port: 32011 }));
+        return middlewares;
+      }
     }
   },
   "docs": {

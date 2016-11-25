@@ -7,9 +7,9 @@ module.exports = function(grunt) {
 
   grunt.initConfig(taskConfig);
 
-  grunt.registerTask("build", ["eslint:all", "browserify:build", "uglify:build"]);
-  grunt.registerTask("test", ["connect:test", "mocha:test"]);
-  grunt.registerTask("serve", ["concurrent:build"]);
+  grunt.registerTask("build", ["bitbundler:build"]);
+  grunt.registerTask("test", ["bitbundler:test", "connect:test", "mocha:test"]);
+  grunt.registerTask("serve", ["concurrent:dev"]);
   grunt.registerTask("build-docs", ["jsdoc:build"]);
   grunt.registerTask("serve-docs", ["build-docs", "concurrent:docs"]);
   grunt.registerTask("build-site", ["clean:site", "build", "jsdoc", "bitimports:site", "copy:siteignore", "copy:site", "copy:sitedocs"]);

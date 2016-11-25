@@ -1,6 +1,6 @@
-var Importer = require("dist/bit-imports");
+var Importer = require("../../browser");
 
-describe("Register Test Suite", function() {
+describe.skip("Register Test Suite", function() {
   describe("When registering a module with no dependencies", function() {
     var importer, moduleA, factoryStub, moduleImportedStub;
     beforeEach(function() {

@@ -11,14 +11,9 @@ module.exports = {
       "livereload": 32010
     }
   },
-  "build": {
+  "dev": {
     "files": [
-      "src/**/*.js",
-      "test/**/*.js",
-      "*.js"
-    ],
-    "tasks": [
-      "build"
+      "dist/*.js",
     ],
     "options": {
       "livereload": 32011
@@ -27,8 +22,6 @@ module.exports = {
   "site": {
     "files": [
       "_site/**/*"
-    ],
-    "tasks": [
     ],
     "options": {
       "livereload": 32012

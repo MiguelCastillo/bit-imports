@@ -1,8 +1,9 @@
 module.exports = {
-  "build": {
+  "dev": {
     "tasks": [
+      "bitbundler:dev",
       "connect:dev",
-      "watch:build"
+      "watch:dev"
     ],
     "options": {
       "logConcurrentOutput": true
