@@ -22,14 +22,17 @@
     <div id="mocha"></div>
     <script>
       mocha.setup('bdd');
-      System.import(['chai', '../dist/SpecRunner.js']).then(function(modules) {
+      System.import(['chai']).then(function(modules) {
         // Setup chai
         var chai      = modules[0];
         window.chai   = chai;
         window.expect = chai.expect;
         window.assert = chai.assert;
-        // Run test
-        mocha.run();
+
+        System.import(['dist/SpecRunner.js']).then(function() {
+          // Run test
+          mocha.run();
+        })
       });
     </script>
   </body>
