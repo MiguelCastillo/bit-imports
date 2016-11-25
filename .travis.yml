@@ -8,7 +8,6 @@ deploy:
   api_key:
     secure: dDq3HZ5eaIrg0Blwi2T6S6bMFCWFVJ/a7nhWZbWNo7XLjnxJkvi+Mr4IrTkdgHmpze6dMzVEGFi3imAh2STr1iJbUcOryOIdOnCvRCTtz4jv7XIsHuXPPZO6eMDFdo0P+iJlj/3h6Qyl7rdUYQsdtzJitYYNwnagRTmGUcU0jBs=
   file:
-    - "dist/bit-imports.js"
     - "dist/bit-imports.min.js"
     - "dist/bit-imports.min.js.map"
   skip_cleanup: true
