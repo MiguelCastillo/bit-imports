@@ -26,6 +26,24 @@ module.exports = {
         extractsm()
       ]
     }
+  },
+  dev: {
+    watch: true,
+    Bitbundler: Bitbundler,
+    files: [{
+      src: "test/SpecRunner.js",
+      dest: "dist/SpecRunner.js"
+    }],
+    loader: {
+      plugins: [
+        eslintPlugin(),
+        jsPlugin(),
+        builtins()
+      ]
+    },
+    bundler: {
+      umd: "bitimports"
+    }
   }
 };
 

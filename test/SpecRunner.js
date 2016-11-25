@@ -1,3 +1,3 @@
-require("test/spec/imports");
-require("test/spec/packages");
-//require("test/spec/register");
+require("./spec/imports");
+require("./spec/packages");
+require("./spec/register");

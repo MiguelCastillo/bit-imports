@@ -1,4 +1,4 @@
-var Importer = require("dist/bit-imports.min.js");
+var Importer = require("../../browser");
 
 describe("Packages Test Suite", function() {
   var importer;
