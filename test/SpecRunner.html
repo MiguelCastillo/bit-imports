@@ -29,7 +29,7 @@
         window.expect = chai.expect;
         window.assert = chai.assert;
 
-        System.import(['dist/SpecRunner.js']).then(function() {
+        System.import(['test/bundle.js']).then(function() {
           // Run test
           mocha.run();
         })

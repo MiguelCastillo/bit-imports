@@ -32,7 +32,7 @@ module.exports = {
     Bitbundler: Bitbundler,
     files: [{
       src: "test/SpecRunner.js",
-      dest: "dist/SpecRunner.js"
+      dest: "test/bundle.js"
     }],
     loader: {
       plugins: [
@@ -46,7 +46,7 @@ module.exports = {
     Bitbundler: Bitbundler,
     files: [{
       src: "test/SpecRunner.js",
-      dest: "dist/SpecRunner.js"
+      dest: "test/bundle.js"
     }],
     loader: {
       plugins: [

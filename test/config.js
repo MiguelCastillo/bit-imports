@@ -3,7 +3,6 @@ var System = (function() {
   var importer = bitimports.config({
     "baseUrl": "../",
     "paths": {
-      "mocha": "node_modules/mocha/mocha",
       "chai": "node_modules/chai/chai"
     },
     "shim": {
@@ -14,11 +13,7 @@ var System = (function() {
     "urlArgs": "bust=" + (new Date()).getTime()
   });
 
-  importer.ignore([{
-    fileName: "SpecRunner.js"
-  }]);
-
+  importer.ignore([{ fileName: "bundle.js" }]);
   importer.logger.enable();
-
   return importer;
 })();
