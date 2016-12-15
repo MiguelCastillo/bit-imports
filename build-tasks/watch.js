@@ -13,7 +13,7 @@ module.exports = {
   },
   "dev": {
     "files": [
-      "dist/*.js",
+      "test/bundle.js"
     ],
     "options": {
       "livereload": 32011

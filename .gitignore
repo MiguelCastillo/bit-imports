@@ -1,6 +1,7 @@
 dist
 _site
 _docs
+test/bundle.js
 
 # Logs
 logs
