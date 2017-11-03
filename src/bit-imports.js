@@ -1,6 +1,5 @@
 var logger     = require("./logger");
 var factory    = require("./factory");
-var dependency = require("deps-bits");
 var Bitloader  = require("bit-loader");
 var utils      = require("belty");
 
@@ -33,21 +32,19 @@ var defaults = {
 function Bitimports(options) {
   var settings = utils.merge({}, defaults, options);
 
-  if (!settings.resolve) {
-    var resolver = factory.create("resolver", settings);
-    settings.resolve = resolver.resolve.bind(resolver);
+  if (settings.resolve !== false) {
+    settings.resolve = settings.resolve ? settings.resolve : factory.create("resolver", settings);
   }
 
-  if (!settings.fetch) {
-    var fetcher = factory.create("fetcher", settings);
-    settings.fetch = fetcher.fetch.bind(fetcher);
+  if (settings.fetch !== false) {
+    settings.fetch = settings.fetch ? settings.fetch : factory.create("fetcher", settings);
+  }
+
+  if (settings.dependency !== false) {
+    settings.dependency = settings.dependency ? settings.dependency : factory.create("dependency", settings)
   }
 
   Bitloader.call(this, settings);
-
-  this.plugin("js", {
-    "dependency": dependency
-  });
 
   // Make this option a bit obtuse - I wanna make it a lil difficult for people to
   // enable processing of node_modules since it can be rather difficult to tweak

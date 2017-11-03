@@ -1,5 +1,6 @@
 var resolvePath = require("bit-bundler-utils/resolvePath");
 var readFile    = require("bit-bundler-utils/readFile");
+var Dependency  = require("./src/dependency");
 var factory     = require("./src/factory");
 
 function Resolver() {}
@@ -14,6 +15,6 @@ Fetcher.prototype.fetch = function(moduleMeta) {
 
 factory.register("fetcher", Fetcher);
 factory.register("resolver", Resolver);
-
+factory.register("dependency", Dependency);
 
 module.exports = require("./src/bit-imports").create({ doNotIgnoreNodeModules: true });

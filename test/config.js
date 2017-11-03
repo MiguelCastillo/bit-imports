@@ -1,6 +1,10 @@
 /*eslint no-unused-vars: 0 */
 var System = (function() {
   var importer = bitimports.config({
+    "dependency": {
+      "extensions": ["js", "jsx"],
+      "ignore": { "filename": "foo.js" }
+    },
     "baseUrl": "../",
     "paths": {
       "chai": "node_modules/chai/chai"
@@ -10,7 +14,7 @@ var System = (function() {
         "exports": "mocha"
       }
     },
-    "urlArgs": "bust=" + (new Date()).getTime()
+    "urlArgs": "bust=" + (new Date()).getTime(),
   });
 
   importer.ignore([{ fileName: "bundle.js" }]);

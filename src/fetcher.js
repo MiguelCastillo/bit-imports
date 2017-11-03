@@ -29,7 +29,7 @@ function Fetcher() {
 /**
  * Reads file content from storage
  */
-Fetcher.prototype.fetch = function(moduleMeta) {
+Fetcher.prototype.run = function(moduleMeta) {
   logger.log(moduleMeta.name, moduleMeta);
 
   function setSource(source) {
