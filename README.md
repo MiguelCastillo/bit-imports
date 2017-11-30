@@ -11,6 +11,8 @@
 
 ### Resources
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/MiguelCastillo/bit-imports.svg)](https://greenkeeper.io/)
+
 - [API](https://imports.bitjs.io/api)
 - [CLI](https://imports.bitjs.io/cli)
 - [Grunt task](https://imports.bitjs.io/grunt-task)
