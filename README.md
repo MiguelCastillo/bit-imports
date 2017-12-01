@@ -1,7 +1,6 @@
 <img src="https://raw.githubusercontent.com/MiguelCastillo/bit-imports/master/img/bit-imports_white.png" width="100%"></img>
 
-[![Build Status](https://travis-ci.org/MiguelCastillo/bit-imports.svg)](https://travis-ci.org/MiguelCastillo/bit-imports)
-[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MiguelCastillo/bit-imports?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/MiguelCastillo/bit-imports.svg)](https://travis-ci.org/MiguelCastillo/bit-imports) [![Greenkeeper badge](https://badges.greenkeeper.io/MiguelCastillo/bit-imports.svg)](https://greenkeeper.io/) [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MiguelCastillo/bit-imports?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Stories in Ready](https://badge.waffle.io/MiguelCastillo/bit-imports.png?label=ready&title=Ready)](https://waffle.io/MiguelCastillo/bit-imports)
 
 > module loader with System.import and CJS dependencies in the browser
@@ -10,8 +9,6 @@
 
 
 ### Resources
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/MiguelCastillo/bit-imports.svg)](https://greenkeeper.io/)
 
 - [API](https://imports.bitjs.io/api)
 - [CLI](https://imports.bitjs.io/cli)
