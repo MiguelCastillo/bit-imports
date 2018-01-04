@@ -26,7 +26,7 @@
   },
   "homepage": "https://github.com/MiguelCastillo/bit-imports",
   "devDependencies": {
-    "bit-bundler": "^9.0.0",
+    "bit-bundler": "^10.0.0",
     "bit-bundler-banner": "^1.0.0",
     "bit-bundler-extractsm": "^2.1.0",
     "bit-bundler-minifyjs": "^3.0.1",
