@@ -79,7 +79,7 @@
     "p-stream": "^1.0.3",
     "promjax": "^3.0.1",
     "spromise": "^1.0.0",
-    "src-dest": "^2.1.0",
+    "src-dest": "^3.0.0",
     "subarg": "^1.0.0"
   }
 }
