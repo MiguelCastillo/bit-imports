@@ -6,7 +6,7 @@ before_install:
 deploy:
   provider: releases
   api_key:
-    secure: dDq3HZ5eaIrg0Blwi2T6S6bMFCWFVJ/a7nhWZbWNo7XLjnxJkvi+Mr4IrTkdgHmpze6dMzVEGFi3imAh2STr1iJbUcOryOIdOnCvRCTtz4jv7XIsHuXPPZO6eMDFdo0P+iJlj/3h6Qyl7rdUYQsdtzJitYYNwnagRTmGUcU0jBs=
+    secure: Zg+GCHwwrBFLIpHD/NY6l+/vMIqdg2OxcwZoYwJzGG4OnOwjNy/xCV5OuLrqAYRUfrexErmIubvckyc29SByv/DqEKIUXAIHaQeqJs/Z6Qq28HpG/s0ExLKwvjogKtY1wei4YCzZLQf8Faae3c7PWaKXnhKdQpvwlhgA8xvw/X0=
   file:
     - "dist/bit-imports.min.js"
     - "dist/bit-imports.min.js.map"
