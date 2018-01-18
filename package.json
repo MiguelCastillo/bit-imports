@@ -33,7 +33,7 @@
     "bit-imports": "~3.1.0",
     "bit-loader-builtins": "^2.0.0",
     "bit-loader-eslint": "^1.2.1",
-    "bootstrap": "^3.3.7",
+    "bootstrap": "^4.0.0",
     "chai": "~4.1.2",
     "config-grunt-tasks": "^1.0.3",
     "connect-livereload": "^0.6.0",
