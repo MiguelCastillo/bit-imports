@@ -7,16 +7,18 @@ module.exports = {
     umd: "bitimports"
   },
   dev: {
-    watch: true,
     files: [{
       src: "test/SpecRunner.js",
       dest: "test/bundle.js"
-    }]
+    }],
+    minify: false,
+    watch: true
   },
   test: {
     files: [{
       src: "test/SpecRunner.js",
       dest: "test/bundle.js"
-    }]
+    }],
+    minify: false
   }
 };
