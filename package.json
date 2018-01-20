@@ -5,7 +5,7 @@
   "directories": {
     "test": "tests"
   },
-  "main": "index.js",
+  "main": "dist/bit-imports.min.js",
   "bin": {
     "bitimports": "bin/cli.js"
   },
@@ -13,7 +13,8 @@
     "docs": "docdown src/bit-imports.js api/README.md url='https://github.com/MiguelCastillo/bit-imports/tree/master/src/bit-imports.js' toc='categories' title='API documentation'",
     "prepublish": "grunt build",
     "test": "grunt test",
-    "build": "grunt build"
+    "build": "grunt build",
+    "serve": "grunt serve"
   },
   "repository": {
     "type": "git",
@@ -26,13 +27,13 @@
   },
   "homepage": "https://github.com/MiguelCastillo/bit-imports",
   "devDependencies": {
-    "bit-bundler": "^10.0.0",
-    "bit-bundler-banner": "^1.0.0",
-    "bit-bundler-extractsm": "^2.1.0",
-    "bit-bundler-minifyjs": "^3.0.1",
-    "bit-imports": "~3.1.0",
-    "bit-loader-builtins": "^2.0.0",
-    "bit-loader-eslint": "^1.2.1",
+    "bit-bundler": "^10.1.0",
+    "bit-bundler-banner": "^1.1.0",
+    "bit-bundler-extractsm": "^2.1.4",
+    "bit-bundler-minifyjs": "^3.1.0",
+    "bit-imports": "~3.1.1",
+    "bit-loader-builtins": "^2.0.2",
+    "bit-loader-eslint": "^1.3.0",
     "bootstrap": "^4.0.0",
     "chai": "~4.1.2",
     "config-grunt-tasks": "^1.0.3",
@@ -49,29 +50,29 @@
     "grunt-contrib-uglify": "~3.3.0",
     "grunt-contrib-watch": "~1.0.0",
     "grunt-eslint": "^20.1.0",
-    "grunt-jsdoc": "~2.2.0",
+    "grunt-jsdoc": "~2.2.1",
     "grunt-mocha": "~1.0.4",
     "grunt-release": "~0.14.0",
     "jshint-stylish": "~2.2.1",
     "load-grunt-tasks": "^3.5.2",
     "loadstyle-bits": "~1.0.1",
-    "marked": "^0.3.6",
+    "marked": "^0.3.12",
     "mocha": "~5.0.0",
     "sass.js": "^0.10.7",
     "sassy-bits": "~1.0.0",
-    "sinon": "~4.1.2"
+    "sinon": "~4.1.6"
   },
   "dependencies": {
     "amd-resolver": "^1.2.3",
     "babel-bits": "^1.0.1",
-    "belty": "^5.1.0",
-    "bit-bundler-utils": "^5.0.1",
-    "bit-loader": "^9.0.0",
+    "belty": "^5.2.1",
+    "bit-bundler-utils": "^5.1.2",
+    "bit-loader": "^9.1.0",
     "chalk": "^2.3.0",
     "chokidar": "^2.0.0",
     "connect-history-api-fallback": "^1.5.0",
-    "deps-bits": "^0.1.3",
-    "dis-isa": "^1.3.0",
+    "deps-bits": "^0.1.4",
+    "dis-isa": "^1.3.2",
     "glob": "^7.1.2",
     "isbinaryfile": "^3.0.2",
     "mkdirp": "^0.5.1",
