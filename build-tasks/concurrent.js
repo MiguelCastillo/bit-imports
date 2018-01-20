@@ -1,7 +1,7 @@
 module.exports = {
   "dev": {
     "tasks": [
-      "bitbundler:dev",
+      "pakit:dev",
       "connect:dev",
       "watch:dev"
     ],
