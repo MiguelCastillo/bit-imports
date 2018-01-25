@@ -3,6 +3,9 @@ node_js:
 - '4'
 before_install:
 - npm install -g grunt-cli
+script:
+  - npm run build
+  - npm test
 deploy:
   provider: releases
   api_key:
