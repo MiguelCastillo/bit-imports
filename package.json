@@ -62,7 +62,7 @@
     "babel-bits": "^1.0.1",
     "belty": "^5.2.1",
     "bit-bundler-utils": "^5.1.2",
-    "bit-loader": "^9.1.0",
+    "bit-loader": "9.2.1",
     "chalk": "^2.3.0",
     "chokidar": "^2.0.0",
     "connect-history-api-fallback": "^1.5.0",
