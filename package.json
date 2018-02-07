@@ -32,7 +32,7 @@
     "chai": "~4.1.2",
     "config-grunt-tasks": "^1.0.3",
     "connect-livereload": "^0.6.0",
-    "grunt": "~1.0.1",
+    "grunt": "1.0.1",
     "grunt-browserify": "~5.2.0",
     "grunt-build-control": "^0.7.1",
     "grunt-cli": "^1.2.0",
