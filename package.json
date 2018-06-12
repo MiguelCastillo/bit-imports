@@ -60,7 +60,7 @@
   "dependencies": {
     "amd-resolver": "^1.2.3",
     "babel-bits": "^1.0.1",
-    "belty": "^5.2.1",
+    "belty": "5.2.1",
     "bit-bundler-utils": "^5.1.2",
     "bit-loader": "^9.1.0",
     "chalk": "^2.3.0",
