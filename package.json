@@ -44,7 +44,7 @@
     "grunt-contrib-watch": "~1.0.0",
     "grunt-eslint": "^20.1.0",
     "grunt-jsdoc": "~2.2.1",
-    "grunt-mocha": "~1.0.4",
+    "grunt-mocha": "~1.1.0",
     "grunt-pakit": "^0.2.2",
     "grunt-release": "~0.14.0",
     "jshint-stylish": "~2.2.1",
