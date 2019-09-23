@@ -55,7 +55,7 @@
     "pakit": "^1.0.1",
     "sass.js": "^0.10.7",
     "sassy-bits": "~1.0.0",
-    "sinon": "~4.2.0"
+    "sinon": "~7.5.0"
   },
   "dependencies": {
     "amd-resolver": "^1.2.3",
