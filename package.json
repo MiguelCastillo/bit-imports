@@ -42,7 +42,7 @@
     "grunt-contrib-copy": "^1.0.0",
     "grunt-contrib-uglify": "~3.3.0",
     "grunt-contrib-watch": "~1.0.0",
-    "grunt-eslint": "^20.1.0",
+    "grunt-eslint": "^23.0.0",
     "grunt-jsdoc": "~2.2.1",
     "grunt-mocha": "~1.0.4",
     "grunt-pakit": "^0.2.2",
